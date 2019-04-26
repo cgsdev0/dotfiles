@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Get relative path of $1 on $2
+relpath(){ python -c "import os.path; print os.path.relpath('$1','${2:-$PWD}')" ; }
+
+# Path calculations
+REPO="/home/$USER/dotfiles"
+OLD_HOME=$(relpath $1 ~)
+NEW_HOME="$REPO/$OLD_HOME"
+OLD_HOME="/home/\$USER/$OLD_HOME"
+OLD_FOLDER=$(dirname "$OLD_HOME")
+
+# Move and link the file
+mkdir -p $(dirname "$NEW_HOME")
+mv "$1" "$NEW_HOME"
+ln -sf "$NEW_HOME" "$1"
+
+# Create instructions for installing in the future
+cp "$REPO/install.sh" "$REPO/install_temp.sh"
+echo "mkdir -p \"$OLD_FOLDER\"" >> "$REPO/install_temp.sh"
+echo "z=1; ln -sf \"$(relpath $NEW_HOME $REPO)\" \"$OLD_HOME\"" >> "$REPO/install_temp.sh"
+cat "$REPO/install_temp.sh" | sort | uniq > "$REPO/install.sh"
+rm "$REPO/install_temp.sh"
