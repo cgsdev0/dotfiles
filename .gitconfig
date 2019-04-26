@@ -1,0 +1,20 @@
+[user]
+    name = Shane Schulte
+    email = shane.schulte@samsara.com
+
+[core]
+    editor = vim
+
+[filter "lfs"]
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+    required = true
+
+[alias]
+    summon = "!summon () { b=$1; git fetch origin +refs/heads/$b:refs/remotes/origin/$b $b:$b; }; summon"
+    fpush = "push --force-with-lease"
+    fp = "push --force-with-lease"
+    pf = "push --force-with-lease"
+[push]
+    default = current
