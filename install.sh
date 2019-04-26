@@ -1,6 +1,7 @@
 #!/bin/bash
 cd "${0%/*}"
 mkdir -p "/home/$USER/bin"
+mkdir -p "/home/$USER/.config/nvim"
 z=1; ln -sf "bin/battery" "/home/$USER/bin/battery"
 z=1; ln -sf "bin/cava-colors" "/home/$USER/bin/cava-colors"
 z=1; ln -sf "bin/color" "/home/$USER/bin/color"
@@ -15,3 +16,4 @@ z=1; ln -sf "bin/volume" "/home/$USER/bin/volume"
 z=1; ln -sf "bin/wal-edit" "/home/$USER/bin/wal-edit"
 z=1; ln -sf "bin/weather" "/home/$USER/bin/weather"
 z=1; ln -sf "bin/weather_widget" "/home/$USER/bin/weather_widget"
+z=1; ln -sf ".config/nvim/init.vim" "/home/$USER/.config/nvim/init.vim"
