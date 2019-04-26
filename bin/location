@@ -1,0 +1,11 @@
+#!/bin/bash
+if [ -f ~/.location ]; then
+    cat ~/.location
+
+elif [ -f ~/.home_location ] && [ $(iwgetid -r) == "dr-evil" ]; then
+    #
+    cat ~/.home_location
+else
+    # { echo '{'; whereami -r | tr -cd '[[:alnum:]]{}":,.\n' | grep -v '\['; } | jq -r '[.latitude, .longitude] | @tsv'
+    whereami -f json | grep {.*} -o | jq -r '[.latitude, .longitude] | @tsv'
+fi

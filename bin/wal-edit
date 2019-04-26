@@ -1,0 +1,131 @@
+#!/usr/bin/python3
+
+from tkinter import *
+from tkinter import ttk
+from tkinter import filedialog
+
+from tkcolorpicker import askcolor
+
+import subprocess
+import os
+import pywal
+
+from shutil import copyfile
+
+# Configuration
+
+cols = 4 # Must be at least 4
+rows = 4 # Must be at least 1
+button_w = 20
+button_h = 10
+
+CACHE_DIR = os.path.join(os.environ["HOME"], ".cache", "wal")
+
+def load_cache_colors():
+
+    colors = pywal.theme.file(os.path.join(CACHE_DIR, 'colors.json'))
+    return colors
+
+def send_colors(buttons):
+
+    # Load colors back from buttons
+    c = 0
+    for button in buttons:
+        colors['colors']['color'+str(c)] = button.cget('bg')
+        c += 1
+
+    pywal.sequences.send(colors)
+    pywal.export.every(colors, CACHE_DIR)
+
+    # Export individual template files.
+    pywal.export.color(colors, "xresources", "/home/schul/.Xresources")
+    pywal.export.color(colors, "shell", "/home/schul/colors.sh")
+
+    # Reload xrdb, i3 and polybar.
+    pywal.reload.env()
+
+    # Reload individual programs.
+    pywal.reload.i3()
+    pywal.reload.polybar()
+    pywal.reload.xrdb()
+
+    # subprocess.run(["wal-vtop"])
+
+root = Tk()
+root.attributes('-type', 'dialog')
+
+mainframe = ttk.Frame(root, padding="0 0 0 0")
+mainframe.grid(column=0, row=0)
+root.columnconfigure(0, weight=1)
+root.rowconfigure(0, weight=1)
+
+def change_color(button):
+    v, new_color = askcolor(button.cget('bg'))
+    if new_color is None:
+        return
+    button.configure(bg = new_color)
+
+def load_config():
+    to_load = filedialog.askopenfilename(initialdir = "~/themes",title = "Select file",filetypes = (("json files","*.json"),("all files","*.*")))
+    if not to_load:
+        return
+    print("Loading from " + to_load)
+    copyfile(to_load, os.path.join(CACHE_DIR, 'colors.json'))
+    # Reload xrdb, i3 and polybar.
+    pywal.reload.env()
+
+    # Reload individual programs.
+    pywal.reload.i3()
+    pywal.reload.polybar()
+    pywal.reload.xrdb()
+
+    subprocess.run(["wal", "-R"])
+
+def save_config():
+    to_save = filedialog.asksaveasfilename(initialdir = "~/themes",title = "Select file",filetypes = (("json files","*.json"),("all files","*.*")))
+    if not to_save:
+        return
+    print("Saving to " + to_save)
+    copyfile(os.path.join(CACHE_DIR, 'colors.json'), to_save)
+
+colors = load_cache_colors()
+
+buttons = []
+# Generate 16 buttons
+for y in range(rows):
+    for x in range(cols):
+        bid=y*rows + x
+        buttons.append(Button(mainframe,
+                # text=str(bid),
+                bg=colors['colors']['color'+str(bid)],
+                width=button_w,
+                height=button_h))
+
+        buttons[-1].grid(column=x, row=y)
+        buttons[-1].configure(command=lambda b=buttons[-1]: change_color(b))
+
+Button(mainframe,
+       text="Apply",
+       width=button_w,
+       height=button_h,
+       command=lambda: send_colors(buttons)).grid(column=cols-1, row=rows)
+
+Button(mainframe,
+       text="Save As",
+       width=button_w,
+       height=button_h,
+       command=lambda: save_config()).grid(column=cols-2, row=rows)
+
+Button(mainframe,
+       text="Load",
+       width=button_w,
+       height=button_h,
+       command=lambda: load_config()).grid(column=cols-3, row=rows)
+
+Button(mainframe,
+       text="Quit",
+       width=button_w,
+       height=button_h,
+       command=root.destroy).grid(column=0, row=rows)
+root.mainloop()
+
