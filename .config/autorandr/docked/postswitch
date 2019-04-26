@@ -1,0 +1,17 @@
+#!/bin/bash
+
+i3-msg -t get_workspaces | jq -r '.[].num' | \
+while read -r workspace; do
+    # Don't move slack / spotify
+    if [[ "$workspace" == "5" || "$workspace" == "10" ]]; then
+        continue
+    fi
+    echo "moving ${workspace} right..."
+    i3-msg workspace "${workspace}"
+    i3-msg move workspace to output right
+done
+
+# Switch to slack
+i3-msg workspace 5
+
+i3-msg reload
