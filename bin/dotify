@@ -1,10 +1,25 @@
 #!/bin/bash
 
+# Settings
+REPO="/home/$USER/dotfiles"
+INSTALL_SCRIPT="$REPO/install.sh"
+
 # Get relative path of $1 on $2
 relpath(){ python -c "import os.path; print os.path.relpath('$1','${2:-$PWD}')" ; }
 
+# Check if file exists
+if [ ! -f "$1" ]; then
+    echo "Must specify a valid file"
+    exit 1
+fi
+
+# Check if file is a symlink
+if [ -h "$1" ]; then
+    echo "Specified file is a symlink"
+    exit 1
+fi
+
 # Path calculations
-REPO="/home/$USER/dotfiles"
 OLD_HOME=$(relpath $1 ~)
 NEW_HOME="$REPO/$OLD_HOME"
 OLD_HOME="/home/\$USER/$OLD_HOME"
@@ -16,8 +31,16 @@ mv "$1" "$NEW_HOME"
 ln -sf "$NEW_HOME" "$1"
 
 # Create instructions for installing in the future
-cp "$REPO/install.sh" "$REPO/install_temp.sh"
-echo "mkdir -p \"$OLD_FOLDER\"" >> "$REPO/install_temp.sh"
-echo "z=1; ln -sf \"$(relpath $NEW_HOME $REPO)\" \"$OLD_HOME\"" >> "$REPO/install_temp.sh"
-cat "$REPO/install_temp.sh" | sort | uniq > "$REPO/install.sh"
-rm "$REPO/install_temp.sh"
+TMP_FILE=/tmp/install_$(date +%s).sh
+cp "$INSTALL_SCRIPT" "$TMP_FILE"
+echo "mkdir -p \"$OLD_FOLDER\"" >> "$TMP_FILE"
+echo "ln -sf \"$(relpath $NEW_HOME $REPO)\" \"$OLD_HOME\"" >> "$TMP_FILE"
+
+# Retain all non-generated lines
+grep -v -e ^mkdir -e ^ln "$TMP_FILE" > "$INSTALL_SCRIPT"
+
+# Sort the new lines into install.sh
+grep ^mkdir "$TMP_FILE" | sort | uniq >> "$INSTALL_SCRIPT"
+grep ^ln "$TMP_FILE" | sort | uniq >> "$INSTALL_SCRIPT"
+
+rm "$TMP_FILE"
