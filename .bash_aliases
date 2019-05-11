@@ -5,6 +5,7 @@ alias mycli-dev="mycli -h 127.0.0.1 -P 3307 -uroot -pdev"
 # Taskrunner
 alias taskl="taskrunner --list | tail -n +3 | fzf | xargs -r taskrunner"
 alias taskr="taskrunner"
+alias taskt="taskrunner --config troy.taskrunner.json"
 
 # Locations
 alias g="cd ~/co/backend"
@@ -18,8 +19,9 @@ alias kde="/usr/lib/x86_64-linux-gnu/libexec/kdeconnectd"
 alias slack="google-chrome --app='https://samsara-net.slack.com/messages'"
 
 # Random
+alias mcdonalds="git push mac -f > /dev/null 2> /dev/null && ssh dev@mac \"cd co/backend && git reset --hard\" 2> /dev/null"
 alias mac="ssh dev@mac"
-alias phone="adb connect 10.6.13.110:5555"
+alias phone="adb connect pixel:5555"
 alias network="sudo service network-manager restart"
 
 # Terminal colors

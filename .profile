@@ -29,3 +29,4 @@ fi
 # eval "$(hub alias -s)"
 xset r rate 250 40
 setxkbmap -option caps:escape
+eval $(ssh-agent) > /dev/null

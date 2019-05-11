@@ -226,6 +226,9 @@ bindsym $mod+Tab workspace back_and_forth
 # Mod+Shift+C = toggle compton
 bindsym $mod+Shift+c exec --no-startup-id killall compton || compton &> /dev/null
 
+# Mod+P = show phone
+bindsym $mod+p exec --no-startup-id scrcpy -m 1024
+
 # Pulse Audio controls
 bindsym XF86AudioRaiseVolume exec --no-startup-id volume up #increase sound volume
 bindsym XF86AudioLowerVolume exec --no-startup-id volume down #decrease sound volume
