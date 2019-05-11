@@ -28,13 +28,13 @@ OLD_FOLDER=$(dirname "$OLD_HOME")
 # Move and link the file
 mkdir -p $(dirname "$NEW_HOME")
 mv "$1" "$NEW_HOME"
-ln -sf "$NEW_HOME" "$1"
+ln -sfr "$NEW_HOME" "$1"
 
 # Create instructions for installing in the future
 TMP_FILE=/tmp/install_$(date +%s).sh
 cp "$INSTALL_SCRIPT" "$TMP_FILE"
 echo "mkdir -p \"$OLD_FOLDER\"" >> "$TMP_FILE"
-echo "ln -sf \"$(relpath $NEW_HOME $REPO)\" \"$OLD_HOME\"" >> "$TMP_FILE"
+echo "ln -sfr \"$(relpath $NEW_HOME $REPO)\" \"$OLD_HOME\"" >> "$TMP_FILE"
 
 # Retain all non-generated lines
 grep -v -e ^mkdir -e ^ln "$TMP_FILE" > "$INSTALL_SCRIPT"
