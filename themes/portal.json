@@ -1,0 +1,28 @@
+{
+    "wallpaper": "/home/schul/Pictures/Wallpapers/Portal.jpg",
+    "alpha": "100",
+
+    "special": {
+        "background": "#151b22",
+        "foreground": "#c4c6c7",
+        "cursor": "#c4c6c7"
+    },
+    "colors": {
+        "color0": "#151b22",
+        "color1": "#FFBE44",
+        "color2": "#3e73aa",
+        "color3": "#94a9be",
+        "color4": "#E07B00",
+        "color5": "#FFA600",
+        "color6": "#0d53aa",
+        "color7": "#c4c6c7",
+        "color8": "#4f5459",
+        "color9": "#6c8bab",
+        "color10": "#3e73aa",
+        "color11": "#94a9be",
+        "color12": "#557eaa",
+        "color13": "#2867aa",
+        "color14": "#0d53aa",
+        "color15": "#c4c6c7"
+    }
+}
