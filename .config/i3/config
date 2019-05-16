@@ -174,6 +174,8 @@ exec_always --no-startup-id /usr/lib/x86_64-linux-gnu/libexec/kdeconnectd
 
 # Start scratch terminal
 exec --no-startup-id st -c scratchterm
+exec --no-startup-id gnome-calculator
+bindsym $mod+c [class="^Gnome-calculator$"] scratchpad show
 bindsym $mod+x [class="^scratchterm$"] scratchpad show
 bindsym $mod+Shift+x [class="^scratchterm$"] move scratchpad 
 # Start i3bar to display a workspace bar (plus the system information i3status
@@ -199,6 +201,8 @@ for_window [title="[.]*Emulator[.]*"] floating enable
 for_window [class="Peek"] floating enable
 for_window [class="^scratchterm$"] floating enable
 for_window [class="^scratchterm$"] move scratchpad
+for_window [class="^Gnome-calculator$"] floating enable
+for_window [class="^Gnome-calculator$"] move scratchpad
 hide_edge_borders both
 gaps outer 15
 gaps inner 10

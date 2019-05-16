@@ -1,0 +1,20 @@
+#!/bin/bash
+current_network () {
+    nmcli -t d wifi list | grep \* | awk -F ':' '{print $2}'
+}
+
+network_options () {
+    nmcli -t d wifi list | awk -F ':' '{print $2}' | grep -v ^$ | sort | uniq
+}
+
+network=$(network_options | fzf)
+if [ "$network" == "" ]; then
+    exit 0
+fi
+read -s -p "Password: " password
+
+if [ "$password" == ""]; then
+    xargs nmcli d wifi connect $network
+else
+    xargs nmcli d wifi connect $network password $password
+fi

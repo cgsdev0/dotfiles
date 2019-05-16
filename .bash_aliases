@@ -18,11 +18,16 @@ alias ll="ls -lhA"
 alias kde="/usr/lib/x86_64-linux-gnu/libexec/kdeconnectd"
 alias slack="google-chrome --app='https://samsara-net.slack.com/messages'"
 
+# Wifi Management
+alias wifi="nmcli d wifi list"
+
 # Random
 alias mcdonalds="git push mac -f > /dev/null 2> /dev/null && ssh dev@mac \"cd co/backend && git reset --hard\" 2> /dev/null"
 alias mac="ssh dev@mac"
 alias phone="adb connect pixel:5555"
 alias network="sudo service network-manager restart"
+alias yarn="~/bin/yarn-hack"
+alias yarl="cat package.json | jq '.scripts | to_entries[] | .key' | tr -d '\" ' | fzf | xargs -r ~/bin/yarn-hack"
 
 # Terminal colors
 alias c0="cat ~/.cache/wal/sequences"
@@ -34,4 +39,4 @@ alias c2="cat ~/themes/override/vscode"
 alias vimrc="vim ~/.config/nvim/init.vim"
 alias i3rc="vim ~/.config/i3/config"
 alias rangerrc="vim ~/.config/ranger/rc.conf"
-alias ba="vim ~/.bash_aliases && source ~/.bash_aliases"
+alias ba="vim ~/.bash_aliases && . ~/.bash_aliases"
