@@ -10,6 +10,10 @@
     fpush = "push --force-with-lease"
     fp = "push --force-with-lease"
     pf = "push --force-with-lease"
+    a = "!git-add-file; git status"
+    r = "!git-reset-file; git status"
+    l = "log --oneline"
+    wopsy = "commit -a --amend --no-edit"
 [push]
     default = current
 [filter "lfs"]

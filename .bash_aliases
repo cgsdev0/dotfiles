@@ -5,14 +5,15 @@ alias mycli-dev="mycli -h 127.0.0.1 -P 3307 -uroot -pdev"
 # Taskrunner
 alias taskl="taskrunner --list | tail -n +3 | fzf | xargs -r taskrunner"
 alias taskr="taskrunner"
-alias taskt="taskrunner --config troy.taskrunner.json"
+alias taskt="taskrunner --config mobile/Troy/troy.taskrunner.json"
 
 # Locations
-alias g="cd ~/co/backend"
+alias gb="cd ~/co/backend"
 alias gt="cd ~/co/backend/mobile/Troy"
 alias gd="cd ~/co/backend/mobile/SamsaraDriver"
 
 # Programs
+alias g="git"
 alias top="vtop --theme wal"
 alias ll="ls -lhA"
 alias kde="/usr/lib/x86_64-linux-gnu/libexec/kdeconnectd"
@@ -22,11 +23,11 @@ alias slack="google-chrome --app='https://samsara-net.slack.com/messages'"
 alias wifi="nmcli d wifi list"
 
 # Random
-alias mcdonalds="git push mac -f > /dev/null 2> /dev/null && ssh dev@mac \"cd co/backend && git reset --hard\" 2> /dev/null"
+alias mcdonalds="git commit -a --amend --no-edit && bash -c \"git push mac -f --no-verify && ssh dev@mac \\\"~/fix.sh\\\" \""
 alias mac="ssh dev@mac"
 alias phone="adb connect pixel:5555"
 alias network="sudo service network-manager restart"
-alias yarn="~/bin/yarn-hack"
+#alias yarn="~/bin/yarn-hack"
 alias yarl="cat package.json | jq '.scripts | to_entries[] | .key' | tr -d '\" ' | fzf | xargs -r ~/bin/yarn-hack"
 
 # Terminal colors
