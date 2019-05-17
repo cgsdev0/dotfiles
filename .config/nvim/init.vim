@@ -162,7 +162,7 @@ inoremap <C-Space> <C-x><C-o>
 set splitbelow splitright
 
 " Automatically delete trailing whitespace on save
-" autocmd BufWritePre * %s/\s\+$//e
+autocmd BufWritePre * %s/\s\+$//e
 
 " Run xrdb whenever XDefaults or Xresources are updated
 autocmd BufWritePost ~/.Xresources,~/.Xdefaults !xrdb %

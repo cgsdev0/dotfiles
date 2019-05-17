@@ -12,8 +12,15 @@ alias gb="cd ~/co/backend"
 alias gt="cd ~/co/backend/mobile/Troy"
 alias gd="cd ~/co/backend/mobile/SamsaraDriver"
 
-# Programs
+# Git
 alias g="git"
+alias gl="git l"
+alias ga="git a"
+alias gr="git r"
+alias gc="git commit"
+alias gs="git status"
+
+# Program
 alias top="vtop --theme wal"
 alias ll="ls -lhA"
 alias kde="/usr/lib/x86_64-linux-gnu/libexec/kdeconnectd"
