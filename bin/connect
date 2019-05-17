@@ -14,7 +14,7 @@ fi
 read -s -p "Password: " password
 
 if [ "$password" == ""]; then
-    xargs nmcli d wifi connect $network
+    nmcli d wifi connect $network
 else
-    xargs nmcli d wifi connect $network password $password
+    nmcli d wifi connect $network password $password
 fi

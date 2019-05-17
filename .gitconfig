@@ -10,9 +10,10 @@
     fpush = "push --force-with-lease"
     fp = "push --force-with-lease"
     pf = "push --force-with-lease"
-    a = "!git-add-file; git status"
-    r = "!git-reset-file; git status"
+    a = "!git-add-file"
+    r = "!git-reset-file"
     l = "log --oneline"
+    s = "status -s"
     wopsy = "commit -a --amend --no-edit"
     pop = "!git log -1 --pretty=%B | cat | xclip -selection c; git reset --soft HEAD^"
 [push]

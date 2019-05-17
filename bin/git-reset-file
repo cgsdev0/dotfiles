@@ -3,6 +3,8 @@ if [ "$1" != "" ]; then
     git reset $@
 else
     cd $(git rev-parse --show-toplevel)
-    git diff --name-only --cached | fzf --height=40% --prompt="git reset: " -m | xargs -r git reset -q
+    git diff --name-only --cached |
+        fzf --height=40% --prompt="git reset: " -m --exit-0 --print0 |
+        xargs -r -0 git reset -q
 fi
 

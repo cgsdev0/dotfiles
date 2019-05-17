@@ -15,10 +15,13 @@ alias gd="cd ~/co/backend/mobile/SamsaraDriver"
 # Git
 alias g="git"
 alias gl="git l"
-alias ga="git a"
-alias gr="git r"
+alias ga="git a; git s"
+alias gA="git add -A; git s"
+alias gap="git a -p; git s"
+alias gr="git r; git s"
+alias gR="git reset -q; git s"
+alias gs="git s"
 alias gc="git commit"
-alias gs="git status"
 
 # Program
 alias top="vtop --theme wal"
