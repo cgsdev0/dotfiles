@@ -3,6 +3,6 @@ if [ "$1" != "" ]; then
     git add $@
 else
     cd $(git rev-parse --show-toplevel)
-    (git diff --name-only | cat; git ls-files . --exclude-standard --others) | fzf --height=40% --prompt="git add: " -m | xargs -r git add
+    git ls-files . -m -o --exclude-standard | fzf --height=40% --prompt="git add: " -m | xargs -r git add
 fi
 
