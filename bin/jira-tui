@@ -1,0 +1,76 @@
+#!/bin/bash
+
+function menu {
+    if [ "$1" == "--nopreview" ]; then
+        hide=:hidden
+        shift
+    fi
+
+    eval "fzf $@ --preview 'cat $view' --preview-window=right:75%:wrap$hide --no-clear"
+}
+
+function exit_and_clear {
+    rm $view
+    tput rmcup
+    exit 0
+}
+
+view=$(mktemp)
+
+while :
+do
+jira $1 > $view
+
+ticket=$(cat $view |
+    menu --nopreview --reverse |
+    grep --color=never -oE "^.*:" |
+    tr -d ':')
+
+if [ "$ticket" == "" ]; then
+    exit_and_clear
+fi
+
+while :
+do
+    jira view $ticket > $view
+
+
+    option=$(echo "Transition
+Comment
+Edit
+Browse
+Back
+Quit" | menu)
+
+    case "$option" in
+        Transition)
+            transition=$(jira transitions $ticket |
+                cut -d " " -f2- |
+                menu)
+            if [ "$transition" != "" ]; then
+                jira transition "$transition" $ticket --noedit
+            fi
+            ;;
+        Comment)
+            printf "Enter your comment: "
+            read comment
+            if [ "$comment" != "" ]; then
+                jira comment --noedit $ticket -m $comment
+            fi
+            ;;
+        Browse)
+            jira browse $ticket
+            ;;
+        Edit)
+            jira edit $ticket
+            ;;
+        Quit)
+            exit_and_clear
+            ;;
+        Back)
+            break
+            ;;
+    esac
+done
+done
+exit_and_clear

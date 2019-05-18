@@ -1,0 +1,10 @@
+endpoint: https://samsaradev.atlassian.net
+editor: vim
+user: Shane Schulte
+login: shane.schulte@samsara.com
+
+custom-commands:
+  - name: mine
+    help: display issues assigned to me
+    script: |-
+      {{jira}} list --query "resolution = unresolved and assignee=currentuser() ORDER BY priority,created"
