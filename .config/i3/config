@@ -3,7 +3,7 @@
 set $mod Mod4
 
 # Default Font
-font pango:Ubuntu 10 
+font pango:Ubuntu 10
 
 # Colour Setting
 set $bgcolor            #2f343f
@@ -177,7 +177,7 @@ exec --no-startup-id st -c scratchterm
 exec --no-startup-id gnome-calculator
 bindsym $mod+c [class="^Gnome-calculator$"] scratchpad show
 bindsym $mod+x [class="^scratchterm$"] scratchpad show
-bindsym $mod+Shift+x [class="^scratchterm$"] move scratchpad 
+bindsym $mod+Shift+x [class="^scratchterm$"] move scratchpad
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 # bar {
@@ -229,9 +229,6 @@ bindsym $mod+Tab workspace back_and_forth
 
 # Mod+Shift+C = toggle compton
 bindsym $mod+Shift+c exec --no-startup-id killall compton || compton &> /dev/null
-
-# Mod+P = show phone
-bindsym $mod+p exec --no-startup-id scrcpy -m 1024
 
 # Pulse Audio controls
 bindsym XF86AudioRaiseVolume exec --no-startup-id volume up #increase sound volume

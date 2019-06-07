@@ -1,12 +1,13 @@
 #!/bin/bash
 
 function menu {
-    if [ "$1" == "--nopreview" ]; then
-        hide=:hidden
+    if [ "$1" == "" ]; then
+        preview=right:75%:wrap
+    else
+        preview=$1
         shift
     fi
-
-    eval "fzf $@ --preview 'cat $view' --preview-window=right:75%:wrap$hide --no-clear"
+    eval "fzf $@ --ansi --preview 'bat --theme=ansi-dark --style=changes --color=always $view' --preview-window=$preview --no-clear"
 }
 
 function exit_and_clear {
@@ -15,14 +16,17 @@ function exit_and_clear {
     exit 0
 }
 
-view=$(mktemp)
+view=$(mktemp).yml
 
 while :
 do
-jira $1 > $view
+echo -e "\e[34mIn Development" > $view
+echo -e "\e[33mIn Review" >> $view
+echo -e "\e[32mTodo" >> $view
+echo -e "\e[31mBacklog" >> $view
 
-ticket=$(cat $view |
-    menu --nopreview --reverse |
+ticket=$(jira $1 |
+    menu right:30%:wrap --reverse |
     grep --color=never -oE "^.*:" |
     tr -d ':')
 
@@ -67,7 +71,7 @@ Quit" | menu)
         Quit)
             exit_and_clear
             ;;
-        Back)
+        *)
             break
             ;;
     esac
