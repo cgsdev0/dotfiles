@@ -41,6 +41,7 @@ alias rr="adb shell input keyevent 82"
 alias network="sudo service network-manager restart"
 #alias yarn="~/bin/yarn-hack"
 alias yarl="cat package.json | jq '.scripts | to_entries[] | .key' | tr -d '\" ' | fzf | xargs -r ~/bin/yarn-hack"
+alias buildi="yarn android-proxy && react-native run-android --variant=InternalDebug --no-packager"
 
 # Terminal colors
 alias c0="cat ~/.cache/wal/sequences"
@@ -48,7 +49,6 @@ alias c1="cat ~/themes/override/monokai"
 alias c2="cat ~/themes/override/vscode"
 
 # Configurations
-# alias vim="~/Tools/nvim.appimage"
 alias vimrc="vim ~/.config/nvim/init.vim"
 alias i3rc="vim ~/.config/i3/config"
 alias rangerrc="vim ~/.config/ranger/rc.conf"

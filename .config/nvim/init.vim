@@ -17,8 +17,14 @@ Plug 'fatih/vim-go', {'for': 'go'}
 Plug 'peitalin/vim-jsx-typescript'
 " Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
 " Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'Shougo/vimproc.vim', {'do' : 'make'}
-Plug 'Quramy/tsuquyomi'
+" Plug 'Shougo/vimproc.vim', {'do' : 'make'}
+" Plug 'Quramy/tsuquyomi'
+ " Install nightly build, replace ./install.sh with install.cmd on windows
+Plug 'neoclide/coc.nvim', {'do': './install.sh nightly'}
+" Or install latest release tag
+Plug 'neoclide/coc.nvim', {'tag': '*', 'do': './install.sh'}
+" Or build from source code
+Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
 
 " Python development tools
 Plug 'davidhalter/jedi-vim', {'for' : 'python'}
@@ -135,12 +141,13 @@ autocmd FileType go nmap <leader>gd :GoDef<CR>
 " let g:syntastic_go_checkers = ['golint', 'govet']
 
 " Configure typescript
-let g:tsuquyomi_disable_default_mappings = 1
-autocmd FileType typescript,typescript.tsx nmap <leader>gd :TsuDefinition<CR>
-autocmd FileType typescript,typescript.tsx setlocal tabstop=2|setlocal shiftwidth=2|setlocal softtabstop=2|setlocal noexpandtab
+"let g:tsuquyomi_disable_default_mappings = 1
+let g:coc_node_path = '/usr/bin/node'
+"autocmd FileType typescript,typescript.tsx nmap <leader>gd :TsuDefinition<CR>
+"autocmd FileType typescript,typescript.tsx setlocal tabstop=2|setlocal shiftwidth=2|setlocal softtabstop=2|setlocal noexpandtab
 "let g:tsuquyomi_disable_quickfix = 1
 "let g:syntastic_typescript_checkers = ['tsuquyomi'] " You shouldn't use 'tsc' checker.
-autocmd FileType typescript,typescript.tsx nmap <leader>gf :TsuQuickFix<CR>
+"autocmd FileType typescript,typescript.tsx nmap <leader>gf :TsuQuickFix<CR>
 
 " Configure syntastic
 "set statusline+=%#warningmsg#

@@ -16,6 +16,7 @@
     s = "status -s"
     wopsy = "commit -a --amend --no-edit"
     pop = "!git log -1 --pretty=%B | cat | xclip -selection c; git reset --soft HEAD^"
+    update = "pull origin master --rebase=interactive"
 [push]
     default = current
 [filter "lfs"]
