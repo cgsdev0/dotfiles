@@ -35,6 +35,7 @@ alias wifi="nmcli d wifi list"
 
 # Random
 alias mcdonalds="git commit -a --amend --no-edit && bash -c \"git push mac -f --no-verify && ssh dev@mac \\\"~/fix.sh\\\" \""
+alias copy="xclip -selection c"
 alias mac="ssh dev@mac"
 alias phone="adb connect pixel:5555"
 alias rr="adb shell input keyevent 82"
