@@ -29,6 +29,7 @@ alias ll="ls -lhA"
 alias kde="/usr/lib/x86_64-linux-gnu/libexec/kdeconnectd"
 alias slack="google-chrome --app='https://samsara-net.slack.com/messages'"
 alias j="jira-tui board"
+alias sp="baton my saved tracks"
 
 # Wifi Management
 alias wifi="nmcli d wifi list"
@@ -43,6 +44,7 @@ alias network="sudo service network-manager restart"
 #alias yarn="~/bin/yarn-hack"
 alias yarl="cat package.json | jq '.scripts | to_entries[] | .key' | tr -d '\" ' | fzf | xargs -r ~/bin/yarn-hack"
 alias buildi="yarn android-proxy && react-native run-android --variant=InternalDebug --no-packager"
+alias hack="figlet ACCESS GRANTED | nms && ssh"
 
 # Terminal colors
 alias c0="cat ~/.cache/wal/sequences"
@@ -51,6 +53,11 @@ alias c2="cat ~/themes/override/vscode"
 
 # Configurations
 alias vimrc="vim ~/.config/nvim/init.vim"
-alias i3rc="vim ~/.config/i3/config"
+alias i3rc="vim ~/.config/i3/config && i3-msg reload"
 alias rangerrc="vim ~/.config/ranger/rc.conf"
+alias grc="git config --edit --global"
 alias ba="vim ~/.bash_aliases && . ~/.bash_aliases"
+
+# Sentry
+alias ds="git apply ~/disable_sentry.patch"
+alias es="git checkout -- ~/co/backend/mobile/Troy/index.js"
