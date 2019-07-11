@@ -2,7 +2,6 @@
 
 # Settings
 REPO="/home/$USER/dotfiles"
-INSTALL_SCRIPT="$REPO/install.sh"
 
 # Get relative path of $1 on $2
 relpath(){ python -c "import os.path; print os.path.relpath('$1','${2:-$PWD}')" ; }
@@ -31,16 +30,10 @@ mv "$1" "$NEW_HOME"
 ln -sfr "$NEW_HOME" "$1"
 
 # Create instructions for installing in the future
-TMP_FILE=/tmp/install_$(date +%s).sh
-cp "$INSTALL_SCRIPT" "$TMP_FILE"
-echo "mkdir -p \"$OLD_FOLDER\"" >> "$TMP_FILE"
-echo "ln -sfr \"$(relpath $NEW_HOME $REPO)\" \"$OLD_HOME\"" >> "$TMP_FILE"
+NEW_DIRS=$(mktemp)
+NEW_FILES=$(mktemp)
+(cat "$REPO/directories"; echo "$OLD_FOLDER") | sort | uniq > $NEW_DIRS
+(cat "$REPO/files"; echo $(relpath $NEW_HOME $REPO)) | sort | uniq > $NEW_FILES
 
-# Retain all non-generated lines
-grep -v -e ^mkdir -e ^ln "$TMP_FILE" > "$INSTALL_SCRIPT"
-
-# Sort the new lines into install.sh
-grep ^mkdir "$TMP_FILE" | sort | uniq >> "$INSTALL_SCRIPT"
-grep ^ln "$TMP_FILE" | sort | uniq >> "$INSTALL_SCRIPT"
-
-rm "$TMP_FILE"
+cp $NEW_DIRS "$REPO/directories"
+cp $NEW_FILES "$REPO/files"
