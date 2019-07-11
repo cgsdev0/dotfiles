@@ -1,0 +1,15 @@
+/home/$USER/bin
+/home/$USER/.config/autorandr/docked
+/home/$USER/.config/autorandr/home
+/home/$USER/.config/autorandr/mobile
+/home/$USER/.config/cava
+/home/$USER/.config/Dharkael
+/home/$USER/.config/dunst
+/home/$USER/.config/i3
+/home/$USER/.config/nvim
+/home/$USER/.config/polybar
+/home/$USER/.config/ranger
+/home/$USER/dotfiles
+/home/$USER/.jira.d
+/home/$USER/themes
+/home/$USER/themes/override
