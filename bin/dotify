@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Settings
-REPO="/home/$USER/dotfiles"
+REPO=$(cd $(dirname $(readlink $0))/..; pwd -P)
 
 # Get relative path of $1 on $2
 relpath(){ python -c "import os.path; print os.path.relpath('$1','${2:-$PWD}')" ; }
