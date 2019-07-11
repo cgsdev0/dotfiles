@@ -233,6 +233,9 @@ bindsym $mod+Shift+c exec --no-startup-id killall compton || compton &> /dev/nul
 bindsym XF86AudioRaiseVolume exec --no-startup-id volume up #increase sound volume
 bindsym XF86AudioLowerVolume exec --no-startup-id volume down #decrease sound volume
 bindsym XF86AudioMute exec --no-startup-id volume mute # mute sound
+bindsym XF86AudioNext exec --no-startup-id baton next
+bindsym XF86AudioPrev exec --no-startup-id baton prev
+bindsym XF86AudioPlay exec --no-startup-id baton pause
 
 # Sreen brightness controls
 bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 20 # increase screen brightness
