@@ -4,7 +4,7 @@ alias mycli-dev="mycli -h 127.0.0.1 -P 3307 -uroot -pdev"
 
 # Taskrunner
 alias taskl="taskrunner --list | tail -n +3 | fzf | xargs -r taskrunner"
-alias taskr="taskrunner"
+alias taskr="export SENTRY_RELEASE_ID=\"troy:dev_no_sentry\"; taskrunner"
 alias taskt="taskrunner --config mobile/Troy/troy.taskrunner.json"
 
 # Locations
