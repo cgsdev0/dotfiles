@@ -1,0 +1,15 @@
+#!/bin/bash
+
+ls $(git rev-parse --git-dir) | grep rebase
+if [ $? -ne 0 ]; then
+    git regen
+fi
+while [ $? -ne 0 ]
+do
+    git conflicts | grep -v *.shot$
+    if [ $? -eq 0 ]; then
+        echo "These look like real conflicts. You're on your own now."
+        exit 1
+    fi
+    git rebase --continue
+done

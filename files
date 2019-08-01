@@ -13,6 +13,7 @@ bin/jira-tui
 bin/location
 bin/monitor
 bin/set_title
+bin/ship-it
 bin/term-launch
 bin/theme
 bin/volume
