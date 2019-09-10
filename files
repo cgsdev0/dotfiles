@@ -6,6 +6,7 @@ bin/cava-colors
 bin/color
 bin/connect
 bin/dotify
+bin/edit-last-n-commits
 bin/git-add-file
 bin/git-reset-file
 bin/i3-get-window-criteria

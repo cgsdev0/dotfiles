@@ -3,13 +3,25 @@
 ls $(git rev-parse --git-dir) | grep rebase
 if [ $? -ne 0 ]; then
     git regen
+else
+    git add -A
+    git wopsy
+    echo "Picking up where we left off..." | grep yeet
 fi
 while [ $? -ne 0 ]
 do
-    git conflicts | grep -v *.shot$
+    cat ~/tests-failed
+    if [ $? -eq 0 ]; then
+        echo "Tests failed for the current commit; Please fix them manually."
+        rm ~/tests-failed
+        exit 1
+    fi
+    git conflicts | grep -v ".*\.shot$" | grep -v ".*\.snap$"
     if [ $? -eq 0 ]; then
         echo "These look like real conflicts. You're on your own now."
         exit 1
     fi
+    git add -A
+    git wopsy
     git rebase --continue
 done
