@@ -33,6 +33,7 @@ for ((i=1;i<=$n;i++));
 do
     echo Applying commit $i
     git apply "$temp_dir/commit$i.patch"
+    git add -A
     git commit -am "$(tail -n 1 $log | tr '\t' '\n')"
     sed -i '$d' $log
 done
