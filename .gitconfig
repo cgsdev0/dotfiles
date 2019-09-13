@@ -21,6 +21,8 @@
     trim = "!git branch | fzf -m | xargs -r git branch -D"
     obliterate = "!git add -A && git stash && git stash drop"
     start = "!git add -A && git stash && git checkout master && git update"
+    regen = "!git rebase origin/master --exec \"(rm -rf *.shot && rm -rf *.snap && rm ~/tests-failed) || exit 0\" --exec \"./bin/taskrunner mobile/troy/gen/component-tests\" --exec \"./bin/taskrunner mobile/troy/gen || (touch ~/tests-failed && exit 1)\" --exec \"git add -A && git commit -a --amend --no-edit\""
+    conflicts = "!git ls-files -u | cut -f 2 | sort -u"
 [push]
     default = current
 [filter "lfs"]

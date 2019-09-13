@@ -209,7 +209,7 @@ gaps inner 10
 # gaps right 440
 
 # Keyboard configuration
-exec_always --no-startup-id autorandr --change && wal -Rts && feh --bg-scale ~/.config/wall.png
+exec_always --no-startup-id autorandr --change; wal -Rts && feh --bg-scale ~/.config/wall.png
 exec_always --no-startup-id setxkbmap -option caps:escape
 exec_always --no-startup-id xset r rate 250 45
 

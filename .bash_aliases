@@ -4,7 +4,7 @@ alias mycli-dev="mycli -h 127.0.0.1 -P 3307 -uroot -pdev"
 
 # Taskrunner
 alias taskl="taskrunner --list | tail -n +3 | fzf | xargs -r taskrunner"
-alias taskr="taskrunner"
+alias taskr="export SENTRY_RELEASE_ID=\"troy:dev_no_sentry\"; taskrunner"
 alias taskt="taskrunner --config mobile/Troy/troy.taskrunner.json"
 
 # Locations
@@ -30,6 +30,9 @@ alias kde="/usr/lib/x86_64-linux-gnu/libexec/kdeconnectd"
 alias slack="google-chrome --app='https://samsara-net.slack.com/messages'"
 alias j="jira-tui board"
 alias sp="baton my saved tracks"
+alias t="todo.sh"
+alias ta="todo.sh -t a"
+alias tls="todo.sh ls"
 
 # Wifi Management
 alias wifi="nmcli d wifi list"
@@ -37,7 +40,7 @@ alias wifi="nmcli d wifi list"
 # Random
 alias mcdonalds="git commit -a --amend --no-edit && bash -c \"git push mac -f --no-verify && ssh dev@mac \\\"~/fix.sh\\\" \""
 alias copy="xclip -selection c"
-alias copy-last="history | tail -n 1 | cut -d' ' -f4- | xclip -selection c"
+alias copy-last="fc -ln -1 | xclip -selection c"
 alias mac="ssh dev@mac"
 alias phone="adb connect pixel:5555"
 alias rr="adb shell input keyevent 82"
@@ -46,6 +49,7 @@ alias network="sudo service network-manager restart"
 alias yarl="cat package.json | jq '.scripts | to_entries[] | .key' | tr -d '\" ' | fzf | xargs -r ~/bin/yarn-hack"
 alias buildi="yarn android-proxy && react-native run-android --variant=InternalDebug --no-packager"
 alias hack="figlet ACCESS GRANTED | nms && ssh"
+alias fixhist="history | sed \"s/[0-9* ]*\(.*\)/\1/\" > ~/.zsh_history"
 
 # Terminal colors
 alias c0="cat ~/.cache/wal/sequences"

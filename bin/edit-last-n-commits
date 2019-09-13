@@ -1,0 +1,39 @@
+#!/bin/bash
+
+n=$1
+
+if [ -z $n ] || [ ! $n -gt 0 ]; then
+    echo "Usage: $0 [n commits]"
+    exit 0
+fi
+
+temp_dir=$(mktemp -d /tmp/XXXXXXXXX)
+
+log="$temp_dir/commits.log"
+echo "Making log of commits in $log..."
+touch "$log"
+
+for ((i=$n;i>=1;i--));
+do
+    echo "Popping commit $i"
+    msg=$(git log -1 --pretty=%B)
+    git reset --soft HEAD^
+    git diff --staged > "$temp_dir/commit$i.patch"
+    echo "$msg" | tr '\n' '\t' >> $log
+    echo "" >> $log
+    echo $msg
+    git add -A
+    git stash -q
+    git stash drop -q
+done
+
+vim $temp_dir/commit*.patch
+
+for ((i=1;i<=$n;i++));
+do
+    echo Applying commit $i
+    git apply "$temp_dir/commit$i.patch"
+    git add -A
+    git commit -am "$(tail -n 1 $log | tr '\t' '\n')"
+    sed -i '$d' $log
+done

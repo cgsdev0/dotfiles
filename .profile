@@ -36,11 +36,11 @@ if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
 
-if [ -f "$HOME/.jira_token" ] ; then
-    eval "$(jira --completion-script-zsh)"
-    export JIRA_API_TOKEN=`cat $HOME/.jira_token`
-fi
+#if [ -f "$HOME/.jira_token" ] ; then
+#    eval "$(jira --completion-script-zsh)"
+#    export JIRA_API_TOKEN=`cat $HOME/.jira_token`
+#fi
 # eval "$(hub alias -s)"
-xset r rate 250 40
-setxkbmap -option caps:escape
+#xset r rate 250 40
+#setxkbmap -option caps:escape
 eval $(ssh-agent) > /dev/null

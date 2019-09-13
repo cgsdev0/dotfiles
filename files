@@ -6,6 +6,7 @@ bin/cava-colors
 bin/color
 bin/connect
 bin/dotify
+bin/edit-last-n-commits
 bin/git-add-file
 bin/git-reset-file
 bin/i3-get-window-criteria
@@ -13,6 +14,7 @@ bin/jira-tui
 bin/location
 bin/monitor
 bin/set_title
+bin/ship-it
 bin/term-launch
 bin/theme
 bin/volume
