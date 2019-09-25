@@ -16,7 +16,7 @@ do
         rm ~/tests-failed
         exit 1
     fi
-    git conflicts | grep -v ".*\.shot$" | grep -v ".*\.snap$"
+    git conflicts | grep -v ".*\.shot$" | grep -v ".*\.snap$" | grep -v ".*\.dot$"
     if [ $? -eq 0 ]; then
         echo "These look like real conflicts. You're on your own now."
         exit 1
@@ -25,3 +25,4 @@ do
     git wopsy
     git rebase --continue
 done
+
