@@ -7,7 +7,7 @@ custom-commands:
   - name: mine
     help: display issues assigned to me
     script: |-
-      {{jira}} list --query "resolution = unresolved and assignee=currentuser() ORDER BY priority,created"
+      {{jira}} list --query "resolution = unresolved and assignee=currentuser() and project = "MOB" and sprint in openSprints() ORDER BY priority,created"
 
   - name: all
     help: display all issues
@@ -27,13 +27,13 @@ custom-commands:
       todo="$(mktemp)"; rm $todo; touch $todo
       backlog="$(mktemp)"; rm $backlog; touch $backlog
 
-      echo "$({{jira}} list --query "assignee = currentuser() and status in ('In Progress', 'In Development') ORDER BY created")" > $dev &
+      echo "$({{jira}} list --query "sprint in openSprints() and assignee = currentuser() and status in ('In Progress', 'In Development') ORDER BY created")" > $dev &
 
-      echo "$({{jira}} list --query "assignee = currentuser() and status = 'In Review' ORDER BY created")" > $review &
+      echo "$({{jira}} list --query "sprint in openSprints() and assignee = currentuser() and status = 'In Review' ORDER BY created")" > $review &
 
-      echo "$({{jira}} list --query "assignee = currentuser() and status in ('Selected for Development', 'Ready for Dev') ORDER BY created")" > $todo &
+      echo "$({{jira}} list --query "sprint in openSprints() and assignee = currentuser() and status in ('Selected for Development', 'Ready for Dev', 'To Do', 'Backlog', 'Reported', 'Triage', 'Reported', 'Confirmed', 'Confirmation in Progress') ORDER BY created")" > $todo &
 
-      echo "$({{jira}} list --query "assignee = currentuser() and status = 'Backlog' ORDER BY created")" > $backlog &
+      echo "$({{jira}} list --query "sprint in openSprints() and assignee = currentuser() and status = 'Backlog' ORDER BY created")" > $backlog &
 
       wait
 
