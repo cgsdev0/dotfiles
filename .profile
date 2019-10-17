@@ -15,7 +15,7 @@ fi
 
 export DIRENV_LOG_FORMAT=
 
-if [ -z $SSH_TTY ]; then
+if [ ! -z "$SSH_TTY" ]; then
     if [ -f "$HOME/.nickname" ] ; then
         export NICKNAME=`cat $HOME/.nickname`
     fi
