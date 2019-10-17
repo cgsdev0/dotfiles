@@ -37,6 +37,7 @@ bin/weather_widget
 .config/ranger/rifle.conf
 .gitconfig
 .jira.d/config.yml
+node_modules/vtop/themes/wal.json
 .profile
 themes/override/monokai
 themes/override/vscode

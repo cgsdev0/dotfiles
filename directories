@@ -11,5 +11,6 @@
 /home/$USER/.config/ranger
 /home/$USER/dotfiles
 /home/$USER/.jira.d
+/home/$USER/node_modules/vtop/themes
 /home/$USER/themes
 /home/$USER/themes/override

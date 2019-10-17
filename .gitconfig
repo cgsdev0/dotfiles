@@ -1,6 +1,6 @@
 [user]
     name = Shane Schulte
-    email = schulte.shane@gmail.com
+    email = shane.schulte@samsara.com
 
 [core]
     editor = vim
@@ -21,7 +21,7 @@
     trim = "!git branch | fzf -m | xargs -r git branch -D"
     obliterate = "!git add -A && git stash && git stash drop"
     start = "!git add -A && git stash && git checkout master && git update"
-    regen = "!git rebase origin/master --exec \"(cd mobile/Troy && fd \".shot$\" | xargs rm && fd \".snap$\" | xargs rm && rm ~/tests-failed) || exit 0\" --exec \"./bin/taskrunner mobile/troy/gen/component-tests\" --exec \"./bin/taskrunner mobile/troy/gen || (touch ~/tests-failed && exit 1)\" --exec \"git add -A && git commit -a --amend --no-edit\""
+    regen = "!git rebase origin/master --exec \"rm ~/tests-failed || exit 0\" --exec \"./bin/taskrunner mobile/troy/gen/component-tests\" --exec \"./bin/taskrunner mobile/troy/gen || (touch ~/tests-failed && exit 1)\" --exec \"git add -A && git commit -a --amend --no-edit\""
     conflicts = "!git ls-files -u | cut -f 2 | sort -u"
     edit = "!edit-last-n-commits"
 [push]

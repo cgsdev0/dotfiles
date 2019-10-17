@@ -27,7 +27,7 @@ custom-commands:
       todo="$(mktemp)"; rm $todo; touch $todo
       backlog="$(mktemp)"; rm $backlog; touch $backlog
 
-      echo "$({{jira}} list --query "sprint in openSprints() and assignee = currentuser() and status in ('In Progress', 'In Development') ORDER BY created")" > $dev &
+      echo "$({{jira}} list --query "sprint in openSprints() and assignee = currentuser() and status in ('In Progress', 'Fix in Progress', 'In Development') ORDER BY created")" > $dev &
 
       echo "$({{jira}} list --query "sprint in openSprints() and assignee = currentuser() and status = 'In Review' ORDER BY created")" > $review &
 

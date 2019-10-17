@@ -55,6 +55,15 @@ call plug#end()
 
 colorscheme wal
 
+function! s:make_ticket_url(lines)
+  return 'https://samsaradev.atlassian.net/browse/'.substitute(join(a:lines), ':.*', '', '')
+endfunction
+
+inoremap <expr> <c-x><c-j> fzf#vim#complete(fzf#wrap({
+            \ 'source': 'jira mine',
+            \ 'reducer': function('<sid>make_ticket_url'),
+            \}))
+
 " Basic configuration
 set number relativenumber
 set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
