@@ -66,6 +66,7 @@ alias i3rc="vim ~/.config/i3/config && i3-msg reload"
 alias rangerrc="vim ~/.config/ranger/rc.conf"
 alias grc="git config --edit --global"
 alias ba="vim ~/.bash_aliases && . ~/.bash_aliases"
+alias zshrc="vim ~/.zshrc && . ~/.zshrc"
 
 # Sentry
 alias ds="git apply ~/disable_sentry.patch"
