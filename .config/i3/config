@@ -23,6 +23,7 @@ floating_modifier $mod
 
 # start a terminal
 bindsym $mod+Return exec --no-startup-id $term
+bindsym $mod+Shift+Return exec --no-startup-id $term -e devbox-connect
 
 # kill focused window
 bindsym $mod+Shift+q kill

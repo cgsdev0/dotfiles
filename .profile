@@ -13,12 +13,12 @@ if [ -f "$HOME/.jira_token" ] ; then
     export JIRA_API_TOKEN=`cat $HOME/.jira_token`
 fi
 
-if [ -f "$HOME/.nickname" ] ; then
-    export NICKNAME=`cat $HOME/.nickname`
-fi
-
 export DIRENV_LOG_FORMAT=
 
-# eval "$(hub alias -s)"
-#xset r rate 250 40
-#setxkbmap -option caps:escape
+if [ -z $SSH_TTY ]; then
+    if [ -f "$HOME/.nickname" ] ; then
+        export NICKNAME=`cat $HOME/.nickname`
+    fi
+else
+    eval $(ssh-agent)
+fi
