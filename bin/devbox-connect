@@ -1,7 +1,10 @@
 #!/bin/bash
 
-ssh-add
+if ! ssh-add -l; then
+    ssh-add
+fi
 clear
+
 ssh -x devbox
 
 # oh no :(
