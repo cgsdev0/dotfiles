@@ -21,7 +21,6 @@ fi
 # Path calculations
 OLD_HOME=$(relpath $1 ~)
 NEW_HOME="$REPO/$OLD_HOME"
-OLD_HOME="/home/\$USER/$OLD_HOME"
 OLD_FOLDER=$(dirname "$OLD_HOME")
 
 # Move and link the file
