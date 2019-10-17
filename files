@@ -5,6 +5,7 @@ bin/battery
 bin/cava-colors
 bin/color
 bin/connect
+bin/devbox-connect
 bin/dotify
 bin/edit-last-n-commits
 bin/git-add-file

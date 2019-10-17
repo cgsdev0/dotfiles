@@ -1,0 +1,8 @@
+#!/bin/bash
+
+ssh-add
+clear
+ssh -x devbox
+
+# oh no :(
+zsh
