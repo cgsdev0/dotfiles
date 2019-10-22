@@ -36,6 +36,7 @@ alias tls="todo.sh ls"
 
 # Wifi Management
 alias wifi="nmcli d wifi list"
+alias vpn="taskrunner vpn/token && sudo openvpn /home/shane/co/backend/conf/tunnelblick/default.tblk/Contents/Resources/config.ovpn"
 
 # Random
 alias mcdonalds="git commit -a --amend --no-edit && bash -c \"git push mac -f --no-verify && ssh dev@mac \\\"~/fix.sh\\\" \""
