@@ -109,7 +109,7 @@ let g:airline#extensions#tabline#formatter = 'unique_tail'
 
 " Auto highlighting hex colors
 let g:colorizer_colornames = 0
-let g:colorizer_auto_filetype='css,html,dosini,vim'
+let g:colorizer_auto_filetype='css,html,dosini,vim,typescript'
 
 "This unsets the "last search pattern" register by hitting return
 nnoremap <silent> <CR> :noh<CR>
