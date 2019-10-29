@@ -62,3 +62,30 @@ if ! which fzf > /dev/null; then
 else
     echo "fzf already installed"
 fi
+
+# Install ripgrep
+if ! which rg > /dev/null; then
+    cd ~/Tools
+    curl -LO https://github.com/BurntSushi/ripgrep/releases/download/11.0.2/ripgrep_11.0.2_amd64.deb
+    sudo dpkg -i ripgrep_11.0.2_amd64.deb
+else
+    echo "ripgrep already installed"
+fi
+
+# Install fd
+if ! which fd > /dev/null; then
+    cd ~/Tools
+    curl -LO https://github.com/sharkdp/fd/releases/download/v7.4.0/fd_7.4.0_amd64.deb
+    sudo dpkg -i fd_7.4.0_amd64.deb
+else
+    echo "fd already installed"
+fi
+
+# Install ranger
+if ! which ranger > /dev/null; then
+    cd ~/Tools
+    git clone git@github.com:ranger/ranger.git
+    cd ranger && sudo make install
+else
+    echo "ranger already installed"
+fi
