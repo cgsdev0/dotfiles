@@ -89,3 +89,13 @@ if ! which ranger > /dev/null; then
 else
     echo "ranger already installed"
 fi
+
+# Install go-jira
+if ! which jira > /dev/null; then
+    cd ~/Tools
+    curl -LO https://github.com/go-jira/jira/releases/download/v1.0.22/jira-linux-amd64
+    sudo ln -sf ~/Tools/jira-linux-amd64 /usr/bin/jira
+    sudo chmod +x /usr/bin/jira
+else
+    echo "go-jira already installed"
+fi
