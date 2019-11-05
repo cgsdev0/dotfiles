@@ -17,6 +17,9 @@ ZSH_THEME="agnoster"
 
 DEFAULT_USER=`whoami`
 
+# configure tmux plugin
+ZSH_TMUX_AUTOSTART=true
+
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
 # a theme from this variable instead of looking in ~/.oh-my-zsh/themes/
@@ -69,7 +72,7 @@ DEFAULT_USER=`whoami`
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git yarn zsh-autosuggestions zsh-history-substring-search zsh-syntax-highlighting)
+plugins=(git yarn tmux zsh-autosuggestions zsh-history-substring-search zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
