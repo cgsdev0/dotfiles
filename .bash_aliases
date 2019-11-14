@@ -30,9 +30,6 @@ alias kde="/usr/lib/x86_64-linux-gnu/libexec/kdeconnectd"
 alias slack="google-chrome --app='https://samsara-net.slack.com/messages'"
 alias j="jira-tui board"
 alias sp="baton my saved tracks"
-alias t="todo.sh"
-alias ta="todo.sh -t a"
-alias tls="todo.sh ls"
 
 # Wifi Management
 alias wifi="nmcli d wifi list"

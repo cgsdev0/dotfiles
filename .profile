@@ -42,3 +42,8 @@ if [ ! -z "$SSH_TTY" ]; then
 else
     eval $(ssh-agent)
 fi
+
+pstree -s $$ | grep -q mosh-server \
+  || [ "$SSH_AUTH_SOCK" = "/tmp/.devbox_agent.sock" ] \
+  || ln -sf "$SSH_AUTH_SOCK" /tmp/.devbox_agent.sock;
+export SSH_AUTH_SOCK=/tmp/.devbox_agent.sock
