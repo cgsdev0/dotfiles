@@ -1,0 +1,39 @@
+// Place your key bindings in this file to override the defaultsauto[]
+[
+  {
+    "key": "ctrl+/ ctrl+s",
+    "command": "sensitive.replace"
+  },
+  {
+    "key": "ctrl+shift+f f",
+    "command": "workbench.action.terminal.focusFindWidget",
+    "when": "terminalFocus"
+  },
+  {
+    "key": "ctrl+f",
+    "command": "-workbench.action.terminal.focusFindWidget",
+    "when": "terminalFocus"
+  },
+  {
+    "key": "ctrl+shift+f f",
+    "command": "workbench.action.terminal.focusFindWidget",
+    "when": "terminalFindWidgetFocused"
+  },
+  {
+    "key": "ctrl+f",
+    "command": "-workbench.action.terminal.focusFindWidget",
+    "when": "terminalFindWidgetFocused"
+  },
+  {
+    "key": "ctrl+shift+`",
+    "command": "-workbench.action.terminal.new"
+  },
+  {
+    "key": "ctrl+shift+`",
+    "command": "workbench.action.terminal.toggleTerminal"
+  },
+  {
+    "key": "ctrl+`",
+    "command": "-workbench.action.terminal.toggleTerminal"
+  }
+]

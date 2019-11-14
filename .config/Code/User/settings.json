@@ -1,0 +1,8 @@
+{
+  "window.zoomLevel": 0,
+  "editor.minimap.enabled": false,
+  "workbench.editor.enablePreview": false,
+  "workbench.editor.enablePreviewFromQuickOpen": false,
+  "editor.fontFamily": "'Hack', 'Droid Sans Mono', 'monospace', monospace, 'Droid Sans Fallback'",
+  "workbench.startupEditor": "none"
+}
