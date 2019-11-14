@@ -5,7 +5,6 @@ if ! ssh-add -l; then
 fi
 clear
 
-ssh -x devbox
+mosh devbox
 
 # oh no :(
-zsh
