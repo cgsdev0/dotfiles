@@ -23,6 +23,11 @@ alias gR="git reset -q; git s"
 alias gs="git s"
 alias gc="git commit"
 
+# Jank control
+jankset() { curl https://shaneschulte.com/mob_jank_gauge/set_jank.php -d "jank=$1"; }
+jankadd() { curl https://shaneschulte.com/mob_jank_gauge/set_jank.php -d "jank=$1&mode=add"; }
+janksubtract() { curl https://shaneschulte.com/mob_jank_gauge/set_jank.php -d "jank=$1&mode=subtract"; }
+
 # Program
 alias top="vtop --theme wal"
 alias ll="ls -lhA"

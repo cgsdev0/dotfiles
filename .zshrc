@@ -109,6 +109,10 @@ if [ -f "$HOME/.jira_token" ] ; then
     export JIRA_API_TOKEN=`cat $HOME/.jira_token`
 fi
 
+if [ -f "$HOME/.buildkite_token" ] ; then
+    export SAMSARA_BUILDKITE_TOKEN=`cat $HOME/.buildkite_token`
+fi
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 eval "$(direnv hook zsh)"
