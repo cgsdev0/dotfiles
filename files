@@ -14,6 +14,7 @@ bin/i3-get-window-criteria
 bin/jira-tui
 bin/location
 bin/monitor
+bin/safe-rebase-target
 bin/set_title
 bin/ship-it
 bin/term-launch

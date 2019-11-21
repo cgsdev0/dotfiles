@@ -1,0 +1,6 @@
+#!/bin/bash
+
+curl --silent -H "Authorization: Bearer $SAMSARA_BUILDKITE_TOKEN" \
+  "https://api.buildkite.com/v2/organizations/samsara/pipelines/backend-test/builds?state=passed&branch=master" \
+ | jq '.[0].commit' \
+ | sed 's/"//g'
