@@ -9,7 +9,7 @@ Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-abolish'
 Plug 'dyng/ctrlsf.vim'
 Plug 'prettier/vim-prettier'
-
+Plug 'rhysd/vim-clang-format'
 " Go development tools
 Plug 'fatih/vim-go', {'for': 'go'}
 
@@ -67,6 +67,8 @@ inoremap <expr> <c-x><c-j> fzf#vim#complete(fzf#wrap({
 " Basic configuration
 set number relativenumber
 set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
+autocmd Filetype typescrpt.tsx tabstop=8 softtabstop=0 expandtab shiftwidth=2 smarttab
+autocmd Filetype typescrpt tabstop=8 softtabstop=0 expandtab shiftwidth=2 smarttab
 set autoindent
 set hidden
 
@@ -124,6 +126,8 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 " prettier autosave
 let g:prettier#autoformat = 0
 autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.graphql,*.md Prettier
+
+autocmd BufWritePre *.cpp,*.h ClangFormat
 
 " configure go
 let g:go_fmt_autosave = 1
