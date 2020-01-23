@@ -18,7 +18,7 @@ ZSH_THEME="agnoster"
 DEFAULT_USER=`whoami`
 
 # configure tmux plugin
-ZSH_TMUX_AUTOSTART=true
+ZSH_TMUX_AUTOSTART=false
 ZSH_TMUX_AUTOCONNECT=false
 ZSH_TMUX_AUTOQUIT=false
 
@@ -122,3 +122,4 @@ prompt_context() {
         prompt_segment '8' '14' "$NICKNAME"
     fi
 }
+

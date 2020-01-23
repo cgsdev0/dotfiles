@@ -27,6 +27,7 @@ alias gc="git commit"
 jankset() { curl https://shaneschulte.com/mob_jank_gauge/set_jank.php -d "jank=$1"; }
 jankadd() { curl https://shaneschulte.com/mob_jank_gauge/set_jank.php -d "jank=$1&mode=add"; }
 janksubtract() { curl https://shaneschulte.com/mob_jank_gauge/set_jank.php -d "jank=$1&mode=subtract"; }
+jankpop() { curl https://shaneschulte.com/mob_jank_gauge/set_jank.php -d "jank=$1&mode=pop"; }
 
 # Program
 alias top="gotop"
