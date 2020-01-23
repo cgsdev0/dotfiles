@@ -59,9 +59,21 @@ function! s:make_ticket_url(lines)
   return 'https://samsaradev.atlassian.net/browse/'.substitute(join(a:lines), ':.*', '', '')
 endfunction
 
+function! s:upload_picture_and_make_s3_url(lines)
+  execute '!upload-picture-s3' join(a:lines)
+  return '![image](https://s3.shaneschulte.com/Pictures/'.join(a:lines).')'
+endfunction
+
+" Shortcut for inserting a jira ticket
 inoremap <expr> <c-x><c-j> fzf#vim#complete(fzf#wrap({
             \ 'source': 'jira mine',
             \ 'reducer': function('<sid>make_ticket_url'),
+            \}))
+
+" Shortcut for inserting an image into markdown
+inoremap <expr> <c-x><c-i> fzf#vim#complete(fzf#wrap({
+            \ 'source': 'pictures',
+            \ 'reducer': function('<sid>upload_picture_and_make_s3_url'),
             \}))
 
 " Basic configuration
