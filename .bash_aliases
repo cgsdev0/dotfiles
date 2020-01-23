@@ -29,7 +29,7 @@ jankadd() { curl https://shaneschulte.com/mob_jank_gauge/set_jank.php -d "jank=$
 janksubtract() { curl https://shaneschulte.com/mob_jank_gauge/set_jank.php -d "jank=$1&mode=subtract"; }
 
 # Program
-alias top="vtop --theme wal"
+alias top="gotop"
 alias ll="ls -lhA"
 alias kde="/usr/lib/x86_64-linux-gnu/libexec/kdeconnectd"
 alias slack="google-chrome --app='https://samsara-net.slack.com/messages'"
