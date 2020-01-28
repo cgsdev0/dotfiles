@@ -7,7 +7,7 @@ custom-commands:
   - name: mine
     help: display issues assigned to me
     script: |-
-      {{jira}} list --query "resolution = unresolved and assignee=currentuser() and project = "MOB" and sprint in openSprints() ORDER BY priority,created"
+      {{jira}} list --query "resolution = unresolved and assignee=currentuser() and sprint in openSprints() ORDER BY priority,created"
 
   - name: all
     help: display all issues

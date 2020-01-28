@@ -29,6 +29,11 @@ jankadd() { curl https://shaneschulte.com/mob_jank_gauge/set_jank.php -d "jank=$
 janksubtract() { curl https://shaneschulte.com/mob_jank_gauge/set_jank.php -d "jank=$1&mode=subtract"; }
 jankpop() { curl https://shaneschulte.com/mob_jank_gauge/set_jank.php -d "jank=$1&mode=pop"; }
 
+# Timezones
+alias tz-atlanta="sudo ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime"
+alias tz-detroit="sudo ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime"
+alias tz-sanfrancisco="sudo ln -sf /usr/share/zoneinfo/America/Los_Angeles /etc/localtime"
+
 # Program
 alias top="gotop"
 alias ll="ls -lhA"
