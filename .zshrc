@@ -123,3 +123,4 @@ prompt_context() {
     fi
 }
 
+export DEVBOX_CUSTOM_AUTOSSH_OPTS="-R 10022:127.0.0.1:22"
