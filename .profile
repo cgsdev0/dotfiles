@@ -43,6 +43,6 @@ else
     eval $(ssh-agent)
 fi
 
-if [ "$NICKNAME" == "devbox" ] ; then
+if [ "$NICKNAME" = "devbox" ] ; then
     export SSH_AUTH_SOCK=/tmp/.devbox_agent.sock
 fi

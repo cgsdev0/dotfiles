@@ -18,8 +18,8 @@ ZSH_THEME="agnoster"
 DEFAULT_USER=`whoami`
 
 # configure tmux plugin
-ZSH_TMUX_AUTOSTART=false
-ZSH_TMUX_AUTOCONNECT=false
+ZSH_TMUX_AUTOSTART=`[ "$NICKNAME" = "devbox" ]`
+ZSH_TMUX_AUTOCONNECT=`[ "$NICKNAME" = "devbox" ]`
 ZSH_TMUX_AUTOQUIT=false
 
 # Set list of themes to pick from when loading at random
