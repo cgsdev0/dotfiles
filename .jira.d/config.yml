@@ -4,10 +4,15 @@ user: Shane Schulte
 login: shane.schulte@samsara.com
 
 custom-commands:
+  - name: mysprint
+    help: display issues assigned to me
+    script: |-
+      {{jira}} list --query "resolution = unresolved and status NOT IN ('Merged', 'Archive') and assignee=currentuser() and sprint in openSprints() ORDER BY priority,created"
+
   - name: mine
     help: display issues assigned to me
     script: |-
-      {{jira}} list --query "resolution = unresolved and assignee=currentuser() and sprint in openSprints() ORDER BY priority,created"
+      {{jira}} list --query "resolution = unresolved and status NOT IN ('Merged', 'Archive') and assignee=currentuser() ORDER BY priority,created"
 
   - name: all
     help: display all issues
