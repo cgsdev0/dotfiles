@@ -40,7 +40,9 @@ if [ ! -z "$SSH_TTY" ]; then
         export NICKNAME=`cat $HOME/.nickname`
     fi
 else
-    eval $(ssh-agent)
+    if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        eval $(ssh-agent)
+    fi
 fi
 
 if [ "$NICKNAME" = "devbox" ] ; then

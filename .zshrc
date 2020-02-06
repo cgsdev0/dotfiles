@@ -2,7 +2,7 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/home/$USER/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 
 # hoard all the commands ever
 export HISTSIZE=1000000000
@@ -18,9 +18,11 @@ ZSH_THEME="agnoster"
 DEFAULT_USER=`whoami`
 
 # configure tmux plugin
-ZSH_TMUX_AUTOSTART=`[ "$NICKNAME" = "devbox" ]`
-ZSH_TMUX_AUTOCONNECT=`[ "$NICKNAME" = "devbox" ]`
-ZSH_TMUX_AUTOQUIT=false
+if [ ! -z "$SSH_TTY" ]; then
+  ZSH_TMUX_AUTOSTART=true
+  ZSH_TMUX_AUTOCONNECT=true
+  ZSH_TMUX_AUTOQUIT=true
+fi
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
