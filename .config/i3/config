@@ -24,6 +24,7 @@ floating_modifier $mod
 # start a terminal
 bindsym $mod+Return exec --no-startup-id $term
 bindsym $mod+Shift+Return exec --no-startup-id $term -e devbox-connect
+bindsym $mod+Ctrl+Return exec --no-startup-id $term -e mac-connect
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -223,6 +224,7 @@ exec_always --no-startup-id killall dunst; dunst -lb "$bgcolor" -nb "$bgcolor" -
 # Bind printscreen
 bindsym Print exec --no-startup-id flameshot gui
 bindsym Shift+Print exec --no-startup-id peek
+bindsym Ctrl+Print exec --no-startup-id ~/bin/screenshot-mac
 
 # Mod+Tab = toggle workspace
 bindsym $mod+Tab workspace back_and_forth
