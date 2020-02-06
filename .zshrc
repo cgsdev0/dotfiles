@@ -21,7 +21,7 @@ DEFAULT_USER=`whoami`
 if [ ! -z "$SSH_TTY" ]; then
   ZSH_TMUX_AUTOSTART=true
   ZSH_TMUX_AUTOCONNECT=true
-  ZSH_TMUX_AUTOQUIT=true
+  ZSH_TMUX_AUTOQUIT=false
 fi
 
 # Set list of themes to pick from when loading at random
