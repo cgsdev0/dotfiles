@@ -31,8 +31,8 @@ if ! vim --version | grep "NVIM $NEOVIM_VERSION" -q; then
     cd ~/Tools
     if [[ "$OSTYPE" == "linux-gnu" ]]; then
         wget https://github.com/neovim/neovim/releases/download/$NEOVIM_VERSION/nvim.appimage
-        sudo mv nvim.appimage ~/bin/.
         chmod u+x nvim.appimage
+        sudo mv nvim.appimage ~/bin/.
         sudo update-alternatives --install /usr/bin/vim vim ~/bin/nvim.appimage 200
         curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
