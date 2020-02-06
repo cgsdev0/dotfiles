@@ -26,21 +26,21 @@ fi
 
 
 NEOVIM_VERSION="v0.4.3"
-# Install neovim 
+# Install neovim
 if ! vim --version | grep "NVIM $NEOVIM_VERSION" -q; then
     cd ~/Tools
     if [[ "$OSTYPE" == "linux-gnu" ]]; then
         wget https://github.com/neovim/neovim/releases/download/$NEOVIM_VERSION/nvim.appimage
         sudo mv nvim.appimage ~/bin/.
+        chmod u+x nvim.appimage
         sudo update-alternatives --install /usr/bin/vim vim ~/bin/nvim.appimage 200
-        chmod +x nvim.appimage
         curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     elif [[ "$OSTYPE" == "darwin"* ]]; then
         wget https://github.com/neovim/neovim/releases/download/$NEOVIM_VERSION/nvim-macos.tar.gz
         tar -xzf nvim-macos.tar.gz
         rm nvim-macos.tar.gz
-        sudo ln -sf $HOME/Tools/nvim-osx64/bin/nvim $HOME/bin/nvim 
+        sudo ln -sf $HOME/Tools/nvim-osx64/bin/nvim $HOME/bin/nvim
     fi
 else
     echo "NVIM $NEOVIM_VERSION already installed"
