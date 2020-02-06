@@ -17,6 +17,7 @@ bin/monitor
 bin/new-ticket
 bin/safe-rebase-target
 bin/screenshot-mac
+bin/screenshot-window
 bin/set_title
 bin/ship-it
 bin/term-launch

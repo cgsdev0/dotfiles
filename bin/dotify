@@ -26,7 +26,7 @@ OLD_FOLDER=$(dirname "$OLD_HOME")
 # Move and link the file
 mkdir -p $(dirname "$NEW_HOME")
 mv "$1" "$NEW_HOME"
-ln -sfr "$NEW_HOME" "$1"
+ln -sf "$NEW_HOME" "$1"
 
 # Create instructions for installing in the future
 NEW_DIRS=$(mktemp)
