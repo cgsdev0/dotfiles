@@ -231,7 +231,7 @@ bindsym $mod+Tab workspace back_and_forth
 bindsym $mod+Shift+c exec --no-startup-id killall compton || compton &> /dev/null
 
 # Mod+Shift+C = toggle compton
-bindsym $mod+F5 exec --no-startup-id adb shell input keyevent 82
+bindsym $mod+F5 exec --no-startup-id rr2
 
 # Pulse Audio controls
 bindsym XF86AudioRaiseVolume exec --no-startup-id volume up #increase sound volume
