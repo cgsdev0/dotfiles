@@ -81,3 +81,8 @@ alias zshrc="vim ~/.zshrc && . ~/.zshrc"
 # Sentry
 alias ds="git apply ~/disable_sentry.patch"
 alias es="git checkout -- ~/co/backend/mobile/Troy/index.js"
+
+# Mac specials
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    alias vim="nvim"
+fi
