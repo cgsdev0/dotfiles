@@ -1,0 +1,20 @@
+#!/bin/bash
+
+cd ~/dotfiles
+
+git add -A
+
+git diff-index --cached --quiet HEAD
+has_local_changes=$?
+
+if [ $has_local_changes ]; then
+    git stash
+fi
+
+git pull origin master --rebase
+
+if [ $has_local_changes ]; then
+    git stash apply --quiet
+    git reset --quiet
+    git status
+fi
