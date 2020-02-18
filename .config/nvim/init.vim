@@ -98,10 +98,12 @@ nnoremap <leader>, :e ~/.config/nvim/init.vim<CR>
 nnoremap <C-p> :Files<CR>
 
 " Window navigation
-" nnoremap <C-H> <C-W><C-H>
-" nnoremap <C-J> <C-W><C-J>
-" nnoremap <C-K> <C-W><C-K>
-" nnoremap <C-L> <C-W><C-L>
+let g:tmux_navigator_no_mappings = 1
+
+nnoremap <silent> <C-H> :TmuxNavigateLeft<cr>
+nnoremap <silent> <C-J> :TmuxNavigateDown<cr>
+nnoremap <silent> <C-K> :TmuxNavigateUp<cr>
+nnoremap <silent> <C-L> :TmuxNavigateRight<cr>
 
 " Buffer navigation
 nnoremap <Tab> :bnext<CR>
@@ -109,6 +111,7 @@ nnoremap <C-N> :NERDTreeFind<CR>
 nnoremap <S-Tab> :bprevious<CR>
 nnoremap <C-w><C-w> :bp\|bd #<CR>
 nnoremap <C-s> :w<CR>
+nnoremap <C-\> :vsplit<CR>
 
 " CtrlSF Config
 nmap     <C-F>f <Plug>CtrlSFPrompt
