@@ -2,6 +2,9 @@ let mapleader = " "
 
 call plug#begin()
 
+" Navigation
+Plug 'christoomey/vim-tmux-navigator'
+
 " General development tools
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
@@ -95,10 +98,10 @@ nnoremap <leader>, :e ~/.config/nvim/init.vim<CR>
 nnoremap <C-p> :Files<CR>
 
 " Window navigation
-nnoremap <C-H> <C-W><C-H>
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
+" nnoremap <C-H> <C-W><C-H>
+" nnoremap <C-J> <C-W><C-J>
+" nnoremap <C-K> <C-W><C-K>
+" nnoremap <C-L> <C-W><C-L>
 
 " Buffer navigation
 nnoremap <Tab> :bnext<CR>
@@ -106,7 +109,6 @@ nnoremap <C-N> :NERDTreeFind<CR>
 nnoremap <S-Tab> :bprevious<CR>
 nnoremap <C-w><C-w> :bp\|bd #<CR>
 nnoremap <C-s> :w<CR>
-nnoremap <C-\> :vsplit<CR>
 
 " CtrlSF Config
 nmap     <C-F>f <Plug>CtrlSFPrompt
