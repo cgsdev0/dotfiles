@@ -76,7 +76,7 @@ fi
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git yarn tmux zsh-autosuggestions zsh-history-substring-search zsh-syntax-highlighting)
+plugins=(git yarn tmux zsh-autosuggestions zsh-history-substring-search zsh-syntax-highlighting forgit)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -103,6 +103,16 @@ source $ZSH/oh-my-zsh.sh
 # For a full list of active aliases, run `alias`.
 #
 . ~/.bash_aliases
+
+export FORGIT_FZF_DEFAULT_OPTS="
+--exact
+--border
+--cycle
+--ansi
+--reverse
+--height '80%'
+--preview-window right:66%
+"
 
 export EDITOR=nvim
 

@@ -23,6 +23,11 @@ if [ ! -d ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting ]; 
 else
     echo "zsh-syntax-highlighting already installed"
 fi
+if [ ! -d ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/forgit ]; then
+    git clone https://github.com/wfxr/forgit.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/forgit
+else
+    echo "forgit already installed"
+fi
 
 
 NEOVIM_VERSION="v0.4.3"
