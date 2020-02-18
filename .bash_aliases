@@ -10,7 +10,7 @@ alias taskt="taskrunner --config mobile/Troy/troy.taskrunner.json"
 # Locations
 alias gb="cd ~/co/backend"
 alias gt="cd ~/co/backend/mobile/Troy"
-alias gd="cd ~/co/backend/mobile/SamsaraDriver"
+alias gd1="cd ~/co/backend/mobile/SamsaraDriver"
 
 # Git
 alias g="git"

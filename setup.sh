@@ -129,6 +129,17 @@ else
     echo "ranger already installed"
 fi
 
+if ! which delta > /dev/null; then
+    if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        cd ~/Tools
+        mkdir -p delta
+        curl -L https://github.com/dandavison/delta/releases/download/0.0.16/delta-0.0.16-x86_64-unknown-linux-musl.tar.gz | tar xzf -
+        mv delta*/delta $HOME/bin/delta
+    fi
+else
+    echo "delta alredy installed"
+fi
+
 # Install go-jira
 if ! which jira > /dev/null; then
     cd ~/Tools
