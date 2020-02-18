@@ -7,14 +7,14 @@ git add -A
 git diff-index --cached --quiet HEAD
 has_local_changes=$?
 
-if [ $has_local_changes ]; then
+if [ $has_local_changes -ne 0 ]; then
     git stash
 fi
 
 git pull origin master --rebase
 ./install.sh
 
-if [ $has_local_changes ]; then
+if [ $has_local_changes -ne 0 ]; then
     git stash apply --quiet
     git reset --quiet
     git status
