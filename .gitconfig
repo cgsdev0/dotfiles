@@ -4,7 +4,7 @@
 
 [core]
     editor = vim
-	pager = delta --dark
+    pager = delta --dark
 
 [alias]
     summon = "!summon () { b=$1; git fetch origin +refs/heads/$b:refs/remotes/origin/$b $b:$b; }; summon"
@@ -21,17 +21,18 @@
     ri = "pull origin master --rebase=interactive"
     trim = "!git branch | fzf -m | xargs -r git branch -D"
     obliterate = "!git add -A && git stash && git stash drop"
-    start = "!git add -A && git stash && git checkout master && git update"
-    regen = "!git rebase origin/master --exec \"rm ~/tests-failed || exit 0\" --exec \"./bin/taskrunner mobile/troy/gen/component-tests\" --exec \"./bin/taskrunner mobile/troy/gen || (touch ~/tests-failed && exit 1)\" --exec \"git add -A && git commit -a --amend --no-edit\""
     conflicts = "!git ls-files -u | cut -f 2 | sort -u"
     edit = "!edit-last-n-commits"
     showvim = "!git diff HEAD^..HEAD --name-only | xargs vim"
+
 [push]
     default = current
+
 [filter "lfs"]
-	required = true
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
+    required = true
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+
 [url "ssh://git@github.com/"]
-	insteadOf = https://github.com/
+    insteadOf = https://github.com/
