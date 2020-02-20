@@ -1,0 +1,47 @@
+#!/bin/bash
+
+source jira-common
+
+cd $(git rev-parse --show-toplevel)
+
+branch_name=$(git rev-parse --abbrev-ref HEAD)
+echo $branch_name
+
+green "Looking for JIRA ticket association..."
+
+ticket=$(grep "$branch_name" "$jira_branch_map" | cut -d ' ' -f1)
+
+template=$(cat .github/PULL_REQUEST_TEMPLATE.md \
+    | sed -e 's@\(\*\*JIRA ticket\*\*: \)link@\1https://samsaradev.atlassian.net/browse/'$ticket'@')
+
+title=""
+if [ -z "$ticket" ]; then
+    red "No ticket found."
+    template=$(cat .github/PULL_REQUEST_TEMPLATE.md)
+else
+    title=$(jira "$ticket" | grep "^summary:" | sed 's/^summary: //')
+fi
+
+# Find reviewers
+review_teams="
+samsara-dev/mobile
+"
+
+reviewers=$((echo $review_teams; rg -I "GithubUsername: \".*\"," go/src/samsaradev.io/team) \
+    | sed 's/^\s*GithubUsername: "\(.*\)".*$/\1/' \
+    | sort \
+    | fzf -m | paste -s -d ',')
+
+hub pull-request \
+    --push \
+    --message "$title" \
+    --message "$template" \
+    --reviewer "$reviewers" \
+    --edit
+
+if [[ $? -ne 0 ]]; then
+    exit 1
+fi
+
+green "Transitioning '$ticket' into 'In Review'..."
+jira transition "In Review" "$ticket" --noedit
