@@ -5,7 +5,12 @@ login: shane.schulte@samsara.com
 
 custom-commands:
   - name: mysprint
-    help: display issues assigned to me
+    help: display issues assigned to me in my current sprint
+    script: |-
+      {{jira}} list --query "resolution = unresolved and status NOT IN ('Merged', 'Archive') and assignee=currentuser() and sprint in openSprints() ORDER BY priority,created"
+
+  - name: unstarted
+    help: display issues assigned to me that I haven't started
     script: |-
       {{jira}} list --query "resolution = unresolved and status NOT IN ('Merged', 'Archive') and assignee=currentuser() and sprint in openSprints() ORDER BY priority,created"
 
@@ -23,26 +28,3 @@ custom-commands:
     help: display all backlog'd issues
     script: |-
       {{jira}} list --query "resolution = unresolved and project = admn and status = 'Backlog' ORDER BY created"
-
-  - name: board
-    help: show jira board
-    script: |-
-      dev="$(mktemp)"; rm $dev; touch $dev
-      review="$(mktemp)"; rm $review; touch $review
-      todo="$(mktemp)"; rm $todo; touch $todo
-      backlog="$(mktemp)"; rm $backlog; touch $backlog
-
-      echo "$({{jira}} list --query "sprint in openSprints() and assignee = currentuser() and status in ('In Progress', 'Fix in Progress', 'In Development') ORDER BY created")" > $dev &
-
-      echo "$({{jira}} list --query "sprint in openSprints() and assignee = currentuser() and status = 'In Review' ORDER BY created")" > $review &
-
-      echo "$({{jira}} list --query "sprint in openSprints() and assignee = currentuser() and status in ('Selected for Development', 'Ready for Dev', 'To Do', 'Backlog', 'Reported', 'Triage', 'Reported', 'Confirmed', 'Confirmation in Progress') ORDER BY created")" > $todo &
-
-      echo "$({{jira}} list --query "sprint in openSprints() and assignee = currentuser() and status = 'Backlog' ORDER BY created")" > $backlog &
-
-      wait
-
-      printf "\e[34m"; cat $dev
-      printf "\e[33m"; cat $review
-      printf "\e[32m"; cat $todo
-      printf "\e[31m"; cat $backlog
