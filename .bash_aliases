@@ -6,6 +6,8 @@ alias mycli-dev="mycli -h 127.0.0.1 -P 3307 -uroot -pdev"
 alias taskl="taskrunner --list | tail -n +3 | fzf | xargs -r taskrunner"
 alias taskr="export SENTRY_RELEASE_ID=\"troy:dev_no_sentry\"; taskrunner"
 alias taskt="taskrunner --config mobile/Troy/troy.taskrunner.json"
+alias dbox="taskrunner devbox/run"
+alias dbox-mac="ssh mac \"/usr/local/bin/tmux send-keys -t monitoring C-C 'DEVBOX_CUSTOM_AUTOSSH_OPTS= taskrunner devbox/run' C-m\""
 
 # Locations
 alias gb="cd ~/co/backend"
