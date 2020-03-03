@@ -32,8 +32,6 @@ reviewers=$((echo $review_teams; rg -I "GithubUsername:\s+\".*\"" go/src/samsara
     | sort \
     | fzf -m | paste -s -d ',')
 
-echo $reviewers
-exit 1
 hub pull-request \
     --push \
     --message "$title" \
