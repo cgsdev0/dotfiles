@@ -27,11 +27,13 @@ review_teams="
 samsara-dev/mobile
 "
 
-reviewers=$((echo $review_teams; rg -I "GithubUsername: \".*\"," go/src/samsaradev.io/team) \
-    | sed 's/^\s*GithubUsername: "\(.*\)".*$/\1/' \
+reviewers=$((echo $review_teams; rg -I "GithubUsername:\s+\".*\"" go/src/samsaradev.io/team) \
+    | sed 's/^[ \t]*GithubUsername:[ \t]*"\(.*\)".*$/\1/' \
     | sort \
     | fzf -m | paste -s -d ',')
 
+echo $reviewers
+exit 1
 hub pull-request \
     --push \
     --message "$title" \

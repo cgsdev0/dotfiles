@@ -12,24 +12,25 @@ fi
 
 git checkout master
 
-ticket=$((jira unstarted; green $new_ticket_text) | fzf \
+ticket_text=$((jira unstarted; green $new_ticket_text) | fzf \
     --ansi \
     --reverse \
     --prompt="Search for a JIRA ticket: " \
-    --height="40%")
+    --height="40%" \
+    --preview="echo {} | cut -d ':' -f1 | xargs jira")
 
-if [ -z "$ticket" ]; then
+if [ -z "$ticket_text" ]; then
     exit 0
 fi
 
-if [ "$ticket" = "$new_ticket_text" ]; then
+if [ "$ticket_text" = "$new_ticket_text" ]; then
     # TODO: implement
     yellow "coming soon!"
     exit 0
     ticket="MOB-NEW"
 else
    # Split the ticket from the FZF string
-   ticket=$(echo "$ticket" \
+   ticket=$(echo "$ticket_text" \
        | grep --color=never -oE "^[-A-Z0-9]*:" \
        | tr -d ':')
 fi
@@ -64,6 +65,8 @@ if [ ! -z "$association" ]; then
         exit 0
     fi
 fi
+
+green "$ticket_text"
 
 good_branch_name=1
 while [ $good_branch_name -ne 0 ]; do
