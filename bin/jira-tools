@@ -1,11 +1,18 @@
 #!/bin/bash
 
 # A set of tools for making using JIRA more seamless
-# with my personal workflows.
+# with my personal workflow.
+
 # Written by Shane Schulte
+
+# Usage:
+# jira-tools start
+# jira-tools pull-request
+# jira-tools create-ticket
 
 # Requirements:
 # - fzf
+# - hub
 # - go-jira (1.0.23 or newer)
 # - Bash (4.4 or newer)
 # - 256 color terminal support
@@ -16,6 +23,8 @@
 #   - the goal is to detect merged PRs and update associations
 #   - If all branches merge and ticket is in review, finalize ticket
 #   - pseudocode: jira view "$ticket" | grep "^status:" | sed 's/^status: //'
+#
+# - get rid of the line that uses gh, it sucks
 
 # ========================================================
 # CONFIGURATION
@@ -249,9 +258,18 @@ create_ticket() {
         fi
         ticket=$(echo $response | cut -d ' ' -f2)
         url=$(echo $response | cut -d ' ' -f3)
-        jira take $ticket
-        green "Ticket successfully created: $url"
-        return 0
+
+        # Attempt to self-assign the ticket
+        if response=$(jira take "$ticket"); then
+            rstatus=$(echo $response | cut -d ' ' -f1)
+            if [ "$rstatus" != "OK" ]; then
+                return 1
+            fi
+            # Success!
+            echo "$ticket"
+            return 0
+        fi
+
     fi
     return 1
 }
@@ -280,10 +298,10 @@ start_work() {
     fi
 
     if [ "$ticket_text" = "$new_ticket_text" ]; then
-        # TODO: implement
-        yellow "coming soon!"
-        exit 0
-        ticket="MOB-NEW"
+        if ! ticket=$(create_ticket); then
+            red "Something went wrong creating the ticket."
+            exit 1
+        fi
     else
        # Split the ticket from the FZF string
        ticket=$(echo "$ticket_text" \
@@ -401,6 +419,11 @@ case "$subcommand" in
         pull_request $@
         ;;
     create-ticket)
-        create_ticket $@
+        if ticket=$(create_ticket $@); then
+            green "${jira_link_base}${ticket}"
+        else
+            red "Something went wrong creating the ticket."
+            exit 1
+        fi
         ;;
 esac
