@@ -141,7 +141,7 @@ transition_branch() {
 
 track_new_branch() {
 # Usage: [branch] [ticket]
-    echo "NONE $1 $2" > "$jira_branch_map"
+    echo "NONE\t$1\t$2" >> "$jira_branch_map"
 }
 
 # Git helpers
