@@ -1,19 +1,58 @@
 #!/bin/bash
 
+# A set of tools for making using JIRA more seamless
+# with my personal workflows.
+# Written by Shane Schulte
+
 # Requirements:
 # - fzf
-# - go-jira
-# - Bash 4.4 or newer
+# - go-jira (1.0.23 or newer)
+# - Bash (4.4 or newer)
+# - 256 color terminal support
+
+# TODO List:
+# - implement github daemon
+#   - can steal from kazoo bot github poller
+#   - the goal is to detect merged PRs and update associations
+#   - If all branches merge and ticket is in review, finalize ticket
+#   - pseudocode: jira view "$ticket" | grep "^status:" | sed 's/^status: //'
+
+# ========================================================
+# CONFIGURATION
+# ========================================================
+jira_link_base="https://samsaradev.atlassian.net/browse/"
+new_ticket_text="-> Create new ticket..."
+new_branch_text="-> Create new branch..."
+extra_review_groups="
+samsara-dev/mobile
+"
+jira_projects="
+AA
+MOB
+"
+jira_priorities="
+Highest
+High
+Medium
+Low
+Lowest
+"
+jira_branch_map=~/.cache/jira-branch-associations
+# ========================================================
+
 
 # Layout of the association file (TSV):
 # {status} {ticket} {branch}
 
-jira_link_base="https://samsaradev.atlassian.net/browse/"
-new_ticket_text="-> Create new ticket..."
-new_branch_text="-> Create new branch..."
-jira_branch_map=~/.cache/jira-branch-associations
-
 touch "$jira_branch_map"
+
+quickedit_markdown() (
+    trap 'rm ~/temp$$.md' exit;
+    touch ~/temp$$.md;
+    $EDITOR ~/temp$$.md > /dev/tty \
+        || vim ~/temp$$.md > /dev/tty;
+    cat ~/temp$$.md;
+)
 
 # Helpers for colored text
 colored_text() {
@@ -31,6 +70,7 @@ yellow() { _yellow "$@"; printf '\n'; }
 
 # Helpers to read the association file
 get_ticket_by_branch() {
+# Usage: [branch]
     local -; set -o pipefail
     grep -P "\t$1$" "$jira_branch_map" | cut -f2
         return 1
@@ -38,6 +78,7 @@ get_ticket_by_branch() {
 }
 
 get_minimum_status_by_ticket() {
+# Usage: [ticket]
     list=$(grep -P "\t$1\t" "$jira_branch_map" | cut -f1 | sort | uniq)
     echo $list | grep -o NONE \
         || echo $list | grep -o REVIEW \
@@ -46,18 +87,21 @@ get_minimum_status_by_ticket() {
 }
 
 get_branch_status() {
+# Usage: [branch]
     local -; set -o pipefail
     grep -P "\t$1$" "$jira_branch_map" | cut -f1
     return $?
 }
 
 get_branches_by_ticket() {
+# Usage: [ticket]
     local -; set -o pipefail
     grep -P "\t$1\t" "$jira_branch_map" | cut -f3
     return $?
 }
 
 get_unmerged_branches_by_ticket() {
+# Usage: [ticket]
     local -; set -o pipefail
     grep -P "^(NONE|REVIEW)\t" "$jira_branch_map" | cut -f3
     return $?
@@ -65,6 +109,7 @@ get_unmerged_branches_by_ticket() {
 
 # Helpers to manipulate the association file
 delete_fully_merged_ticket() {
+# Usage: [ticket]
     min_status=$(get_minimum_status_by_ticket "$1")
     if [ "$min_status" = "MERGED" ]; then
         sed -i '/^MERGED\t'$1'\t.*$/d' "$jira_branch_map"
@@ -74,8 +119,20 @@ delete_fully_merged_ticket() {
 }
 
 dangerously_delete_branch() {
+# Usage: [branch]
     escaped=$(echo "$1" | sed 's;/;\\/;g')
     sed -i '/^[A-Z]*\t[A-Z0-9-]*\t'$escaped'$/d' "$jira_branch_map"
+}
+
+transition_branch() {
+# Usage: [src status] [dest status] [branch]
+    escaped=$(echo "$3" | sed 's;/;\\/;g')
+    sed -i 's/^'$1'\(\t[A-Z0-9-]*\t'$escaped'$\)/'$2'\1/' "$jira_branch_map"
+}
+
+track_new_branch() {
+# Usage: [branch] [ticket]
+    echo "NONE $1 $2" > "$jira_branch_map"
 }
 
 # Git helpers
@@ -99,6 +156,7 @@ git_new_branch() {
 }
 
 git_try_checkout_branch() {
+# Usage: [branch]
     git checkout "$1"
     if [ $? -ne 0 ]; then
         yellow "Couldn't find branch locally. Attempting to fetch..."
@@ -110,9 +168,8 @@ git_try_checkout_branch() {
             read -n 1 c; echo ""
             if [[ $c == [yY] ]]; then
                 dangerously_delete_branch "$1"
-            else
-                exit 0
             fi
+            return 1
         fi
     fi
 }
@@ -128,6 +185,75 @@ git_reset_to_latest_master() {
     done
     git reset --hard origin/master &> /dev/null
     echo "Done."
+}
+
+create_ticket() {
+    project=$(echo "$jira_projects" \
+        | sed '/^$/d' \
+        | fzf \
+            --reverse \
+            --height="40%" \
+            --select-1 \
+            --prompt="Select a project: ")
+
+    if [ -z "$project" ]; then
+        exit 0
+    fi
+
+    issuetype=$(jira issuetypes -p "$project" \
+        | cut -d ':' -f1 \
+        | fzf \
+            --ansi \
+            --reverse \
+            --height="40%" \
+            --prompt="Select an issue type: ")
+
+    if [ -z "$issuetype" ]; then
+        exit 0
+    fi
+
+    read -p "Describe the ticket (title): " title
+    description=$(quickedit_markdown)
+    if [ "$description" = "" ]; then
+        exit 0
+    fi
+
+    read -p "Estimated effort (days): " story_points
+
+    priority=$(echo "$jira_priorities" \
+        | sed '/^$/d' \
+        | fzf \
+            --ansi \
+            --reverse \
+            --height="40%" \
+            --prompt="Select a priority level: ")
+
+    if [ -z "$priority" ]; then
+        exit 0
+    fi
+
+    sprint=$(jira current-sprint "$project")
+
+    if response=$(jira create \
+        --project="$project" \
+        --override="summary: $title" \
+        --override="description: $description" \
+        --override="priority: $priority" \
+        --override="storypoints: $story_points" \
+        --override="sprint: $sprint" \
+        --issuetype="$issuetype" \
+        --noedit); then
+        rstatus=$(echo $response | cut -d ' ' -f1)
+        if [ "$rstatus" != "OK" ]; then
+            return 1
+        fi
+        ticket=$(echo $response | cut -d ' ' -f2)
+        url=$(echo $response | cut -d ' ' -f3)
+        jira take $ticket
+        green "Ticket successfully created: $url"
+        return 0
+    fi
+    return 1
 }
 
 start_work() {
@@ -187,15 +313,15 @@ start_work() {
         selected_branch="$(git rev-parse --abbrev-ref HEAD)"
         green "Transitioning '$ticket' into 'In Progress'..."
         jira transition "In Progress" "$ticket" --noedit
+        track_new_branch "$selected_branch" "$ticket"
     else
-        git_try_checkout_branch "$selected_branch"
+        if ! git_try_checkout_branch "$selected_branch"; then
+            exit 1
+        fi
     fi
 }
 
-find_reviewers() {
-    review_teams="
-    samsara-dev/mobile
-    "
+find_samsara_reviewers() {
     echo $review_teams
     rg -I "GithubUsername:\s+\".*\"" "go/src/samsaradev.io/team" \
             | sed 's/^[ \t]*GithubUsername:[ \t]*"\(.*\)".*$/\1/' \
@@ -206,42 +332,62 @@ pull_request() {
     pushd $(git rev-parse --show-toplevel)
 
     branch_name=$(git rev-parse --abbrev-ref HEAD)
-    echo $branch_name
-
-    green "Looking for JIRA ticket association..."
-
-    ticket=$(grep "$branch_name" "$jira_branch_map" | cut -f2)
-
-    template=$(cat .github/PULL_REQUEST_TEMPLATE.md \
-        | sed -e "s@\(\*\*JIRA ticket\*\*: \)link@\1${jira_link_base}${ticket}@")
-
-    title=""
-    if [ -z "$ticket" ]; then
-        red "No ticket found."
-        template=$(cat .github/PULL_REQUEST_TEMPLATE.md)
-    else
-        title=$(jira "$ticket" | grep "^summary:" | sed 's/^summary: //')
-    fi
-
 
     reviewers=$(find_reviewers \
         | fzf -m \
         | paste -s -d ',')
 
+    if status=$(get_branch_status "$branch_name"); then
+        if [ "$status" = "REVIEW" ]; then
+            yellow "This branch already has an open PR."
+            _yellow "Would you like to view it in browser?"
+            read -n 1 c; echo ""
+            if [[ $c == [yY] ]]; then
+                gh pr view
+            fi
+            exit 1
+        fi
+        if [ "$status" = "MERGED" ]; then
+            red "This branch already has a merged PR."
+            exit 1
+        fi
+        if ticket=$(get_ticket_by_branch "$branch_name"); then
+
+            template=$(cat .github/PULL_REQUEST_TEMPLATE.md \
+                | sed -e "s@\(\*\*JIRA ticket\*\*: \)link@\1${jira_link_base}${ticket}@")
+            title=$(jira "$ticket" | grep "^summary:" | sed 's/^summary: //')
+            hub pull-request \
+                --message "$title" \
+                --message "$template" \
+                --reviewer "$reviewers" \
+                --edit
+            if [[ $? -ne 0 ]]; then
+                exit 1
+            fi
+            transition_branch "NONE" "REVIEW" "$branch_name"
+            _green "Is this ticket ready for review? (y/n) "
+            read -n 1 c; echo ""
+            if [[ $c == [yY ]]; then
+                jira transition "In Review" "$ticket" --noedit
+            else
+                _yellow "start a new branch based on this one? (y/n) "
+
+                read -n 1 c; echo ""
+                if [[ $c == [yY ]]; then
+                    git_new_branch
+                    next_branch=$(git rev-parse --abbrev-ref HEAD)
+                    track_new_branch "$next_branch" "$ticket"
+                fi
+            fi
+            exit 0
+        fi
+    fi
+
     hub pull-request \
-        --push \
-        --message "$title" \
-        --message "$template" \
         --reviewer "$reviewers" \
         --edit
 
-    if [[ $? -ne 0 ]]; then
-        exit 1
-    fi
-
-    green "Transitioning '$ticket' into 'In Review'..."
-    jira transition "In Review" "$ticket" --noedit
-    popd
+    exit $?
 }
 
 # Runner Program
@@ -253,5 +399,8 @@ case "$subcommand" in
         ;;
     pull-request)
         pull_request $@
+        ;;
+    create-ticket)
+        create_ticket $@
         ;;
 esac

@@ -19,6 +19,7 @@
 .config/ranger/rifle.conf
 .gitconfig
 .jira.d/config.yml
+.jira.d/templates/create
 .profile
 .tmux.conf
 .zshrc

@@ -144,11 +144,11 @@ fi
 if ! which jira > /dev/null; then
     cd ~/Tools
     if [[ "$OSTYPE" == "linux-gnu" ]]; then
-        curl -LO https://github.com/go-jira/jira/releases/download/v1.0.22/jira-linux-amd64
+        curl -LO https://github.com/go-jira/jira/releases/download/v1.0.23/jira-linux-amd64
         sudo ln -sf ~/Tools/jira-linux-amd64 /usr/bin/jira
         sudo chmod +x /usr/bin/jira
     elif [[ "$OSTYPE" == "darwin"* ]]; then
-        curl -LO https://github.com/go-jira/jira/releases/download/v1.0.22/jira-darwin-amd64
+        curl -LO https://github.com/go-jira/jira/releases/download/v1.0.23/jira-darwin-amd64
         sudo ln -sf ~/Tools/jira-darwin-amd64 $HOME/bin/jira
         sudo chmod +x $HOME/bin/jira
     fi

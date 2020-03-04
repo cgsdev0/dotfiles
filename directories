@@ -11,6 +11,7 @@
 .config/polybar
 .config/ranger
 .jira.d
+.jira.d/templates
 bin
 dotfiles
 node_modules/vtop/themes
