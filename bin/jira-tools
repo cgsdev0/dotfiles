@@ -1,26 +1,198 @@
 #!/bin/bash
 
+# Requirements:
+# - fzf
+# - go-jira
+# - Bash 4.4 or newer
+
+# Layout of the association file (TSV):
+# {status} {ticket} {branch}
+
 jira_link_base="https://samsaradev.atlassian.net/browse/"
-new_ticket_text="-> Create new ticket"
+new_ticket_text="-> Create new ticket..."
+new_branch_text="-> Create new branch..."
 jira_branch_map=~/.cache/jira-branch-associations
 
 touch "$jira_branch_map"
 
 # Helpers for colored text
 colored_text() {
-    color=$1
-    shift
-    echo -e "\e[${color}m\c"
-    echo "$@"
-    echo -e "\e[0m\c"
-};
+    printf "\e[38;5;%sm%s\e[0m" $1 "$2"
+}
 
-red() { colored_text 31 $@; }
-green() { colored_text 32 $@; }
-yellow() { colored_text 33 $@; }
+_red() { colored_text 160 "$@"; }
+red() { _red "$@"; printf '\n'; }
+
+_green() { colored_text 46 "$@"; }
+green() { _green "$@"; printf '\n'; }
+
+_yellow() { colored_text 226 "$@"; }
+yellow() { _yellow "$@"; printf '\n'; }
+
+# Helpers to read the association file
+get_ticket_by_branch() {
+    local -; set -o pipefail
+    grep -P "\t$1$" "$jira_branch_map" | cut -f2
+        return 1
+    return $?
+}
+
+get_minimum_status_by_ticket() {
+    list=$(grep -P "\t$1\t" "$jira_branch_map" | cut -f1 | sort | uniq)
+    echo $list | grep -o NONE \
+        || echo $list | grep -o REVIEW \
+        || echo $list | grep -o MERGED \
+        || (echo NOTFOUND; return 1)
+}
+
+get_branch_status() {
+    local -; set -o pipefail
+    grep -P "\t$1$" "$jira_branch_map" | cut -f1
+    return $?
+}
+
+get_branches_by_ticket() {
+    local -; set -o pipefail
+    grep -P "\t$1\t" "$jira_branch_map" | cut -f3
+    return $?
+}
+
+get_unmerged_branches_by_ticket() {
+    local -; set -o pipefail
+    grep -P "^(NONE|REVIEW)\t" "$jira_branch_map" | cut -f3
+    return $?
+}
+
+# Helpers to manipulate the association file
+delete_fully_merged_ticket() {
+    min_status=$(get_minimum_status_by_ticket "$1")
+    if [ "$min_status" = "MERGED" ]; then
+        sed -i '/^MERGED\t'$1'\t.*$/d' "$jira_branch_map"
+        return 0
+    fi
+    return 1
+}
+
+dangerously_delete_branch() {
+    escaped=$(echo "$1" | sed 's;/;\\/;g')
+    sed -i '/^[A-Z]*\t[A-Z0-9-]*\t'$escaped'$/d' "$jira_branch_map"
+}
+
+# Git helpers
+git_new_branch() {
+    good_branch_name=1
+    while [ $good_branch_name -ne 0 ]; do
+        printf '\n'
+        _green "Enter a name for your branch: "
+        read branch_name
+
+        case "$branch_name" in
+             *\ * )
+                   red "Your branch cannot contain spaces."
+                   continue
+                  ;;
+        esac
+        git checkout -b "$branch_name"
+        good_branch_name=$?
+    done
+    return $good_branch_name
+}
+
+git_try_checkout_branch() {
+    git checkout "$1"
+    if [ $? -ne 0 ]; then
+        yellow "Couldn't find branch locally. Attempting to fetch..."
+        git fetch origin "$1"
+        git checkout "$1"
+        if [ $? -ne 0 ]; then
+            red "Couldn't find branch remotely."
+            _red "Want to delete the JIRA association? (y/n) "
+            read -n 1 c; echo ""
+            if [[ $c == [yY] ]]; then
+                dangerously_delete_branch "$1"
+            else
+                exit 0
+            fi
+        fi
+    fi
+}
+
+git_reset_to_latest_master() {
+    _green "Pulling latest master... "
+    while ! git fetch origin master &> /dev/null; do
+        _red "Fetch failed. Try again? (y/n)"
+        read -n 1 c; echo ""
+        if [[ $c != [yY] ]]; then
+            exit 1
+        fi
+    done
+    git reset --hard origin/master &> /dev/null
+    echo "Done."
+}
+
+start_work() {
+    git diff-index --cached --quiet HEAD
+    has_local_changes=$?
+
+    if [ $has_local_changes -ne 0 ]; then
+        red "Uncommitted changes detected. Please commit or stash them first."
+        exit 1
+    fi
+
+    ticket_text=$( (jira unstarted; green "$new_ticket_text") \
+        | sed '/^$/d' \
+        | fzf \
+        --ansi \
+        --cycle \
+        --reverse \
+        --prompt="Search for a JIRA ticket: " \
+        --height="40%" \
+        --preview="echo {} | cut -d ':' -f1 | xargs jira")
+
+    if [ -z "$ticket_text" ]; then
+        exit 0
+    fi
+
+    if [ "$ticket_text" = "$new_ticket_text" ]; then
+        # TODO: implement
+        yellow "coming soon!"
+        exit 0
+        ticket="MOB-NEW"
+    else
+       # Split the ticket from the FZF string
+       ticket=$(echo "$ticket_text" \
+           | grep --color=never -oE "^[-A-Z0-9]*:" \
+           | tr -d ':')
+    fi
+
+    branches=$(get_unmerged_branches_by_ticket "$ticket")
+    selected_branch=$( (echo "$branches"; green "$new_branch_text") \
+        | sed '/^$/d' \
+        | fzf \
+        --ansi \
+        --cycle \
+        --reverse \
+        --select-1 \
+        --prompt="Choose a branch to continue: " \
+        --height="40%" \
+        --preview="git log --oneline -n 20 --color=always {}")
+
+    if [ -z "$selected_branch" ]; then
+        exit 0
+    fi
+
+    if [ "$selected_branch" = "$new_branch_text" ]; then
+        git_new_branch
+        git_reset_to_latest_master
+        selected_branch="$(git rev-parse --abbrev-ref HEAD)"
+        green "Transitioning '$ticket' into 'In Progress'..."
+        jira transition "In Progress" "$ticket" --noedit
+    else
+        git_try_checkout_branch "$selected_branch"
+    fi
+}
 
 find_reviewers() {
-    # Find reviewers
     review_teams="
     samsara-dev/mobile
     "
@@ -28,7 +200,7 @@ find_reviewers() {
     rg -I "GithubUsername:\s+\".*\"" "go/src/samsaradev.io/team" \
             | sed 's/^[ \t]*GithubUsername:[ \t]*"\(.*\)".*$/\1/' \
             | sort
-};
+}
 
 pull_request() {
     pushd $(git rev-parse --show-toplevel)
@@ -38,7 +210,7 @@ pull_request() {
 
     green "Looking for JIRA ticket association..."
 
-    ticket=$(grep "$branch_name" "$jira_branch_map" | cut -d ' ' -f1)
+    ticket=$(grep "$branch_name" "$jira_branch_map" | cut -f2)
 
     template=$(cat .github/PULL_REQUEST_TEMPLATE.md \
         | sed -e "s@\(\*\*JIRA ticket\*\*: \)link@\1${jira_link_base}${ticket}@")
@@ -70,110 +242,16 @@ pull_request() {
     green "Transitioning '$ticket' into 'In Review'..."
     jira transition "In Review" "$ticket" --noedit
     popd
-};
-
-start_work() {
-    git diff-index --cached --quiet HEAD
-    has_local_changes=$?
-
-    if [ $has_local_changes -ne 0 ]; then
-        red "Uncommitted changes detected. Please commit or stash them first."
-        exit 1
-    fi
-
-    git checkout master
-
-    ticket_text=$( (jira unstarted; green $new_ticket_text) | fzf \
-        --ansi \
-        --reverse \
-        --prompt="Search for a JIRA ticket: " \
-        --height="40%" \
-        --preview="echo {} | cut -d ':' -f1 | xargs jira")
-
-    if [ -z "$ticket_text" ]; then
-        exit 0
-    fi
-
-    if [ "$ticket_text" = "$new_ticket_text" ]; then
-        # TODO: implement
-        yellow "coming soon!"
-        exit 0
-        ticket="MOB-NEW"
-    else
-       # Split the ticket from the FZF string
-       ticket=$(echo "$ticket_text" \
-           | grep --color=never -oE "^[-A-Z0-9]*:" \
-           | tr -d ':')
-    fi
-
-    # lol
-    dont_exit=0
-
-    association=$(grep $ticket $jira_branch_map)
-    if [ ! -z "$association" ]; then
-        branch_name=$(echo $association | cut -d ' ' -f2)
-        green "Ticket already associated with branch '$branch_name'. Checking out..."
-        git checkout "$branch_name"
-        if [ $? -ne 0 ]; then
-            yellow "Couldn't find branch locally. Attempting to fetch..."
-            git fetch origin
-            git checkout "$branch_name"
-            if [ $? -ne 0 ]; then
-                red "Couldn't find branch remotely. Want to delete the association? (y/n) "
-                read -n 1 c
-                echo ""
-                if [[ $c == [yY] ]]; then
-                    temp_file=`mktemp`
-                    mv "$jira_branch_map" "$temp_file"
-                    grep -v "$ticket" "$temp_file" > "$jira_branch_map"
-                    dont_exit=1
-                else
-                    exit 0
-                fi
-            fi
-        fi
-        if [ $dont_exit -eq 0 ]; then
-            exit 0
-        fi
-    fi
-
-    green "$ticket_text"
-
-    good_branch_name=1
-    while [ $good_branch_name -ne 0 ]; do
-        green "Enter a name for your branch: "
-        read branch_name
-
-        case "$branch_name" in
-             *\ * )
-                   red "Your branch cannot contain spaces."
-                   continue
-                  ;;
-        esac
-
-        echo "$ticket" "$branch_name" >> "$jira_branch_map"
-        git checkout -b "$branch_name"
-        good_branch_name=$?
-    done
-
-    printf "Rebasing on latest master... "
-    git pull origin master --rebase &> /dev/null
-    if [ $? -ne 0 ]; then
-        red "Failed to pull latest master."
-        exit 1
-    fi
-    echo "Done."
-
-    green "Transitioning '$ticket' into 'In Progress'..."
-    jira transition "In Progress" "$ticket" --noedit
-};
-
+}
 
 # Runner Program
-if [ "$1" = "pull-request" ]; then
-    pull_request
-fi
-
-if [ "$1" = "start" ]; then
-    start_work
-fi
+subcommand=$1
+shift
+case "$subcommand" in
+    start)
+        start_work $@
+        ;;
+    pull-request)
+        pull_request $@
+        ;;
+esac
