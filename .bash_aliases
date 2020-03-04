@@ -63,7 +63,10 @@ alias fixhist="history | sed \"s/[0-9* ]*\(.*\)/\1/\" > ~/.zsh_history"
 alias d1="sudo chown -R shane:shane /dev/kvm && bin/d1-run-android"
 alias troy="sudo chown -R shane:shane /dev/kvm && bin/troy-run-android"
 alias pass="cat /usr/share/dict/words | grep -v \"[']\" | shuf -n 6 | tr '[:upper:]' '[:lower:]' | xargs | tr ' ' '-'"
-alias pr="pull-request"
+
+# Jira management
+alias pr="jira-tools pull-request"
+alias start="jira-tools start"
 
 # Terminal colors
 alias c0="cat ~/.cache/wal/sequences"

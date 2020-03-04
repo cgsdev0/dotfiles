@@ -32,7 +32,7 @@ bin/edit-last-n-commits
 bin/git-add-file
 bin/git-reset-file
 bin/i3-get-window-criteria
-bin/jira-common
+bin/jira-tools
 bin/jira-tui
 bin/location
 bin/monitor
