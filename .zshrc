@@ -111,10 +111,10 @@ export EDITOR=nvim
 if [ -f "$HOME/.jira_token" ] ; then
     eval "$(jira --completion-script-zsh)"
     export JIRA_API_TOKEN=`cat $HOME/.jira_token`
+fi
 
-    # Add support for monks's jira ticket creator
-    export JIRA_TOKEN=$JIRA_API_TOKEN
-    export JIRA_USERNAME="shane.schulte@samsara.com"
+if [ -f "$HOME/.github_token" ] ; then
+    export GITHUB_API_TOKEN=`cat $HOME/.github_token`
 fi
 
 if [ -f "$HOME/.buildkite_token" ] ; then

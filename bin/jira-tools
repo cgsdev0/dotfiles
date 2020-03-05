@@ -17,19 +17,11 @@
 # - Bash (4.4 or newer)
 # - 256 color terminal support
 
-# TODO List:
-# - implement github daemon
-#   - can steal from kazoo bot github poller
-#   - the goal is to detect merged PRs and update associations
-#   - If all branches merge and ticket is in review, finalize ticket
-#   - pseudocode: jira view "$ticket" | grep "^status:" | sed 's/^status: //'
-#
-# - get rid of the line that uses gh, it sucks
-
 # ========================================================
 # CONFIGURATION
 # ========================================================
 jira_link_base="https://samsaradev.atlassian.net/browse/"
+github_repository_name="samsara-dev/backend"
 new_ticket_text="-> Create new ticket..."
 new_branch_text="-> Create new branch..."
 extra_review_groups="
@@ -47,21 +39,9 @@ Low
 Lowest
 "
 jira_branch_map=~/.cache/jira-branch-associations
+secrets_path="$HOME/.config/jira-tools/secrets.json"
+daemon_logs=~/.jira_daemon.log
 # ========================================================
-
-
-# Layout of the association file (TSV):
-# {status} {ticket} {branch}
-
-touch "$jira_branch_map"
-
-quickedit_markdown() (
-    trap 'rm ~/temp$$.md' exit;
-    touch ~/temp$$.md;
-    $EDITOR ~/temp$$.md > /dev/tty \
-        || vim ~/temp$$.md > /dev/tty;
-    cat ~/temp$$.md;
-)
 
 # Helpers for colored text
 colored_text() {
@@ -77,12 +57,123 @@ green() { _green "$@"; printf '\n'; }
 _yellow() { colored_text 226 "$@"; }
 yellow() { _yellow "$@"; printf '\n'; }
 
+# Layout of the association file (TSV):
+# {status} {ticket} {branch}
+
+touch "$jira_branch_map"
+touch "$daemon_logs"
+
+if [[ "$1" == "setup" ]]; then
+    set -e
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        red "Mac OS is currently unsupported. :("
+        exit 101
+    fi
+    if [[ "$0" != "/usr/local/bin/"* ]]; then
+        sudo ln -sf "$0" /usr/local/bin/jira-tools
+    fi
+    # Install fzf
+    if ! which fzf > /dev/null; then
+        if [[ "$OSTYPE" == "linux-gnu" ]]; then
+            cd /tmp
+            wget https://github.com/junegunn/fzf/archive/0.18.0.tar.gz
+            mkdir -p fzf
+            tar -xzf 0.18.0.tar.gz -C fzf
+            cd fzf/fzf-0.18.0
+            ./install
+        elif [[ "$OSTYPE" == "darwin"* ]]; then
+            brew install fzf
+        fi
+    else
+        echo "fzf already installed"
+    fi
+    # Install go-jira
+    if ! which jira > /dev/null; then
+        cd /tmp
+        if [[ "$OSTYPE" == "linux-gnu" ]]; then
+            curl -LO https://github.com/go-jira/jira/releases/download/v1.0.23/jira-linux-amd64
+            sudo ln -sf /tmp/jira-linux-amd64 /usr/bin/jira
+            sudo chmod +x /usr/bin/jira
+        elif [[ "$OSTYPE" == "darwin"* ]]; then
+            curl -LO https://github.com/go-jira/jira/releases/download/v1.0.23/jira-darwin-amd64
+            sudo ln -sf /tmp/jira-darwin-amd64 $HOME/bin/jira
+            sudo chmod +x $HOME/bin/jira
+        fi
+    else
+        echo "go-jira already installed"
+    fi
+    # Install hub
+    if ! which hub > /dev/null; then
+        if [[ "$OSTYPE" == "linux-gnu" ]]; then
+            cd /tmp
+            curl -L0 https://github.com/github/hub/releases/download/v2.14.1/hub-linux-amd64-2.14.1.tgz
+            tar -xzf hub-linux-amd64-2.14.1.tgz
+            cd hub-linux-amd64-2.14.1
+            sudo ./install
+        elif [[ "$OSTYPE" == "darwin"* ]]; then
+            yellow "TODO"
+        fi
+    else
+        echo "hub already installed"
+    fi
+
+    if [ ! -f "$secrets_path" ]; then
+        echo '{"github": null, "jira": null}' | jq -r '.' > "$secrets_path"
+    fi
+
+    JIRA_API_TOKEN=$(jq -r ".jira" "$secrets_path")
+    if [[ "$JIRA_API_TOKEN" == "null" ]]; then
+        read -p "Enter your JIRA API token: " token
+        if [[ "$token" != "" ]]; then
+            buf=$(cat "$secrets_path" \
+                | jq -r --arg token "$token" '. + {jira: $token}')
+            echo "$buf" | jq -r '.' > "$secrets_path"
+        fi
+    fi
+    GITHUB_API_TOKEN=$(jq -r ".github" "$secrets_path")
+    if [[ "$GITHUB_API_TOKEN" == "null" ]]; then
+        read -p "Enter your GitHub API token: " token
+        if [[ "$token" != "" ]]; then
+            buf=$(cat "$secrets_path" \
+                | jq -r --arg token "$token" '. + {github: $token}')
+            echo "$buf" | jq -r '.' > "$secrets_path"
+        fi
+    fi
+    green "Setup was successful!"
+    green "Add the following line to your crontab to complete:"
+    echo "*/5 * * * * /usr/local/bin/jira-tools daemon"
+    exit 0
+fi
+
+# Validate secrets
+if [ ! -f "$secrets_path" ]; then
+    yellow "Missing secrets. Have you run 'jira-tools setup' yet?"
+    exit 1
+fi
+export JIRA_API_TOKEN=$(jq -r ".jira" "$secrets_path")
+if [[ "$JIRA_API_TOKEN" == "null" ]]; then
+    red "Missing JIRA API token."
+    exit 1
+fi
+export GITHUB_API_TOKEN=$(jq -r ".github" "$secrets_path")
+if [[ "$GITHUB_API_TOKEN" == "null" ]]; then
+    red "Missing GITHUB API token."
+    exit 1
+fi
+
+quickedit_markdown() (
+    trap 'rm ~/temp$$.md' exit;
+    touch ~/temp$$.md;
+    $EDITOR ~/temp$$.md > /dev/tty \
+        || vim ~/temp$$.md > /dev/tty;
+    cat ~/temp$$.md;
+)
+
 # Helpers to read the association file
 get_ticket_by_branch() {
 # Usage: [branch]
     local -; set -o pipefail
     grep -P "\t$1$" "$jira_branch_map" | cut -f2
-        return 1
     return $?
 }
 
@@ -136,12 +227,16 @@ dangerously_delete_branch() {
 transition_branch() {
 # Usage: [src status] [dest status] [branch]
     escaped=$(echo "$3" | sed 's;/;\\/;g')
-    sed -i 's/^'$1'\(\t[A-Z0-9-]*\t'$escaped'$\)/'$2'\1/' "$jira_branch_map"
+    if grep -qP '^'$1'\t[A-Z0-9-]*\t'$escaped'$' "$jira_branch_map"; then
+        sed -i 's/^'$1'\(\t[A-Z0-9-]*\t'$escaped'$\)/'$2'\1/' "$jira_branch_map"
+        return 0
+    fi
+    return 1
 }
 
 track_new_branch() {
 # Usage: [branch] [ticket]
-    echo "NONE\t$1\t$2" >> "$jira_branch_map"
+    printf "NONE\t$2\t$1\n" >> "$jira_branch_map"
 }
 
 # Git helpers
@@ -195,8 +290,65 @@ git_reset_to_latest_master() {
     git reset --hard origin/master &> /dev/null
     echo "Done."
 }
+github_api() {
+# Usage: [query]
+    query="$(echo $@ | sed 's/\n//g')"
+    curl --silent \
+        --header "Authorization: bearer $GITHUB_API_TOKEN" \
+        --request POST \
+        -d "{ \"query\": \"$query\" }" \
+        https://api.github.com/graphql
+    return $?
+}
+
+github_resolve_merged() {
+    recently_merged_query="
+    query {
+        viewer {
+            pullRequests(states: [MERGED], last: 10) {
+                nodes {
+                    repository {
+                        nameWithOwner
+                    }
+                    baseRefName
+                    headRefName
+                }
+            }
+        }
+    }
+    "
+    for branch in $( \
+        github_api "$recently_merged_query" \
+        | jq -r ".data.viewer.pullRequests.nodes \
+            | map( \
+                select( \
+                    .repository.nameWithOwner \
+                    == \"$github_repository_name\" \
+                    and .baseRefName == \"master\" \
+                ) \
+                | .headRefName \
+            ) | .[]" \
+        ); do
+        if transition_branch "REVIEW" "MERGED" "$branch"; then
+            ticket=$(get_ticket_by_branch "$branch")
+            status=$(get_minimum_status_by_ticket "$ticket")
+            if [[ "$status" == "MERGED" ]]; then
+                ticket_status=$(jira view "$ticket" \
+                    | grep "^status:" \
+                    | sed 's/^status: //')
+                if [[ "$ticket_status" == "In Review" ]]; then
+                    echo "Cleaning up $ticket..."
+                    delete_fully_merged_ticket "$ticket"
+                    jira transition "Done" "$ticket" --noedit
+                fi
+            fi
+        fi
+    done
+}
 
 create_ticket() {
+# Usage: [--now?]
+    fast_mode=[[ "$1" == "--now" ]]
     project=$(echo "$jira_projects" \
         | sed '/^$/d' \
         | fzf \
@@ -206,7 +358,7 @@ create_ticket() {
             --prompt="Select a project: ")
 
     if [ -z "$project" ]; then
-        exit 0
+        exit 1
     fi
 
     issuetype=$(jira issuetypes -p "$project" \
@@ -218,13 +370,13 @@ create_ticket() {
             --prompt="Select an issue type: ")
 
     if [ -z "$issuetype" ]; then
-        exit 0
+        exit 1
     fi
 
     read -p "Describe the ticket (title): " title
     description=$(quickedit_markdown)
     if [ "$description" = "" ]; then
-        exit 0
+        exit 1
     fi
 
     read -p "Estimated effort (days): " story_points
@@ -238,20 +390,23 @@ create_ticket() {
             --prompt="Select a priority level: ")
 
     if [ -z "$priority" ]; then
-        exit 0
+        exit 1
     fi
 
-    sprint=$(jira current-sprint "$project")
+    if $fast_mode; then
+        sprint=$(jira current-sprint "$project")
+    fi
 
+    set -e
     if response=$(jira create \
         --project="$project" \
         --override="summary: $title" \
-        --override="description: $description" \
+        --override="description:$description" \
         --override="priority: $priority" \
         --override="storypoints: $story_points" \
         --override="sprint: $sprint" \
         --issuetype="$issuetype" \
-        --noedit); then
+        --no-edit > /dev/tty); then
         rstatus=$(echo $response | cut -d ' ' -f1)
         if [ "$rstatus" != "OK" ]; then
             return 1
@@ -259,17 +414,20 @@ create_ticket() {
         ticket=$(echo $response | cut -d ' ' -f2)
         url=$(echo $response | cut -d ' ' -f3)
 
-        # Attempt to self-assign the ticket
-        if response=$(jira take "$ticket"); then
+        if $fast_mode; then
+            # Attempt to self-assign the ticket
+            if ! response=$(jira take "$ticket"); then
+                return 1
+            fi
             rstatus=$(echo $response | cut -d ' ' -f1)
             if [ "$rstatus" != "OK" ]; then
                 return 1
             fi
-            # Success!
-            echo "$ticket"
-            return 0
         fi
 
+        # Success!
+        echo "$ticket"
+        return 0
     fi
     return 1
 }
@@ -283,7 +441,7 @@ start_work() {
         exit 1
     fi
 
-    ticket_text=$( (jira unstarted; green "$new_ticket_text") \
+    ticket_text=$( (jira mysprint; green "$new_ticket_text") \
         | sed '/^$/d' \
         | fzf \
         --ansi \
@@ -298,7 +456,7 @@ start_work() {
     fi
 
     if [ "$ticket_text" = "$new_ticket_text" ]; then
-        if ! ticket=$(create_ticket); then
+        if ! ticket=$(create_ticket --now); then
             red "Something went wrong creating the ticket."
             exit 1
         fi
@@ -340,39 +498,41 @@ start_work() {
 }
 
 find_samsara_reviewers() {
-    echo $review_teams
+    echo $extra_review_groups
     rg -I "GithubUsername:\s+\".*\"" "go/src/samsaradev.io/team" \
             | sed 's/^[ \t]*GithubUsername:[ \t]*"\(.*\)".*$/\1/' \
             | sort
 }
 
 pull_request() {
-    pushd $(git rev-parse --show-toplevel)
+    cd $(git rev-parse --show-toplevel)
 
     branch_name=$(git rev-parse --abbrev-ref HEAD)
 
-    reviewers=$(find_reviewers \
+    reviewers=$(find_samsara_reviewers \
         | fzf -m \
         | paste -s -d ',')
 
     if status=$(get_branch_status "$branch_name"); then
         if [ "$status" = "REVIEW" ]; then
             yellow "This branch already has an open PR."
-            _yellow "Would you like to view it in browser?"
-            read -n 1 c; echo ""
-            if [[ $c == [yY] ]]; then
-                gh pr view
-            fi
+            # _yellow "Would you like to view it in browser?"
+            # read -n 1 c; echo ""
+            # if [[ $c == [yY] ]]; then
+            #     gh pr view
+            # fi
             exit 1
         fi
         if [ "$status" = "MERGED" ]; then
             red "This branch already has a merged PR."
             exit 1
         fi
+
         if ticket=$(get_ticket_by_branch "$branch_name"); then
 
             template=$(cat .github/PULL_REQUEST_TEMPLATE.md \
                 | sed -e "s@\(\*\*JIRA ticket\*\*: \)link@\1${jira_link_base}${ticket}@")
+
             title=$(jira "$ticket" | grep "^summary:" | sed 's/^summary: //')
             hub pull-request \
                 --message "$title" \
@@ -385,7 +545,7 @@ pull_request() {
             transition_branch "NONE" "REVIEW" "$branch_name"
             _green "Is this ticket ready for review? (y/n) "
             read -n 1 c; echo ""
-            if [[ $c == [yY ]]; then
+            if [[ $c == [yY] ]]; then
                 jira transition "In Review" "$ticket" --noedit
             else
                 _yellow "start a new branch based on this one? (y/n) "
@@ -421,9 +581,14 @@ case "$subcommand" in
     create-ticket)
         if ticket=$(create_ticket $@); then
             green "${jira_link_base}${ticket}"
-        else
-            red "Something went wrong creating the ticket."
-            exit 1
+            exit 0
         fi
+        exit 1
+        ;;
+    daemon)
+        github_resolve_merged &>> "$daemon_logs"
+        ;;
+    *)
+        echo "jira-tools [start|pull-request|create-ticket|daemon]"
         ;;
 esac

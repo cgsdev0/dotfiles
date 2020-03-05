@@ -67,6 +67,7 @@ alias pass="cat /usr/share/dict/words | grep -v \"[']\" | shuf -n 6 | tr '[:uppe
 # Jira management
 alias pr="jira-tools pull-request"
 alias start="jira-tools start"
+alias ticket="jira-tools create-ticket"
 
 # Terminal colors
 alias c0="cat ~/.cache/wal/sequences"
