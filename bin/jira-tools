@@ -347,8 +347,10 @@ github_resolve_merged() {
 }
 
 create_ticket() {
-# Usage: [--now?]
-    fast_mode=[[ "$1" == "--now" ]]
+# Usage: [now]?
+    assign_now="$1"
+    fast_mode() { [[ "$assign_now" == "now" ]]; }
+
     project=$(echo "$jira_projects" \
         | sed '/^$/d' \
         | fzf \
@@ -393,7 +395,7 @@ create_ticket() {
         exit 1
     fi
 
-    if $fast_mode; then
+    if fast_mode; then
         sprint=$(jira current-sprint "$project")
     fi
 
@@ -406,21 +408,23 @@ create_ticket() {
         --override="storypoints: $story_points" \
         --override="sprint: $sprint" \
         --issuetype="$issuetype" \
-        --no-edit > /dev/tty); then
-        rstatus=$(echo $response | cut -d ' ' -f1)
+        --noedit); then
+        rstatus=$(echo "$response" | cut -d ' ' -f1)
         if [ "$rstatus" != "OK" ]; then
             return 1
         fi
-        ticket=$(echo $response | cut -d ' ' -f2)
-        url=$(echo $response | cut -d ' ' -f3)
+        ticket=$(echo "$response" | cut -d ' ' -f2)
+        url=$(echo "$response" | cut -d ' ' -f3)
 
-        if $fast_mode; then
+        if fast_mode; then
             # Attempt to self-assign the ticket
             if ! response=$(jira take "$ticket"); then
+                red "$response"
                 return 1
             fi
-            rstatus=$(echo $response | cut -d ' ' -f1)
+            rstatus=$(echo "$response" | cut -d ' ' -f1)
             if [ "$rstatus" != "OK" ]; then
+                red "$rstatus"
                 return 1
             fi
         fi
@@ -456,7 +460,8 @@ start_work() {
     fi
 
     if [ "$ticket_text" = "$new_ticket_text" ]; then
-        if ! ticket=$(create_ticket --now); then
+        if ! ticket=$(create_ticket now); then
+            red "$ticket"
             red "Something went wrong creating the ticket."
             exit 1
         fi
@@ -579,7 +584,7 @@ case "$subcommand" in
         pull_request $@
         ;;
     create-ticket)
-        if ticket=$(create_ticket $@); then
+        if create_ticket $@; then
             green "${jira_link_base}${ticket}"
             exit 0
         fi
