@@ -31,7 +31,6 @@ bin/devbox-connect
 bin/dotify
 bin/edit-last-n-commits
 bin/i3-get-window-criteria
-bin/jira-tools
 bin/jira-tui
 bin/location
 bin/monitor
