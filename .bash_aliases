@@ -75,3 +75,9 @@ alias ticket="jira-tools create-ticket"
 if [[ "$OSTYPE" == "darwin"* ]]; then
     alias vim="nvim"
 fi
+
+# =============== STUPID stuff ===============
+
+# mimic python -m SimpleHTTPServer
+serve () { rm /tmp/tunnel; mkfifo /tmp/tunnel; echo "Serving $(pwd) on 127.0.0.1:8000..."; while true; do (printf "HTTP/1.0 200 OK\n"; (reqreader() { while IFS= read line;  do [[ $line = $'\r' ]] && break; echo "$line"; done; exit 0; }; var=$(</tmp/tunnel | reqreader); var=$(echo "$var" | grep ^GET | sed 's/GET \(.*\) HTTP\/1\.1.*/\1/'); var=$(echo "$var" | sed 's/^\(.*\)@$/\1/' | sed 's/^\(.*\)\*/\1/'); var=$(echo "<!doctype html><html><head><title>$(pwd)</title></head><body>"; (cat "./$var" 2> /dev/null || (ls -F "./$var" 2> /dev/null | sed 's/\(.*\)/<a href="\1">\1<\/a><br \/>/')); echo "</body></html>"); printf "Content-Length: "; echo "$var" | wc -c; printf "\r\n\r\n"; echo $var)) | nc -l 8000 | >/tmp/tunnel; done }
+# =========== End STUPID stuff ===============
