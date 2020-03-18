@@ -207,12 +207,13 @@ autocmd BufWritePost ~/.Xresources,~/.Xdefaults !xrdb %
 " Custom bindings
 map <leader>f :Goyo \| set linebreak<CR>
 
-" Copy to local machine system clipboard
-vnoremap <silent> <leader>y :w !rcopy<CR><CR>
-nnoremap <silent> <leader>yy :silent .w !rcopy<CR>
+" Copy to system clipboard
+vnoremap <leader>y "+y
+nnoremap <leader>Y "+yg_
+nnoremap <leader>y "+y
 
-" Paste from local machine clipboard
-nnoremap <silent> <leader>p :r !rpaste<CR>
-nnoremap <silent> <leader>P :r !rpaste<CR> <bar> :normal dd P<CR>
-vnoremap <silent> <leader>p :r !rpaste<CR>
-vnoremap <silent> <leader>P :r !rpaste<CR> <bar> :normal dd P<CR>
+" Paste from clipboard
+nnoremap <leader>p "+p
+nnoremap <leader>P "+P
+vnoremap <leader>p "+p
+vnoremap <leader>P "+P
