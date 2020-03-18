@@ -21,6 +21,8 @@ set $TERMINAL urxvt
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
+mouse_warping none
+
 # start a terminal
 bindsym $mod+Return exec --no-startup-id $term
 bindsym $mod+Shift+Return exec --no-startup-id $term -e devbox-connect
