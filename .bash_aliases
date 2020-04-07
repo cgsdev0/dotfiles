@@ -20,6 +20,10 @@ alias sp="baton my saved tracks"
 # Wifi Management
 alias wifi="nmcli d wifi list"
 
+# Power Management
+alias sleep-disable="sudo systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target"
+alias sleep-enable="sudo systemctl unmask sleep.target suspend.target hibernate.target hybrid-sleep.target"
+
 # Random
 alias copy="xclip -selection c"
 alias copy-last="fc -ln -1 | xclip -selection c"

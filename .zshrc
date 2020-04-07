@@ -117,10 +117,6 @@ if [ -f "$HOME/.github_token" ] ; then
     export GITHUB_API_TOKEN=`cat $HOME/.github_token`
 fi
 
-if [ -f "$HOME/.buildkite_token" ] ; then
-    export SAMSARA_BUILDKITE_TOKEN=`cat $HOME/.buildkite_token`
-fi
-
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 eval "$(direnv hook zsh)"
@@ -131,4 +127,10 @@ prompt_context() {
     fi
 }
 
-export DEVBOX_CUSTOM_AUTOSSH_OPTS="-R 10022:127.0.0.1:22"
+# Samsara specific section
+export DEVBOX_CUSTOM_AUTOSSH_OPTS="-R 10022:127.0.0.1:22 -L 13002:127.0.0.1:13002"
+
+if [ -f "$HOME/.buildkite_token" ] ; then
+    export SAMSARA_BUILDKITE_TOKEN=`cat $HOME/.buildkite_token`
+fi
+
