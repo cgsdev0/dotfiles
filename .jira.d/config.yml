@@ -1,6 +1,6 @@
 endpoint: https://samsaradev.atlassian.net
 editor: vim
-user: Shane Schulte
+accountId: 5c6b1a0acf74864794a31cb5
 login: shane.schulte@samsara.com
 
 custom-commands:
@@ -22,3 +22,11 @@ custom-commands:
     script: |
       board_id=$({{jira}} req "/rest/agile/1.0/board?projectKeyOrId={{args.PROJECT}}" --gjq values.0.id)
       {{jira}} req "/rest/agile/1.0/board/$board_id/sprint?state=active" --gjq values.0.id
+
+  - name: take2
+    help: self-assigns the specified ticket
+    args:
+      - name: TICKET
+        required: true
+    script: |
+      {{jira}} req -v -t empty -M PUT "/rest/api/3/issue/{{args.TICKET}}/assignee" "{\"accountId\": \"5c6b1a0acf74864794a31cb5\" }" 2> /dev/null > /dev/null || exit 0
