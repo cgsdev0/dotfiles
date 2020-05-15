@@ -46,7 +46,7 @@ alias ba="vim ~/.bash_aliases && . ~/.bash_aliases"
 alias zshrc="vim ~/.zshrc && . ~/.zshrc"
 
 # == Samsara ==
-alias unfuck-hooks="[[ \"\$(readlink \$HOME/co/backend/.git/hooks)\" = personal_hooks ]] || (cd \$HOME/co/backend/.git; unlink hooks; ln -s personal_hooks hooks; echo 'Personal hooks restored.')"
+alias unfuck-hooks="[[ \"\$(readlink \$HOME/co/backend/.git/hooks)\" = personal_hooks ]] || (cd \$HOME/co/backend/.git; unlink hooks; mkdir -p personal_hooks; ln -s personal_hooks hooks; echo 'Personal hooks restored.')"
 alias d1="sudo chown -R shane:shane /dev/kvm && bin/d1-run-android"
 alias troy="sudo chown -R shane:shane /dev/kvm && bin/troy-run-android"
 alias slack="google-chrome --app='https://samsara-net.slack.com/messages'"
