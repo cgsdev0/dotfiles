@@ -7,12 +7,12 @@ custom-commands:
   - name: mysprint
     help: display issues assigned to me in my current sprint
     script: |-
-      {{jira}} list --query "resolution = unresolved and status NOT IN ('In Review', 'Merged', 'Archive') and assignee=currentuser() and sprint in openSprints() ORDER BY priority,created"
+      {{jira}} list --query "resolution = unresolved and status NOT IN ('In Review', 'Review', 'Merged', 'Archive') and assignee=currentuser() and sprint in openSprints() ORDER BY priority,created"
 
   - name: mine
     help: display issues assigned to me
     script: |-
-      {{jira}} list --query "resolution = unresolved and status NOT IN ('In Review', 'Merged', 'Archive') and assignee=currentuser() ORDER BY priority,created"
+      {{jira}} list --query "resolution = unresolved and status NOT IN ('In Review', 'Review', 'Merged', 'Archive') and assignee=currentuser() ORDER BY priority,created"
 
   - name: current-sprint
     help: gets the currently active sprint ID
@@ -20,7 +20,8 @@ custom-commands:
       - name: PROJECT
         required: true
     script: |
-      board_id=$({{jira}} req "/rest/agile/1.0/board?projectKeyOrId={{args.PROJECT}}" --gjq values.0.id)
+      board_id=$({{jira}} req "/rest/agile/1.0/board?projectKeyOrId={{args.PROJECT}}" --gjq values | jq -c '.[] | select(.location.projectKey == "MOB").id')
+
       {{jira}} req "/rest/agile/1.0/board/$board_id/sprint?state=active" --gjq values.0.id
 
   - name: take2

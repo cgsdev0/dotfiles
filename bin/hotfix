@@ -1,0 +1,73 @@
+#!/bin/bash
+
+CUR_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+DIVERGED_COMMITS=$(git log origin/master..HEAD --oneline --reverse | cut -f1 -d' ')
+v=$1
+script_name=$(basename "$0")
+
+summon () { b=$1; git fetch origin +refs/heads/$b:refs/remotes/origin/$b $b:$b; };
+
+show_help () {
+    echo "Usage: $script_name [u version number]"
+    echo
+    echo "Start the script from your initial fix branch (the one you merged into master)."
+    echo "The script will cherry pick all of your commits that diverge from master,"
+    echo "and open a PR into the release branch."
+    exit 0
+}
+
+if [ "$1" == "help" ]; then
+    show_help
+fi
+
+if [ ! -f "$HOME/.hotfix_inprogress" ]; then
+    if [ -z "$v" ]; then
+        show_help
+    fi
+    echo "Pulling release branch..."
+    git branch -D driver2/u$v 2> /dev/null
+    set -e
+    summon driver2/u$v
+
+    # Start a new branch from the base release branch
+    git checkout -b ${CUR_BRANCH}-$v
+    git reset --hard driver2/u$v
+    # "git obliterate"
+    git add -A && git stash && git stash drop
+
+    # Cherry-pick this branch's commits
+    if ! git cherry-pick $DIVERGED_COMMITS; then
+        echo "$v" > "$HOME/.hotfix_inprogress"
+        echo "Conflicts detected. Please resolve them, then run '$script_name' again."
+        exit 1
+    fi
+else
+    # Load our saved hotfix state
+    v=$(cat "$HOME/.hotfix_inprogress")
+    rm "$HOME/.hotfix_inprogress"
+    if [ -f $(git rev-parse --git-path CHERRY_PICK_HEAD) ]; then
+        # Cherry-pick this branch's commits
+        if ! git cherry-pick --continue; then
+            echo "$v" > "$HOME/.hotfix_inprogress"
+            echo "Conflicts detected. Please resolve them, then run '$script_name' again."
+            exit 1
+        fi
+    fi
+fi
+
+echo "Cherry-pick complete. Creating a PR..."
+set -e
+# Make a PR
+git push -f origin
+
+if which hub &> /dev/null; then
+    hub pull-request -b driver2/u$v --no-edit -l hotfix,u$v
+else
+    echo "==================================================================="
+    echo "Branch pushed, but 'hub' was not found. You can open a PR here: "
+    echo "https://github.com/samsara-dev/backend/compare/driver2/u$v...$(git rev-parse --abrev-ref HEAD)"
+    echo "==================================================================="
+fi
+
+# Back to previous branch
+git checkout -

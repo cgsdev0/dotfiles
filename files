@@ -1,3 +1,4 @@
+
 .bash_aliases
 .bash_profile
 .bashrc
@@ -30,6 +31,7 @@ bin/connect
 bin/devbox-connect
 bin/dotify
 bin/edit-last-n-commits
+bin/hotfix
 bin/i3-get-window-criteria
 bin/jira-tui
 bin/location
