@@ -173,8 +173,10 @@ fi
 if ! which baton > /dev/null; then
     if [[ "$OSTYPE" == "linux-gnu" ]]; then
         cd ~/Tools
-        curl -L0 https://github.com/joshuathompson/baton/releases/download/0.1.7/baton-0.1.7-linux-amd64
-        sudo dpkg -i baton-0.1.7-linux-amd64
+        curl -LO https://github.com/joshuathompson/baton/releases/download/0.1.7/baton-0.1.7-linux-amd64
+        mv baton-0.1.7-linux-amd64 "$HOME/bin/baton"
+        sudo chmod +x "$HOME/bin/baton"
+        baton auth
     fi
 else
     echo "baton already installed"
