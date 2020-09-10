@@ -10,27 +10,8 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-abolish'
-Plug 'dyng/ctrlsf.vim'
-Plug 'prettier/vim-prettier'
 Plug 'rhysd/vim-clang-format'
 " Go development tools
-Plug 'fatih/vim-go', {'for': 'go'}
-
-" Typescript development tools
-Plug 'peitalin/vim-jsx-typescript'
-" Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
-" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-" Plug 'Shougo/vimproc.vim', {'do' : 'make'}
-" Plug 'Quramy/tsuquyomi'
- " Install nightly build, replace ./install.sh with install.cmd on windows
-Plug 'neoclide/coc.nvim', {'do': './install.sh nightly'}
-" Or install latest release tag
-Plug 'neoclide/coc.nvim', {'tag': '*', 'do': './install.sh'}
-" Or build from source code
-Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
-
-" Python development tools
-Plug 'davidhalter/jedi-vim', {'for' : 'python'}
 
 " TODO: Explore these
 " Plug 'SirVer/ultisnips'
@@ -41,6 +22,10 @@ Plug 'junegunn/goyo.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
+" Typescript development tools
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'antoinemadec/coc-fzf', {'branch': 'release'}
+
 " File tree browser
 Plug 'scrooloose/nerdtree'
 
@@ -49,6 +34,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
 
 " Theme plugins
+Plug 'peitalin/vim-jsx-typescript'
 Plug 'dylanaraps/wal.vim'
 Plug 'sheerun/vim-polyglot'
 Plug 'PotatoesMaster/i3-vim-syntax'
@@ -87,6 +73,9 @@ autocmd Filetype typescrpt tabstop=8 softtabstop=0 expandtab shiftwidth=2 smartt
 set autoindent
 set hidden
 
+" don't pass messages to |ins-completion-menu|.
+set shortmess+=c
+
 " Terminal config
 tnoremap <Esc> <C-\><C-n>
 
@@ -94,12 +83,11 @@ tnoremap <Esc> <C-\><C-n>
 nnoremap <leader>r :so ~/.config/nvim/init.vim<CR>
 nnoremap <leader>, :e ~/.config/nvim/init.vim<CR>
 
-" CtrlP config
-nnoremap <C-p> :Files<CR>
+" Global search for this word
+nmap <C-F>w :Rg <c-r>=expand("<cword>")<cr><cr>
 
 " Window navigation
 let g:tmux_navigator_no_mappings = 1
-
 nnoremap <silent> <C-H> :TmuxNavigateLeft<cr>
 nnoremap <silent> <C-J> :TmuxNavigateDown<cr>
 nnoremap <silent> <C-K> :TmuxNavigateUp<cr>
@@ -108,18 +96,12 @@ nnoremap <silent> <C-L> :TmuxNavigateRight<cr>
 " Buffer navigation
 nnoremap <Tab> :bnext<CR>
 nnoremap <C-N> :NERDTreeFind<CR>
+" Gross windows hack lol
+nnoremap <F5> :bprevious<CR>
+cmap <F5> <S-Tab>
+" / hack
 nnoremap <S-Tab> :bprevious<CR>
 nnoremap <C-w><C-w> :bp\|bd #<CR>
-nnoremap <C-s> :w<CR>
-nnoremap <C-\> :vsplit<CR>
-
-" CtrlSF Config
-nmap     <C-F>f <Plug>CtrlSFPrompt
-vmap     <C-F>F <Plug>CtrlSFVwordPath
-vmap     <C-F>f <Plug>CtrlSFVwordExec
-nmap     <C-F>w <Plug>CtrlSFCwordExec<C-H>
-nnoremap <C-F>t :CtrlSFToggle<CR>
-inoremap <C-F>t <Esc>:CtrlSFToggle<CR>
 
 " Powerline theme
 let g:airline_powerline_fonts = 1
@@ -128,22 +110,15 @@ let g:airline#extensions#tabline#formatter = 'unique_tail'
 
 " Auto highlighting hex colors
 let g:colorizer_colornames = 0
-let g:colorizer_auto_filetype='css,html,dosini,vim,typescript'
+let g:colorizer_auto_filetype='css,html,dosini,vim,typescript,typescript.tsx,javascript'
 
 "This unsets the "last search pattern" register by hitting return
 nnoremap <silent> <CR> :noh<CR>
-
-" Configure jedi-vim
-let g:jedi#popup_on_dot = 0
-let g:jedi#show_call_signatures = 0
 
 " Configure NerdTree
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 "
 " prettier autosave
-let g:prettier#autoformat = 0
-autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.graphql,*.md Prettier
-
 autocmd BufWritePre *.cpp,*.h ClangFormat
 
 " configure go
@@ -152,49 +127,51 @@ let g:go_fmt_command = "goimports"
 let g:go_fmt_options = {
   \ 'goimports': ' -w -local samsaradev.io',
   \ }
-" let g:go_metalinter_autosave = 1
-" let g:go_metalinter_autosave_enabled = ['vet', 'errcheck']
-" let g:go_metalinter_enabled = ['vet', 'errcheck']
-let g:go_highlight_extra_types = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_functions = 1
-let g:go_highlight_function_arguments = 1
-let g:go_highlight_function_calls = 1
-let g:go_highlight_types = 1
-let g:go_highlight_fields = 1
-let g:go_highlight_variable_declarations = 1
-let g:go_highlight_variable_assignments = 1
-" let g:go_list_type = "quickfix"
-autocmd FileType go setlocal tabstop=2|setlocal shiftwidth=2|setlocal softtabstop=2|setlocal noexpandtab
-autocmd FileType go compiler go
-autocmd FileType go nmap <leader>gd :GoDef<CR>
-" let g:syntastic_go_checkers = ['golint', 'govet']
 
-" Configure typescript
-"let g:tsuquyomi_disable_default_mappings = 1
+" Configure CoC
 let g:coc_node_path = '/usr/bin/node'
-"autocmd FileType typescript,typescript.tsx nmap <leader>gd :TsuDefinition<CR>
-"autocmd FileType typescript,typescript.tsx setlocal tabstop=2|setlocal shiftwidth=2|setlocal softtabstop=2|setlocal noexpandtab
-"let g:tsuquyomi_disable_quickfix = 1
-"let g:syntastic_typescript_checkers = ['tsuquyomi'] " You shouldn't use 'tsc' checker.
-"autocmd FileType typescript,typescript.tsx nmap <leader>gf :TsuQuickFix<CR>
+let g:python3_host_prog = '/usr/bin/python3'
 
-" Configure syntastic
-"set statusline+=%#warningmsg#
-"set statusline+=%{SyntasticStatuslineFlag()}
-"set statusline+=%*
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
 
-"let g:syntastic_always_populate_loc_list = 1
-"let g:syntastic_auto_loc_list = 1
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<CR>
 
-nmap <leader>gn :lnext<CR>
-nmap <leader>gp :lprev<CR>
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+" Symbol renaming.
+nmap <leader>rn <Plug>(coc-rename)
+
+" VS code binds
+map <M-S-o> :CocCommand tsserver.organizeImports<CR>
+nnoremap <C-s> :w<CR>
+nnoremap <C-\> :vsplit<CR>
+map <F6> :CocFzfList<CR>
+nnoremap <C-p> :Files<CR>
+
+" Jest commands
+command! -nargs=0 JestFile :call CocAction('runCommand', 'jest.fileTest', ['%'])
+command! -nargs=0 JestSingle :call CocAction('runCommand', 'jest.singleTest')
+
+" Give more space for displaying messages.
+set cmdheight=2
+
+" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
+" delays and poor user experience.
+set updatetime=300
 
 " autocomplete:
 set completeopt=noinsert,menuone,noselect
 
-inoremap <C-Space> <C-x><C-o>
-" :inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 " Match i3 split direction
 set splitbelow splitright
 

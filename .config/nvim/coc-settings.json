@@ -1,0 +1,11 @@
+{
+  "tslint.autoFixOnSave": true,
+  "coc.preferences.formatOnSaveFiletypes": [
+    "go",
+    "javascript",
+    "typescript",
+    "javascript.jsx",
+    "typescript.tsx",
+    "json"
+  ]
+}

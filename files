@@ -13,6 +13,7 @@
 .config/cava/config
 .config/dunst/dunstrc
 .config/i3/config
+.config/nvim/coc-settings.json
 .config/nvim/init.vim
 .config/polybar/config
 .config/polybar/launch.sh
