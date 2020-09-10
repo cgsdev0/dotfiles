@@ -165,4 +165,17 @@ if ! which gh > /dev/null; then
     elif [[ "$OSTYPE" == "darwin"* ]]; then
         brew install github/gh/gh
     fi
+else
+    echo "github CLI already installed"
+fi
+
+# Install baton (Spotify CLI)
+if ! which baton > /dev/null; then
+    if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        cd ~/Tools
+        curl -L0 https://github.com/joshuathompson/baton/releases/download/0.1.7/baton-0.1.7-linux-amd64
+        sudo dpkg -i baton-0.1.7-linux-amd64
+    fi
+else
+    echo "baton already installed"
 fi
