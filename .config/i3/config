@@ -216,6 +216,7 @@ gaps inner 10
 exec_always --no-startup-id autorandr --change; wal -Rts && feh --bg-scale ~/.config/wall.png
 exec_always --no-startup-id setxkbmap -option caps:escape
 exec_always --no-startup-id xset r rate 250 45
+exec_always --no-startup-id xinput --set-prop "Logitech USB Receiver Mouse" "Coordinate Transformation Matrix" 0.7 0 0 0 0.7 0 0 0 1
 
 # Start compton
 exec_always --no-startup-id compton &> /dev/null
