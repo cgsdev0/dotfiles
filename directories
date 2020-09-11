@@ -9,6 +9,8 @@
 .config/i3
 .config/nvim
 .config/polybar
+.config/powerline
+.config/powerline/themes/tmux
 .config/ranger
 .jira.d
 .jira.d/templates

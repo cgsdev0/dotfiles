@@ -17,6 +17,8 @@
 .config/nvim/init.vim
 .config/polybar/config
 .config/polybar/launch.sh
+.config/powerline/config.json
+.config/powerline/themes/tmux/default.json
 .config/ranger/rc.conf
 .config/ranger/rifle.conf
 .gitconfig
