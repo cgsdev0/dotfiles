@@ -157,11 +157,12 @@ else
 fi
 
 # Install github CLI
+GH_VERSION="0.12.0"
 if ! which gh > /dev/null; then
     if [[ "$OSTYPE" == "linux-gnu" ]]; then
         cd ~/Tools
-        curl -LO https://github.com/cli/cli/releases/download/v0.5.5/gh_0.5.5_linux_amd64.deb
-        sudo dpkg -i gh_0.5.5_linux_amd64.deb
+        curl -LO https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_linux_amd64.deb
+        sudo dpkg -i gh_${GH_VERSION}_linux_amd64.deb
     elif [[ "$OSTYPE" == "darwin"* ]]; then
         brew install github/gh/gh
     fi
