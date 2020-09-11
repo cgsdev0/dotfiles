@@ -47,6 +47,7 @@ bin/theme
 bin/updot
 bin/volume
 bin/wal-edit
+bin/yank
 node_modules/vtop/themes/wal.json
 themes/override/monokai
 themes/override/vscode

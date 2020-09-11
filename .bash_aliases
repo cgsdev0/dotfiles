@@ -44,6 +44,7 @@ alias rangerrc="vim ~/.config/ranger/rc.conf"
 alias grc="git config --edit --global"
 alias ba="vim ~/.bash_aliases && . ~/.bash_aliases"
 alias zshrc="vim ~/.zshrc && . ~/.zshrc"
+alias tmuxrc="vim ~/.tmux.conf && tmux source-file ~/.tmux.conf"
 
 # == Samsara ==
 alias unfuck-hooks="[[ \"\$(readlink \$HOME/co/backend/.git/hooks)\" = personal_hooks ]] || (cd \$HOME/co/backend/.git; unlink hooks; mkdir -p personal_hooks; ln -s personal_hooks hooks; echo 'Personal hooks restored.')"

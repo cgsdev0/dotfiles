@@ -11,6 +11,7 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-abolish'
 Plug 'rhysd/vim-clang-format'
+Plug 'roxma/vim-tmux-clipboard'
 " Go development tools
 
 " TODO: Explore these
@@ -184,13 +185,24 @@ autocmd BufWritePost ~/.Xresources,~/.Xdefaults !xrdb %
 " Custom bindings
 map <leader>f :Goyo \| set linebreak<CR>
 
-" Copy to system clipboard
-vnoremap <leader>y "+y
-nnoremap <leader>Y "+yg_
-nnoremap <leader>y "+y
+" copy to attached terminal using the yank(1) script:
+" https://github.com/sunaku/home/blob/master/bin/yank
+function! Yank(text) abort
+  let escape = system('yank', a:text)
+  if v:shell_error
+    echoerr escape
+  else
+    call writefile([escape], '/dev/tty', 'b')
+  endif
+endfunction
+noremap <silent> <Leader>y y:<C-U>call Yank(@0)<CR>
 
-" Paste from clipboard
-nnoremap <leader>p "+p
-nnoremap <leader>P "+P
-vnoremap <leader>p "+p
-vnoremap <leader>P "+P
+" automatically run yank(1) whenever yanking in Vim
+" (this snippet was contributed by Larry Sanderson)
+function! CopyYank() abort
+  call Yank(join(v:event.regcontents, "\n"))
+endfunction
+autocmd TextYankPost * call CopyYank()
+
+" Mouse functionality
+set mouse=a
