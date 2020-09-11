@@ -206,3 +206,7 @@ autocmd TextYankPost * call CopyYank()
 
 " Mouse functionality
 set mouse=a
+nnoremap <M-LeftMouse> <LeftMouse>:call CocAction('jumpDefinition')<CR>
+nnoremap <C-LeftMouse> <LeftMouse>:call CocAction('jumpDefinition')<CR>
+nnoremap <RightMouse> <LeftMouse>:CocFzfList actions<CR>
+
