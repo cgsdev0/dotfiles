@@ -104,7 +104,7 @@ source $ZSH/oh-my-zsh.sh
 #
 . ~/.bash_aliases
 
-export FORGIT_FZF_DEFAULT_OPTS=" --exact --border --cycle --ansi --reverse --height '80%' --preview-window right:66%"
+export FORGIT_FZF_DEFAULT_OPTS=" --border --cycle --ansi --reverse --height '80%' --preview-window right:66%"
 
 export EDITOR=nvim
 
