@@ -15,6 +15,7 @@
 .config/rg
 .jira.d
 .jira.d/templates
+.todo
 bin
 dotfiles
 node_modules/vtop/themes

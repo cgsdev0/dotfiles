@@ -14,8 +14,11 @@ alias tz-sanfrancisco="sudo ln -sf /usr/share/zoneinfo/America/Los_Angeles /etc/
 
 # Program
 alias ll="ls -lhA"
+export TODOTXT_DEFAULT_ACTION=ls
+alias t="todo.sh -ct"
 alias kde="/usr/lib/x86_64-linux-gnu/libexec/kdeconnectd"
 alias sp="baton my saved tracks"
+alias clear="clear; printf '\n%.0s' {1..100}"
 
 # Wifi Management
 alias wifi="nmcli d wifi list"
