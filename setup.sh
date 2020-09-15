@@ -5,6 +5,7 @@ sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.
 
 ./install.sh
 mkdir -p ~/Tools
+mkdir -p ~/todo
 cd ~/Tools
 
 # Install zsh plugins

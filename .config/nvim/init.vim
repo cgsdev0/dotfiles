@@ -29,6 +29,7 @@ Plug 'antoinemadec/coc-fzf', {'branch': 'release'}
 
 " File tree browser
 Plug 'scrooloose/nerdtree'
+Plug 'ryanoasis/vim-devicons'
 
 " Git integration
 Plug 'tpope/vim-fugitive'
@@ -111,6 +112,7 @@ nnoremap <C-w><C-w> :bp\|bd #<CR>
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
+let g:webdevicons_enable_airline_tabline = 0
 
 " Auto highlighting hex colors
 let g:colorizer_colornames = 0
@@ -118,6 +120,7 @@ let g:colorizer_auto_filetype='css,html,dosini,vim,typescript,typescript.tsx,jav
 
 "This unsets the "last search pattern" register by hitting return
 nnoremap <silent> <CR> :noh<CR>
+vnoremap <silent> <CR> y/\V<C-R>=escape(@",'/\')<CR><CR>
 
 " Configure NerdTree
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
