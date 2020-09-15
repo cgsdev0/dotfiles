@@ -74,6 +74,9 @@ autocmd Filetype typescrpt tabstop=8 softtabstop=0 expandtab shiftwidth=2 smartt
 set autoindent
 set hidden
 
+let $FZF_DEFAULT_COMMAND='fd --type f --exclude SamsaraDriver --exclude "npm-packages-offline-cache" --exclude "\.shot" --exclude "*.snap" --exclude "*.shot" --exclude "*.snapshots.json"'
+let $RIPGREP_CONFIG_PATH='~/.config/rg/.ripgreprc'
+
 " don't pass messages to |ins-completion-menu|.
 set shortmess+=c
 

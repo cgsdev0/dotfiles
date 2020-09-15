@@ -1,0 +1,4 @@
+--type-add
+snapshot:*.{snap,shot,snapshot,snapshots}*
+
+--type-not snapshot

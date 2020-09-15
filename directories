@@ -12,6 +12,7 @@
 .config/powerline
 .config/powerline/themes/tmux
 .config/ranger
+.config/rg
 .jira.d
 .jira.d/templates
 bin

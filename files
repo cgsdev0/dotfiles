@@ -21,6 +21,7 @@
 .config/powerline/themes/tmux/default.json
 .config/ranger/rc.conf
 .config/ranger/rifle.conf
+.config/rg/.ripgreprc
 .gitconfig
 .jira.d/config.yml
 .jira.d/templates/create
