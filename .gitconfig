@@ -11,12 +11,10 @@
     fpush = "push --force-with-lease"
     fp = "push --force-with-lease"
     pf = "push --force-with-lease"
-    a = "!git-add-file"
-    r = "!git-reset-file"
     l = "log --oneline"
     s = "status -s"
     wopsy = "commit -a --amend --no-edit"
-    pop = "!git log -1 --pretty=%B | cat | xclip -selection c; git reset --soft HEAD^"
+    pop = "!git log -1 --pretty=%B | cat | yank; git reset --soft HEAD^"
     update = "pull origin master --rebase"
     ri = "pull origin master --rebase=interactive"
     trim = "!git branch | fzf -m | xargs -r git branch -D"
@@ -25,6 +23,7 @@
     edit = "!edit-last-n-commits"
     showvim = "!git diff HEAD^..HEAD --name-only | xargs vim"
     recent = "!git checkout $(git for-each-ref --count=100 --sort=-committerdate refs/heads/ --format='%(refname:short)' | fzf)"
+    rehash = "commit --amend --no-edit --reset-author"
 
 [push]
     default = current

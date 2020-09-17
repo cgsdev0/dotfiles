@@ -10,6 +10,7 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-abolish'
+Plug 'tpope/vim-commentary'
 Plug 'rhysd/vim-clang-format'
 Plug 'roxma/vim-tmux-clipboard'
 " Go development tools
@@ -69,9 +70,7 @@ inoremap <expr> <c-x><c-i> fzf#vim#complete(fzf#wrap({
 
 " Basic configuration
 set number relativenumber
-set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
-autocmd Filetype typescrpt.tsx tabstop=8 softtabstop=0 expandtab shiftwidth=2 smarttab
-autocmd Filetype typescrpt tabstop=8 softtabstop=0 expandtab shiftwidth=2 smarttab
+set tabstop=2 softtabstop=0 expandtab shiftwidth=4 smarttab
 set autoindent
 set hidden
 
@@ -128,7 +127,9 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 " prettier autosave
 autocmd BufWritePre *.cpp,*.h ClangFormat
 
-" configure go
+" configure vim-go
+let g:go_term_enabled = 1
+let g:go_term_close_on_exit = 0
 let g:go_fmt_autosave = 1
 let g:go_fmt_command = "goimports"
 let g:go_fmt_options = {

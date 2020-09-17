@@ -32,8 +32,7 @@ if [ ! -f "$HOME/.hotfix_inprogress" ]; then
     # Start a new branch from the base release branch
     git checkout -b ${CUR_BRANCH}-$v
     git reset --hard driver2/u$v
-    # "git obliterate"
-    git add -A && git stash && git stash drop
+    git clean -fd
 
     # Cherry-pick this branch's commits
     if ! git cherry-pick $DIVERGED_COMMITS; then
