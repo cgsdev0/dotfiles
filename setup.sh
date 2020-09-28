@@ -158,7 +158,7 @@ else
 fi
 
 # Install github CLI
-GH_VERSION="0.12.0"
+GH_VERSION="1.0.0"
 if ! which gh > /dev/null; then
     if [[ "$OSTYPE" == "linux-gnu" ]]; then
         cd ~/Tools
