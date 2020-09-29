@@ -61,7 +61,8 @@ git push -f origin
 
 if which hub &> /dev/null; then
     pr_number=$(hub pull-request -b driver2/u$v --no-edit -l hotfix,u$v | grep -oE '[0-9]*')
-    gh pr review "$pr_number" --comment -b ":sheep:"
+    # this doesn't actually work (sad): 
+    # gh pr review "$pr_number" --comment -b ":sheep:"
 else
     echo "==================================================================="
     echo "Branch pushed, but 'hub' was not found. You can open a PR here: "
