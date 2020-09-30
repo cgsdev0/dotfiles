@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "coc-go": ">=0.11.0",
+    "coc-graphql": ">=0.0.1",
+    "coc-jest": ">=1.0.3",
+    "coc-json": ">=1.2.6",
+    "coc-prettier": ">=1.1.17",
+    "coc-tslint-plugin": ">=1.1.1",
+    "coc-tsserver": ">=1.5.5"
+  }
+}

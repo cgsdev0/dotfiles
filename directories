@@ -5,9 +5,11 @@
 .config/autorandr/home
 .config/autorandr/mobile
 .config/cava
+.config/coc/extensions
 .config/dunst
 .config/i3
 .config/nvim
+.config/nvim/plugins.d
 .config/polybar
 .config/powerline
 .config/powerline/themes/tmux
