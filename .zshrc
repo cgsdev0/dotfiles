@@ -118,7 +118,7 @@ source $ZSH/oh-my-zsh.sh
 
 export FORGIT_FZF_DEFAULT_OPTS=" --border --cycle --ansi --reverse --height '80%' --preview-window right:66%"
 
-export EDITOR=nvim
+export EDITOR=vim
 
 if [ -f "$HOME/.jira_token" ] ; then
     eval "$(jira --completion-script-zsh)"

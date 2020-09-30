@@ -13,7 +13,7 @@ Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-commentary'
 Plug 'rhysd/vim-clang-format'
 Plug 'roxma/vim-tmux-clipboard'
-" Go development tools
+Plug 'unblevable/quick-scope'
 
 " TODO: Explore these
 " Plug 'SirVer/ultisnips'
