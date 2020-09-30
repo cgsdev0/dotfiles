@@ -1,0 +1,32 @@
+#!/bin/bash
+
+set -e
+
+PR_NUMBER_ID="$1"
+
+if ! which jq &> /dev/null; then
+	echo "requires jq to run, please install first"
+	exit 1
+fi
+
+if [ -z "$PR_NUMBER_ID" ]; then
+	echo "Usage: ./comment-sheep [PR number]"
+	exit 1
+fi
+
+PR_ID=$(hub api graphql -F query='
+query {
+	repository(name: "backend", owner: "samsara-dev") {
+		pullRequest(number: '$PR_NUMBER_ID') {
+			id
+		}
+	}
+}' | jq -r '.data.repository.pullRequest.id')
+
+hub api graphql -F query='
+mutation {
+	addComment(input: {body: ":sheep:", clientMutationId: "bash", subjectId: "'"$PR_ID"'"}) {
+		clientMutationId
+	}
+}
+' | jq

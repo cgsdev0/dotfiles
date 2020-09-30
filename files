@@ -33,6 +33,7 @@
 bin/battery
 bin/cava-colors
 bin/color
+bin/comment-sheep
 bin/connect
 bin/devbox-connect
 bin/dotify
