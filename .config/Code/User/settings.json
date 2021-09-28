@@ -77,5 +77,8 @@
       "gitDecoration.deletedResourceForeground": "#FFBE44",
       "gitDecoration.untrackedResourceForeground": "#3e73aa"
     }
-  }
+  },
+  "extensions.autoUpdate": "onlyEnabledExtensions",
+  "update.mode": "none",
+  "go.toolsManagement.autoUpdate": true
 }

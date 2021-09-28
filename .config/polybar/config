@@ -59,13 +59,13 @@ padding-right = 7
 module-margin-left = 3
 module-margin-right = 3
 
-font-0 = fixed:pixelsize=11;2
+font-0 = fixed:pixelsize=12;2
+font-1 = FontAwesome:pixelsize=16;2
+font-2 = Hack Nerd Font Mono:pixelsize=20;4
 #font-1 = unifont:fontformat=truetype:size=8:antialias=false;0
 ;font-2 = siji:pixelsize=10;1
-font-1 = FontAwesome:pixelsize=16;3
-font-2 = Weather Icons:pixelsize=16;3
 
-modules-left = cpu memory filesystem custombattery
+modules-left = cpu memory filesystem custombattery customvpn
 ;weathericon weathertext
 modules-center = i3
 modules-right = alsa wlan eth date time
@@ -329,6 +329,13 @@ type = custom/script
 exec = battery bar
 click-left = battery info
 interval = 3
+
+[module/customvpn]
+type = custom/script
+
+exec = vpn-status
+click-left = vpn-status --toggle
+interval = 2
 
 [module/battery]
 type = internal/battery

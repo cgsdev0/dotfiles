@@ -203,6 +203,7 @@ for_window [class="^.*"] border pixel 1
 for_window [class="Google-chrome"] border none
 for_window [title="[.]*Emulator[.]*"] floating enable
 for_window [class="Peek"] floating enable
+for_window [class="Pavucontrol"] floating enable
 for_window [class="^scratchterm$"] floating enable
 for_window [class="^scratchterm$"] move scratchpad
 for_window [class="^Gnome-calculator$"] floating enable
@@ -219,7 +220,7 @@ exec_always --no-startup-id xset r rate 250 45
 exec_always --no-startup-id xinput --set-prop "Logitech USB Receiver Mouse" "Coordinate Transformation Matrix" 0.7 0 0 0 0.7 0 0 0 1
 
 # Start compton
-exec_always --no-startup-id compton &> /dev/null
+exec_always --no-startup-id compton --config ~/.config/compton.conf -b &> /dev/null
 
 # Start dunst
 exec_always --no-startup-id killall dunst; dunst -lb "$bgcolor" -nb "$bgcolor" -cb "$bgcolor" -lf "$textcolor" -nf "$textcolor" -cf "$urgentcolor"
@@ -233,10 +234,7 @@ bindsym Ctrl+Print exec --no-startup-id ~/bin/screenshot-mac
 bindsym $mod+Tab workspace back_and_forth
 
 # Mod+Shift+C = toggle compton
-bindsym $mod+Shift+c exec --no-startup-id killall compton || compton &> /dev/null
-
-# Mod+Shift+C = toggle compton
-bindsym $mod+F5 exec --no-startup-id rr2
+bindsym $mod+Shift+c exec --no-startup-id killall compton || compton --config ~/.config/compton.conf -b &> /dev/null
 
 # Pulse Audio controls
 bindsym XF86AudioRaiseVolume exec --no-startup-id volume up #increase sound volume
