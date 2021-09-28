@@ -38,8 +38,8 @@ def send_colors(buttons):
     pywal.export.every(colors, CACHE_DIR)
 
     # Export individual template files.
-    pywal.export.color(colors, "xresources", "/home/shane/.Xresources")
-    pywal.export.color(colors, "shell", "/home/shane/colors.sh")
+    pywal.export.color(colors, "xresources", "/home/sarah/.Xresources")
+    pywal.export.color(colors, "shell", "/home/sarah/colors.sh")
 
     # Reload xrdb, i3 and polybar.
     pywal.reload.env()

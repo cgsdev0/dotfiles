@@ -6,4 +6,4 @@ PICTURE="/tmp/screengrab.png"
 
 screencapture -w $PICTURE
 
-scp -p $PICTURE carbon:/home/shane/Pictures/mac-screenshot-`mktemp -u XXXXXXX`.png
+scp -p $PICTURE carbon:/home/sarah/Pictures/mac-screenshot-`mktemp -u XXXXXXX`.png
