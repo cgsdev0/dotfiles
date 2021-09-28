@@ -1,4 +1,4 @@
-# Shane's Dotfiles
+# Sarah's Dotfiles
 
 **Warning**: Running `install.sh` will overwrite any existing configurations that clash with mine. 
 I would **not recommend** using this script on your system.
