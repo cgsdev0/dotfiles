@@ -1,7 +1,7 @@
 endpoint: https://samsaradev.atlassian.net
 editor: vim
 accountId: 5c6b1a0acf74864794a31cb5
-login: shane.schulte@samsara.com
+login: sarah.schulte@samsara.com
 
 custom-commands:
   - name: mysprint

@@ -1,2 +1,2 @@
-if [ -f /home/shane/.bashrc ]; then source /home/shane/.bashrc; fi
+if [ -f /home/sarah/.bashrc ]; then source /home/sarah/.bashrc; fi
 source ~/.profile

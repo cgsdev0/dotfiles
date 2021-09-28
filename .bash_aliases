@@ -54,10 +54,10 @@ alias tmuxrc="vim ~/.tmux.conf && tmux source-file ~/.tmux.conf"
 
 # == Samsara ==
 alias unfuck-hooks="[[ \"\$(readlink \$HOME/co/backend/.git/hooks)\" = personal_hooks ]] || (cd \$HOME/co/backend/.git; unlink hooks; mkdir -p personal_hooks; ln -s personal_hooks hooks; echo 'Personal hooks restored.')"
-alias d1="sudo chown -R shane:shane /dev/kvm && bin/d1-run-android"
-alias troy="sudo chown -R shane:shane /dev/kvm && bin/troy-run-android"
+alias d1="sudo chown -R sarah:sarah /dev/kvm && bin/d1-run-android"
+alias troy="sudo chown -R sarah:sarah /dev/kvm && bin/troy-run-android"
 alias slack="google-chrome --app='https://samsara-net.slack.com/messages'"
-alias vpn="taskrunner vpn/token && sudo openvpn /home/shane/co/backend/conf/tunnelblick/default.tblk/Contents/Resources/config.ovpn"
+alias vpn="taskrunner vpn/token && sudo openvpn /home/sarah/co/backend/conf/tunnelblick/default.tblk/Contents/Resources/config.ovpn"
 #### Taskrunner
 alias taskl="taskrunner --list | tail -n +3 | fzf | xargs -r taskrunner"
 alias taskr="export SENTRY_RELEASE_ID=\"troy:dev_no_sentry\"; taskrunner"
