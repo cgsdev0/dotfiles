@@ -66,8 +66,8 @@ fi
 # install global nodejs
 if ! which node > /dev/null; then
     if [[ "$OSTYPE" == "linux-gnu" ]]; then
-	curl -fsSL https://deb.nodesource.com/setup_current.x | sudo -E bash -
-	sudo apt-get install -y nodejs
+        curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell
+        fnm install
     elif [[ "$OSTYPE" == "darwin"* ]]; then
         brew install node
     fi
