@@ -34,9 +34,6 @@ nnoremap <RightMouse> <LeftMouse>:CocFzfList actions<CR>
 " ================
 " Javascript
 " ================
-
-let g:coc_node_path = '/usr/bin/node'
-
 " Jest commands
 command! -nargs=0 JestFile :call CocAction('runCommand', 'jest.fileTest', ['%'])
 command! -nargs=0 JestSingle :call CocAction('runCommand', 'jest.singleTest')

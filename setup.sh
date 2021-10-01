@@ -1,7 +1,14 @@
 #!/bin/bash
 
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
-	sudo apt-get install -y build-essential zsh unzip curl direnv powerline
+	sudo apt-get install -y build-essential \
+      zsh \
+      unzip \
+      curl \
+      direnv \
+      powerline \
+      clang-format \
+      tmux
 fi
 
 # Install zsh
@@ -52,6 +59,7 @@ if ! vim --version | grep "NVIM" -q; then
 	sudo update-alternatives --install /usr/bin/vim vim $(which nvim) 200
         curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
     elif [[ "$OSTYPE" == "darwin"* ]]; then
 	NEOVIM_VERSION="0.6.0"
         wget https://github.com/neovim/neovim/releases/download/$NEOVIM_VERSION/nvim-macos.tar.gz
@@ -59,6 +67,16 @@ if ! vim --version | grep "NVIM" -q; then
         rm nvim-macos.tar.gz
         sudo ln -sf $HOME/tools/nvim-osx64/bin/nvim $HOME/bin/nvim
     fi
+    vim -c :PlugInstall
+    vim -c ":CocInstall coc-json" \
+        -c ":CocInstall coc-tsserver" \
+        -c ":CocInstall coc-go" \
+        -c ":CocInstall coc-jest" \
+        -c ":CocInstall coc-graphql" \
+        -c ":CocInstall coc-tslint" \
+        -c ":CocInstall coc-eslint" \
+        -c ":CocInstall coc-tslint-plugin" \
+        -c ":CocInstall coc-prettier"
 else
     echo "NVIM $NEOVIM_VERSION already installed"
 fi
@@ -181,6 +199,3 @@ if ! which baton > /dev/null; then
 else
     echo "baton already installed"
 fi
-
-# drop into a shiny new shell (hopefully)
-zsh
