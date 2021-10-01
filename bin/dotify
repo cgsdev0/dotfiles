@@ -19,7 +19,7 @@ if [ -h "$1" ]; then
 fi
 
 # Path calculations
-OLD_HOME=$(relpath $1 ~)
+OLD_HOME=$(realpath --relative-to="$HOME" "$1")
 NEW_HOME="$REPO/$OLD_HOME"
 OLD_FOLDER=$(dirname "$OLD_HOME")
 
@@ -32,7 +32,7 @@ ln -sf "$NEW_HOME" "$1"
 NEW_DIRS=$(mktemp)
 NEW_FILES=$(mktemp)
 (cat "$REPO/directories"; echo "$OLD_FOLDER") | sort | uniq > $NEW_DIRS
-(cat "$REPO/files"; echo $(relpath $NEW_HOME $REPO)) | sort | uniq > $NEW_FILES
+(cat "$REPO/files"; echo "$OLD_HOME") | sort | uniq > $NEW_FILES
 
 cp $NEW_DIRS "$REPO/directories"
 cp $NEW_FILES "$REPO/files"

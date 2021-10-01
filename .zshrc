@@ -150,3 +150,6 @@ fi
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 typeset -g POWERLEVEL9K_INSTANT_PROMPT=off
 
+# fnm
+export PATH=$HOME/.fnm:$PATH
+eval "`fnm env`"

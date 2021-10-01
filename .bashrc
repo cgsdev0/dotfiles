@@ -120,3 +120,7 @@ export PATH=$(pwd -P)/../../opt/node$NODE_VERSION/bin:$PATH
 eval "$(direnv hook bash)"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+# fnm
+export PATH=$HOME/.fnm:$PATH
+eval "`fnm env`"
