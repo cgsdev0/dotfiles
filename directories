@@ -5,6 +5,7 @@
 .config/autorandr/docked
 .config/autorandr/home
 .config/autorandr/mobile
+.config/autorandr/sf7
 .config/cava
 .config/coc/extensions
 .config/dunst

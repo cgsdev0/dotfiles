@@ -10,6 +10,9 @@
 .config/autorandr/home/config
 .config/autorandr/mobile/config
 .config/autorandr/mobile/postswitch
+.config/autorandr/sf7/config
+.config/autorandr/sf7/postswitch
+.config/autorandr/sf7/setup
 .config/cava/config
 .config/coc/extensions/package.json
 .config/compton.conf
