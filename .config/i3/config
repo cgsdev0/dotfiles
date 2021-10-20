@@ -219,8 +219,12 @@ exec_always --no-startup-id setxkbmap -option caps:escape
 exec_always --no-startup-id xset r rate 250 45
 exec_always --no-startup-id xinput --set-prop "Logitech USB Receiver Mouse" "Coordinate Transformation Matrix" 0.7 0 0 0 0.7 0 0 0 1
 
-# Start compton
-exec_always --no-startup-id compton --config ~/.config/compton.conf -b &> /dev/null
+# Transparency shortcuts
+bindsym $mod+Shift+plus exec --no-startup-id ~/bin/terminal_transparency up
+bindsym $mod+Shift+minus exec --no-startup-id ~/bin/terminal_transparency down
+
+# Start picom
+exec_always --no-startup-id picom --experimental-backends -c --config ~/.config/compton.conf -b &> /dev/null
 
 # Start dunst
 exec_always --no-startup-id killall dunst; dunst -lb "$bgcolor" -nb "$bgcolor" -cb "$bgcolor" -lf "$textcolor" -nf "$textcolor" -cf "$urgentcolor"
@@ -233,8 +237,8 @@ bindsym Ctrl+Print exec --no-startup-id ~/bin/screenshot-mac
 # Mod+Tab = toggle workspace
 bindsym $mod+Tab workspace back_and_forth
 
-# Mod+Shift+C = toggle compton
-bindsym $mod+Shift+c exec --no-startup-id killall compton || compton --config ~/.config/compton.conf -b &> /dev/null
+# Mod+Shift+C = toggle picom
+bindsym $mod+Shift+c exec --no-startup-id killall picom || picom --experimental-backends -c --config ~/.config/compton.conf -b &> /dev/null
 
 # Pulse Audio controls
 bindsym XF86AudioRaiseVolume exec --no-startup-id volume up #increase sound volume
