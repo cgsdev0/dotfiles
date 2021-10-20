@@ -13,6 +13,7 @@
 .config/autorandr/sf7/config
 .config/autorandr/sf7/postswitch
 .config/autorandr/sf7/setup
+.config/bat/config
 .config/cava/config
 .config/coc/extensions/package.json
 .config/compton.conf

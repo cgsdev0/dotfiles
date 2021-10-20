@@ -6,6 +6,7 @@
 .config/autorandr/home
 .config/autorandr/mobile
 .config/autorandr/sf7
+.config/bat
 .config/cava
 .config/coc/extensions
 .config/dunst

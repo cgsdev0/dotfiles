@@ -22,7 +22,7 @@ nmap <leader>rn <Plug>(coc-rename)
 
 " VS code binds I'm too attached to
 map <M-S-o> :CocCommand tsserver.organizeImports<CR>
-map <C-S-p> :CocFzfList<CR>
+" map <C-S-p> :CocFzfList<CR>
 " Windows terminal hack
 map <F6> :CocFzfList<CR>
 
@@ -43,7 +43,7 @@ command! -nargs=0 JestSingle :call CocAction('runCommand', 'jest.singleTest')
 " ================
 
 " format on save
-autocmd BufWritePre *.cpp,*.h ClangFormat
+autocmd BufWritePre *.c,*.cpp,*.h ClangFormat
 
 " ================
 " Python

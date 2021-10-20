@@ -10,6 +10,9 @@ alias gR="git reset -q; git s"
 alias gs="git s"
 alias gc="git commit"
 
+# Clear shortcut
+alias c="clear && tmux clear-history"
+
 # Timezones
 alias tz-atlanta="sudo ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime"
 alias tz-detroit="sudo ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime"

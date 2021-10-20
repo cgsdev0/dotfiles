@@ -1,4 +1,15 @@
 {
+  "go.goplsPath": "/home/ubuntu/co/backend/bin/gopls",
+  "go.goplsOptions": {
+    "expandWorkspaceToModule": false,
+    "staticcheck": false,
+    "local": "samsaradev.io",
+    "codelenses": {
+      "gc_details": false,
+      "generate": false,
+      "test": false
+    }
+  },
   "tslint.autoFixOnSave": true,
   "eslint.autoFixOnSave": true,
   "coc.preferences.formatOnSaveFiletypes": [
