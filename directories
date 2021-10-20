@@ -1,7 +1,6 @@
 .
+bin
 .config
-.config/Code/User
-.config/Dharkael
 .config/autorandr/docked
 .config/autorandr/home
 .config/autorandr/mobile
@@ -9,6 +8,8 @@
 .config/bat
 .config/cava
 .config/coc/extensions
+.config/Code/User
+.config/Dharkael
 .config/dunst
 .config/i3
 .config/nvim
@@ -18,11 +19,10 @@
 .config/powerline/themes/tmux
 .config/ranger
 .config/rg
+dotfiles
 .jira.d
 .jira.d/templates
-.todo
-bin
-dotfiles
 node_modules/vtop/themes
 themes
 themes/override
+.todo
