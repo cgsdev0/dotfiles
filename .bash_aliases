@@ -42,6 +42,14 @@ alias pass="cat /usr/share/dict/words | grep -v \"[']\" | shuf -n 6 | tr '[:uppe
 alias c0="cat ~/.cache/wal/sequences"
 alias c1="cat ~/themes/override/monokai"
 alias c2="cat ~/themes/override/vscode"
+alias c3="cat ~/themes/override/gruvbox"
+alias c4="cat ~/themes/override/gruvbox-light"
+
+alias sc0="wal -i ~/.config/wall.png && theme"
+alias sc1="wal --theme sexy-monokai && theme"
+alias sc2="wal --theme vscode && theme"
+alias sc3="wal --theme base16-gruvbox-medium && theme"
+alias sc4="wal --theme base16-gruvbox-medium -l && theme"
 
 # Configurations
 alias vimrc="vim ~/.config/nvim/init.vim"

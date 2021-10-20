@@ -151,5 +151,7 @@ fi
 typeset -g POWERLEVEL9K_INSTANT_PROMPT=off
 
 # fnm
-export PATH=$HOME/.fnm:$PATH
-eval "`fnm env`"
+if which fnm > /dev/null; then
+    export PATH=$HOME/.fnm:$PATH
+    eval "`fnm env`"
+fi

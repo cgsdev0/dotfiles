@@ -4,7 +4,6 @@
 
 [core]
     editor = vim
-    pager = delta --dark
 
 [alias]
     summon = "!summon () { b=$1; git fetch origin +refs/heads/$b:refs/remotes/origin/$b $b:$b; }; summon"
