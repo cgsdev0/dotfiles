@@ -10,6 +10,11 @@ nmap <silent> gr <Plug>(coc-references)
 " Use K to show documentation in preview window.
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
+" Autocomplete settings
+"let b:coc_suggest_disable = 1
+inoremap <silent><expr> <c-space> coc#refresh()
+nnoremap <silent><expr> <c-space> coc#refresh()
+
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
     execute 'h '.expand('<cword>')
@@ -23,6 +28,7 @@ nmap <leader>rn <Plug>(coc-rename)
 " VS code binds I'm too attached to
 map <M-S-o> :CocCommand tsserver.organizeImports<CR>
 " map <C-S-p> :CocFzfList<CR>
+"
 " Windows terminal hack
 map <F6> :CocFzfList<CR>
 

@@ -11,11 +11,27 @@
     }
   },
   "tslint.autoFixOnSave": true,
+  "languageserver": {
+      "ccls": {
+          "command": "ccls",
+          "filetypes": ["c", "cpp", "cuda", "objc", "objcpp"],
+          "rootPatterns": [".ccls-root", "compile_commands.json"],
+          "initializationOptions": {
+              "cache": {
+                  "directory": ".ccls-cache"
+              },
+              "client": {
+                  "snippetSupport": true
+              }
+          }
+      }
+  },
   "eslint.autoFixOnSave": true,
   "coc.preferences.formatOnSaveFiletypes": [
     "go",
     "javascript",
     "typescript",
+    "typescriptreact",
     "javascript.jsx",
     "typescript.tsx",
     "json"

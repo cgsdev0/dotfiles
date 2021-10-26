@@ -12,7 +12,7 @@ if [ $has_local_changes -ne 0 ]; then
 fi
 
 git pull origin master --rebase
-./install.sh
+./_install.sh
 
 if [ $has_local_changes -ne 0 ]; then
     git stash apply --quiet

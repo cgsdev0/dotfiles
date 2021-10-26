@@ -14,7 +14,7 @@ fi
 # Install zsh
 sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
-./install.sh
+./_install.sh
 mkdir -p ~/tools
 mkdir -p ~/todo
 
