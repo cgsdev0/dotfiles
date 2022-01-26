@@ -124,3 +124,6 @@ eval "$(direnv hook bash)"
 # fnm
 export PATH=$HOME/.fnm:$PATH
 eval "`fnm env`"
+
+
+.[ -f "$HOME/.cargo/env" ] && "$HOME/.cargo/env"
