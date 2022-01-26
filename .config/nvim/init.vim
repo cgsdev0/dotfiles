@@ -43,10 +43,6 @@ nnoremap <leader>, :e ~/.config/nvim/init.vim<CR>
 
 " Buffer navigation
 nnoremap <Tab> :bnext<CR>
-" Gross windows hack lol
-nnoremap <F5> :bprevious<CR>
-cmap <F5> <S-Tab>
-" /end hack
 nnoremap <S-Tab> :bprevious<CR>
 nnoremap <C-w><C-w> :bp\|bd #<CR>
 

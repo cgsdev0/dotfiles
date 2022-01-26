@@ -27,10 +27,6 @@ nmap <leader>rn <Plug>(coc-rename)
 
 " VS code binds I'm too attached to
 map <M-S-o> :CocCommand tsserver.organizeImports<CR>
-" map <C-S-p> :CocFzfList<CR>
-"
-" Windows terminal hack
-map <F6> :CocFzfList<CR>
 
 " Why not?
 nnoremap <M-LeftMouse> <LeftMouse>:call CocAction('jumpDefinition')<CR>
