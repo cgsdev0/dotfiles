@@ -24,14 +24,9 @@ export TODOTXT_DEFAULT_ACTION=ls
 alias t="todo.sh -ct"
 alias kde="/usr/lib/x86_64-linux-gnu/libexec/kdeconnectd"
 alias sp="baton my saved tracks"
-alias clear="clear; printf '\n%.0s' {1..100}"
 
 # Wifi Management
 alias wifi="nmcli d wifi list"
-
-# Power Management
-alias sleep-disable="sudo systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target"
-alias sleep-enable="sudo systemctl unmask sleep.target suspend.target hibernate.target hybrid-sleep.target"
 
 # Random
 alias copy="xclip -selection c"
@@ -63,30 +58,6 @@ alias ba="vim ~/.bash_aliases && . ~/.bash_aliases"
 alias zshrc="vim ~/.zshrc && . ~/.zshrc"
 alias tmuxrc="vim ~/.tmux.conf && tmux source-file ~/.tmux.conf"
 
-# == Samsara ==
-alias unfuck-hooks="[[ \"\$(readlink \$HOME/co/backend/.git/hooks)\" = personal_hooks ]] || (cd \$HOME/co/backend/.git; unlink hooks; mkdir -p personal_hooks; ln -s personal_hooks hooks; echo 'Personal hooks restored.')"
-alias d1="sudo chown -R sarah:sarah /dev/kvm && bin/d1-run-android"
-alias troy="sudo chown -R sarah:sarah /dev/kvm && bin/troy-run-android"
-alias slack="google-chrome --app='https://samsara-net.slack.com/messages'"
-alias vpn="taskrunner vpn/token && sudo openvpn /home/sarah/co/backend/conf/tunnelblick/default.tblk/Contents/Resources/config.ovpn"
-#### Taskrunner
-alias taskl="taskrunner --list | tail -n +3 | fzf | xargs -r taskrunner"
-alias taskr="export SENTRY_RELEASE_ID=\"troy:dev_no_sentry\"; taskrunner"
-alias taskt="taskrunner --config mobile/Troy/troy.taskrunner.json"
-alias dbox="BROWSER=local-open taskrunner devbox/run"
-alias dbox-mac="ssh mac \"/usr/local/bin/tmux send-keys -t monitoring C-C 'DEVBOX_CUSTOM_AUTOSSH_OPTS= taskrunner devbox/run' C-m\""
-#### Locations
-alias gb="cd ~/co/backend"
-alias gt="cd ~/co/backend/mobile/Troy"
-alias gd1="cd ~/co/backend/mobile/SamsaraDriver"
-#### SQL
-alias mysql-dev="mysql -h 127.0.0.1 --port=3307 -uroot -pdev"
-alias mycli-dev="mycli -h 127.0.0.1 -P 3307 -uroot -pdev"
-#### Jank controls
-jankset() { curl https://shaneschulte.com/mob_jank_gauge/set_jank.php -d "jank=$1"; }
-jankadd() { curl https://shaneschulte.com/mob_jank_gauge/set_jank.php -d "jank=$1&mode=add"; }
-janksubtract() { curl https://shaneschulte.com/mob_jank_gauge/set_jank.php -d "jank=$1&mode=subtract"; }
-jankpop() { curl https://shaneschulte.com/mob_jank_gauge/set_jank.php -d "jank=$1&mode=pop"; }
 #### Jira management
 alias pr="jira-tools pull-request"
 alias start="jira-tools start"
