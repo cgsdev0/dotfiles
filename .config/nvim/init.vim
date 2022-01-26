@@ -2,8 +2,9 @@ let mapleader = " "
 
 " Load plugins
 runtime plugins.vim
-
-colorscheme wal
+set guifont=Hack\ NF:h16
+autocmd vimenter * ++nested colorscheme gruvbox
+let g:neovide_cursor_animation_length=0
 
 " Basic configuration
 set number relativenumber

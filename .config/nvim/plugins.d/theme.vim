@@ -4,6 +4,7 @@ Plug 'sheerun/vim-polyglot'
 Plug 'PotatoesMaster/i3-vim-syntax'
 Plug 'vim-airline/vim-airline'
 Plug 'chrisbra/Colorizer'
+Plug 'morhetz/gruvbox'
 
 " Powerline theme
 let g:airline_powerline_fonts = 1
