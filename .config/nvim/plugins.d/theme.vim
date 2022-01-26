@@ -1,4 +1,11 @@
 Plug 'kaicataldo/material.vim', { 'branch': 'main' }
+let g:material_theme_style = 'darker'
+
+" For Neovim 0.1.3 and 0.1.4 - https://github.com/neovim/neovim/pull/2198
+if (has('nvim'))
+  let $NVIM_TUI_ENABLE_TRUE_COLOR = 1
+endif
+
 Plug 'peitalin/vim-jsx-typescript'
 Plug 'pangloss/vim-javascript'
 Plug 'sheerun/vim-polyglot'
@@ -6,13 +13,7 @@ Plug 'PotatoesMaster/i3-vim-syntax'
 Plug 'vim-airline/vim-airline'
 Plug 'chrisbra/Colorizer'
 
-let g:material_theme_style = 'darker'
-colorscheme material
 
-" For Neovim 0.1.3 and 0.1.4 - https://github.com/neovim/neovim/pull/2198
-if (has('nvim'))
-  let $NVIM_TUI_ENABLE_TRUE_COLOR = 1
-endif
 
 " Airline theme
 let g:airline_theme = 'material'

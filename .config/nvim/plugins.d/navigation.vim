@@ -1,5 +1,4 @@
 Plug 'christoomey/vim-tmux-navigator'
-Plug 'roman/golden-ratio'
 
 " Window navigation
 let g:tmux_navigator_no_mappings = 1

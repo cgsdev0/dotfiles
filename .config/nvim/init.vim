@@ -3,6 +3,8 @@ let mapleader = " "
 " Load plugins
 runtime plugins.vim
 
+colorscheme material
+
 " Basic configuration
 set number relativenumber
 set tabstop=2 softtabstop=0 expandtab shiftwidth=4 smarttab
