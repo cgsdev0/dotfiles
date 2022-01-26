@@ -46,10 +46,11 @@ if [ ! -z "$SSH_TTY" ]; then
     fi
 else
     if [[ "$OSTYPE" == "linux-gnu" ]]; then
-        eval $(ssh-agent)
+        eval $(ssh-agent) &> /dev/null
     fi
 fi
 
 if [ "$NICKNAME" = "devbox" ] ; then
     export SSH_AUTH_SOCK=/tmp/.devbox_agent.sock
 fi
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
