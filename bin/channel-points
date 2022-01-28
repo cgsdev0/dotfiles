@@ -18,13 +18,15 @@ ACCESS_TOKEN=$(echo "$RESPONSE" | jq -r '.access_token')
 
 echo "$REFRESH_TOKEN" > ~/.twitch_refresh
 
+PANE=$(tmux display -pt "${TMUX_PANE:?}" '#{pane_index}')
+
 redeem () {
     while IFS= read -r line; do
         who=$(echo "$line" | jq -r '.user.display_name')
         reward=$(echo "$line" | jq -r '.reward.title')
         case $reward in
             "CHOO CHOO")
-                tmux select-pane -t 1
+                tmux select-pane -t $PANE
                 tmux resize-pane -Z
                 sl
                 tmux resize-pane -Z
@@ -32,7 +34,7 @@ redeem () {
             "Flashbang")
                 mpv --volume-max=200 $FLASHBANG_SFX &>/dev/null &
                 sleep 2.6
-                tmux select-pane -t 1
+                tmux select-pane -t $PANE
                 tmux resize-pane -Z
                 colorscheme flashbang
                 tmux resize-pane -Z
