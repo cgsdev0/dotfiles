@@ -1,0 +1,100 @@
+#!/bin/bash
+
+ALACRITTY_CONFIG="/mnt/c/Users/sarah/AppData/Roaming/alacritty/alacritty.yml"
+VIM_COLOR_CONFIG=~/.config/nvim/colors.vim
+
+rm -f "$VIM_COLOR_CONFIG"
+
+_vim_cmd () {
+    nvr --serverlist | xargs -L1 -I {} nvr --servername {} -c ":$@"
+}
+
+vim_cmd () {
+    echo "$@" >> "$VIM_COLOR_CONFIG"
+    _vim_cmd "$@"
+}
+
+vim_airline () {
+    _vim_cmd "AirlineTheme $1"
+    echo "let g:airline_theme = '$1'" >> "$VIM_COLOR_CONFIG"
+}
+
+if [[ "$1" == "hotdog" ]]; then
+    vim_cmd "colorscheme hotdog"
+    vim_airline "atomic"
+    yq -i '
+        .colors.primary.background = "#ff0000" |
+        .colors.primary.foreground = "#ffff00" |
+        .colors.normal.black = "#ffff00" |
+        .colors.normal.red = "#ffff00" |
+        .colors.normal.green = "#ffff00" |
+        .colors.normal.yellow = "#ffff00" |
+        .colors.normal.blue = "#ffff00" |
+        .colors.normal.magenta = "#ffff00" |
+        .colors.normal.cyan = "#ffff00" |
+        .colors.normal.white = "#ffff00"
+    ' $ALACRITTY_CONFIG
+elif [[ "$1" == "solarized" ]]; then
+    vim_cmd "set background=dark"
+    vim_cmd "colorscheme solarized8"
+    vim_airline "solarized"
+    yq -i '
+        .colors.primary.background = "#002b36" |
+        .colors.primary.foreground = "#839496" |
+        .colors.normal.black = "#fdf6e3" |
+        .colors.normal.red = "#dc322f" |
+        .colors.normal.green = "#859900" |
+        .colors.normal.yellow = "#b58900" |
+        .colors.normal.blue = "#268bd2" |
+        .colors.normal.magenta = "#d33682" |
+        .colors.normal.cyan = "#2aa198" |
+        .colors.normal.white = "#eee8d5"
+    ' $ALACRITTY_CONFIG
+elif [[ "$1" == "gruvbox" ]]; then
+    vim_cmd "set background=dark"
+    vim_cmd "colorscheme gruvbox"
+    vim_airline "base16_gruvbox_dark_hard"
+    yq -i '
+        .colors.primary.background = "#282828" |
+        .colors.primary.foreground = "#ebdbb2" |
+        .colors.normal.black = "#928374" |
+        .colors.normal.red = "#cc241d" |
+        .colors.normal.green = "#98971a" |
+        .colors.normal.yellow = "#d79921" |
+        .colors.normal.blue = "#458588" |
+        .colors.normal.magenta = "#b16286" |
+        .colors.normal.cyan = "#689d6a" |
+        .colors.normal.white = "#a89984"
+    ' $ALACRITTY_CONFIG
+elif [[ "$1" == "gruvbox light" ]]; then
+    vim_cmd "set background=light"
+    vim_cmd "colorscheme gruvbox"
+    vim_airline "base16_gruvbox_light_hard"
+    yq -i '
+        .colors.primary.background = "#fbf1c7" |
+        .colors.primary.foreground = "#3c3836" |
+        .colors.normal.black = "#928374" |
+        .colors.normal.red = "#cc241d" |
+        .colors.normal.green = "#98971a" |
+        .colors.normal.yellow = "#d79921" |
+        .colors.normal.blue = "#458588" |
+        .colors.normal.magenta = "#b16286" |
+        .colors.normal.cyan = "#689d6a" |
+        .colors.normal.white = "#7c6f64"
+    ' $ALACRITTY_CONFIG
+elif [[ "$1" == "material" ]]; then
+    vim_cmd "colorscheme material"
+    vim_airline "material"
+    yq -i '
+        .colors.primary.background = "#212121" |
+        .colors.primary.foreground = "#eeffff" |
+        .colors.normal.black = "#2b2b2b" |
+        .colors.normal.red = "#f07178" |
+        .colors.normal.green = "#c3e88d" |
+        .colors.normal.yellow = "#ffcb6b" |
+        .colors.normal.blue = "#82aaff" |
+        .colors.normal.magenta = "#c792ea" |
+        .colors.normal.cyan = "#89ddff" |
+        .colors.normal.white = "#eeffff"
+    ' $ALACRITTY_CONFIG
+fi

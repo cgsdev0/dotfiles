@@ -1,0 +1,27 @@
+#!/bin/bash
+
+msg='{"type":"LISTEN","data":{"topics":["channel-points-channel-v1.56931496"],"auth_token":"1db1ug82vvyf3cdpokvesixi42y67i"}}'
+
+ping='{"type": "PING"}'
+
+redeem () {
+    while IFS= read -r line; do
+        who=$(echo "$line" | jq -r '.user.display_name')
+        reward=$(echo "$line" | jq -r '.reward.title')
+        case $reward in
+            "CHOO CHOO")
+                tmux select-pane -t 1
+                tmux resize-pane -Z
+                sl
+                tmux resize-pane -Z
+                ;;
+            "Theme:"*)
+                colorscheme "$(echo "$reward" | cut -d' ' -f2- | tr '[:upper:]' '[:lower:]')"
+                ;;
+            *)
+                echo "$who redeemed '$reward'!"
+        esac
+    done
+}
+
+(echo "$msg"; while true; do sleep 280; echo "$ping"; done) | websocat_linux64 wss://pubsub-edge.twitch.tv | jq -r --unbuffered 'select(.type == "MESSAGE") | .data.message' | jq -c --unbuffered '.data.redemption' | redeem

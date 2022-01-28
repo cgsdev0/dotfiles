@@ -3,9 +3,6 @@
 # Settings
 REPO=$(cd $(dirname $(readlink $0))/..; pwd -P)
 
-# Get relative path of $1 on $2
-relpath(){ python2 -c "import os.path; print os.path.relpath('$1','${2:-$PWD}')" ; }
-
 # Check if file exists
 if [ ! -f "$1" ]; then
     echo "Must specify a valid file"
@@ -27,12 +24,3 @@ OLD_FOLDER=$(dirname "$OLD_HOME")
 mkdir -p $(dirname "$NEW_HOME")
 mv "$1" "$NEW_HOME"
 ln -sf "$NEW_HOME" "$1"
-
-# Create instructions for installing in the future
-NEW_DIRS=$(mktemp)
-NEW_FILES=$(mktemp)
-(cat "$REPO/directories"; echo "$OLD_FOLDER") | sort | uniq > $NEW_DIRS
-(cat "$REPO/files"; echo "$OLD_HOME") | sort | uniq > $NEW_FILES
-
-cp $NEW_DIRS "$REPO/directories"
-cp $NEW_FILES "$REPO/files"
