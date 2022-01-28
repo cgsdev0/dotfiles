@@ -3,7 +3,6 @@
 ALACRITTY_CONFIG="/mnt/c/Users/sarah/AppData/Roaming/alacritty/alacritty.yml"
 VIM_COLOR_CONFIG=~/.config/nvim/colors.vim
 
-rm -f "$VIM_COLOR_CONFIG"
 
 _vim_cmd () {
     nvr --serverlist | xargs -L1 -I {} nvr --servername {} -c ":$@"
@@ -18,6 +17,27 @@ vim_airline () {
     _vim_cmd "AirlineTheme $1"
     echo "let g:airline_theme = '$1'" >> "$VIM_COLOR_CONFIG"
 }
+
+if [[ "$1" == "flashbang" ]]; then
+    clear
+    echo -e "\n\n\n\n\n\n\n\n\n\t\t\t\t\t\t\tDeploying flashbang!\n\n\n\n\n\n\n\n\n\n\n\n\n"
+    BG=$(yq '.colors.primary.background' $ALACRITTY_CONFIG)
+    FG=$(yq '.colors.primary.foreground' $ALACRITTY_CONFIG)
+    yq -i '.colors.primary.background = "#ffffff" | .colors.primary.foreground="#ffffff"' $ALACRITTY_CONFIG
+    sleep 1
+    yq -i '.colors.primary.background = "#cccccc"' $ALACRITTY_CONFIG
+    sleep 0.3
+    yq -i '.colors.primary.background = "#888888"' $ALACRITTY_CONFIG
+    sleep 0.3
+    yq -i '.colors.primary.background = "#333333"' $ALACRITTY_CONFIG
+    sleep 0.3
+    yq -i '.colors.primary.background = "#000000"' $ALACRITTY_CONFIG
+    sleep 3
+    yq -i '.colors.primary.background = "'$BG'" | .colors.primary.foreground = "'$FG'"' $ALACRITTY_CONFIG
+    clear
+else
+    rm -f "$VIM_COLOR_CONFIG"
+fi
 
 if [[ "$1" == "hotdog" ]]; then
     vim_cmd "colorscheme hotdog"

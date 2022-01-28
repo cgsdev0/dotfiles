@@ -1,6 +1,22 @@
 #!/bin/bash
 
-msg='{"type":"LISTEN","data":{"topics":["channel-points-channel-v1.56931496"],"auth_token":"1db1ug82vvyf3cdpokvesixi42y67i"}}'
+REFRESH_TOKEN="$(cat ~/.twitch_refresh)"
+
+source ~/.twitch_secrets
+
+RESPONSE=$(curl -Ss -X POST "https://id.twitch.tv/oauth2/token" \
+    -F "client_id=${TWITCH_CLIENT_ID}" \
+    -F "refresh_token=${REFRESH_TOKEN}" \
+    -F "client_secret=${TWITCH_CLIENT_SECRET}" \
+    -F 'grant_type=refresh_token' \
+    -F 'scope=chat:read chat:edit')
+
+REFRESH_TOKEN=$(echo "$RESPONSE" | jq -r '.refresh_token')
+ACCESS_TOKEN=$(echo "$RESPONSE" | jq -r '.access_token')
+
+echo "$REFRESH_TOKEN" > ~/.twitch_refresh
+
+msg='{"type":"LISTEN","data":{"topics":["channel-points-channel-v1.56931496"],"auth_token":"'$ACCESS_TOKEN'"}}'
 
 ping='{"type": "PING"}'
 
@@ -15,6 +31,14 @@ redeem () {
                 sl
                 tmux resize-pane -Z
                 ;;
+            "Flashbang")
+                mpv --volume-max=200 /mnt/c/Users/sarah/Music/DeployingFlashbang.mp3 &>/dev/null &
+                sleep 2.6
+                tmux select-pane -t 1
+                tmux resize-pane -Z
+                colorscheme flashbang
+                tmux resize-pane -Z
+                ;;
             "Theme:"*)
                 colorscheme "$(echo "$reward" | cut -d' ' -f2- | tr '[:upper:]' '[:lower:]')"
                 ;;
@@ -24,4 +48,4 @@ redeem () {
     done
 }
 
-(echo "$msg"; while true; do sleep 280; echo "$ping"; done) | websocat_linux64 wss://pubsub-edge.twitch.tv | jq -r --unbuffered 'select(.type == "MESSAGE") | .data.message' | jq -c --unbuffered '.data.redemption' | redeem
+(echo "$msg"; while true; do sleep 280; echo "$ping"; done) | websocat_linux64 wss://pubsub-edge.twitch.tv | tee from_twitch | jq -r --unbuffered 'select(.type == "MESSAGE") | .data.message' | jq -c --unbuffered '.data.redemption' | redeem
