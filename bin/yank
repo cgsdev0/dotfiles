@@ -44,3 +44,6 @@ test -n "$TMUX" && tmux set-buffer "$buf" ||:
 
 # also copy via X11
 test -n "$DISPLAY" && printf %s "$buf" | { xsel -i -b || xclip -sel c ;} ||:
+
+# also copy via WSL
+grep -q WSL2 /proc/version && test -n "$DISPLAY" && printf %s "$buf" | { clip.exe || true ;} ||:

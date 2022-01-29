@@ -672,9 +672,10 @@ colors:
 
 #   - (Windows) powershell
 
-#shell:
+shell:
 
-#  program: /bin/bash
+  program: 'C:\Windows\system32\wsl.exe'
+working_directory: '\\wsl.localhost\Ubuntu-20.04\home\sarah'
 
 #  args:
 
