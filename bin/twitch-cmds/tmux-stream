@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -eu
+
+OUTER_SESSION_NAME="stream-outer"
+
+if ! tmux -f ~/.streaming-outer-tmux.conf new -d -s $OUTER_SESSION_NAME -x 137 -y 39; then
+    tmux attach -t $OUTER_SESSION_NAME
+else
+    tmux send-keys -t $OUTER_SESSION_NAME 'tw_chanpoints' Enter
+    tmux splitw -v -t $OUTER_SESSION_NAME
+    tmux send-keys -t $OUTER_SESSION_NAME 'tw_follower' Enter
+    tmux splitw -v -t $OUTER_SESSION_NAME
+    tmux send-keys -t $OUTER_SESSION_NAME 'tw_chat' Enter
+    tmux splitw -hfb -t $OUTER_SESSION_NAME
+    tmux select-layout -t $OUTER_SESSION_NAME \
+        "ce6f,137x40,0,0{101x40,0,0,3,35x40,102,0[35x12,102,0,0,35x1,102,13,1,35x25,102,15,2]}"
+    tmux attach -t $OUTER_SESSION_NAME
+fi

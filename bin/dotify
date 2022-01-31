@@ -3,11 +3,33 @@
 # Settings
 REPO=$(cd $(dirname $(readlink $0))/..; pwd -P)
 
+# Unlink mode
+if [ "$1" == "-u" ]; then
+    shift
+    # Check if file exists
+    if [ ! -f "$1" ]; then
+        echo "Must specify a valid file"
+        exit 1
+    fi
+
+    # Check if file is a symlink
+    if [ ! -h "$1" ]; then
+        echo "Specified file is not a symlink"
+        exit 1
+    fi
+
+    CURRENT_HOME=$(readlink "$1")
+    unlink "$1"
+    mv "$CURRENT_HOME" "$1"
+    exit 0
+fi
+
 # Check if file exists
 if [ ! -f "$1" ]; then
     echo "Must specify a valid file"
     exit 1
 fi
+
 
 # Check if file is a symlink
 if [ -h "$1" ]; then

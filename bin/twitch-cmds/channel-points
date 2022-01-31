@@ -16,6 +16,8 @@ RESPONSE=$(curl -Ss -X POST "https://id.twitch.tv/oauth2/token" \
 REFRESH_TOKEN=$(echo "$RESPONSE" | jq -r '.refresh_token')
 ACCESS_TOKEN=$(echo "$RESPONSE" | jq -r '.access_token')
 
+echo "$ACCESS_TOKEN" > ~/.twitch_access_token
+
 echo "$REFRESH_TOKEN" > ~/.twitch_refresh
 
 PANE=$(tmux display -pt "${TMUX_PANE:?}" '#{pane_index}')

@@ -10,7 +10,10 @@
 
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/bin" ] ; then
-    PATH="$HOME/bin:$PATH"
+    pushd "$HOME/bin" &> /dev/null
+    folders=$(find ~+ -type d | tr '\n' ':')
+    popd &> /dev/null
+    PATH="$folders$PATH"
 fi
 
 # set PATH so it includes snap if it exists

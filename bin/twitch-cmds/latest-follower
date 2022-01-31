@@ -1,0 +1,14 @@
+#!/bin/bash
+
+while true; do
+    follower=$(curl -Ss -X GET \
+        'https://api.twitch.tv/helix/users/follows?to_id=56931496&first=1' \
+        -H 'Authorization: Bearer '$(cat ~/.twitch_access_token) \
+        -H 'Client-Id: '$(. ~/.twitch_secrets; echo $TWITCH_CLIENT_ID) \
+        | jq -r '.data[0].from_name' \
+        | tr -d '\n')
+
+    clear
+    printf "Last Follow: $follower"
+    sleep 20
+done

@@ -671,9 +671,7 @@ colors:
 #   - (Linux/BSD) user login shell
 
 #   - (Windows) powershell
-
 shell:
-
   program: 'C:\Windows\system32\wsl.exe'
 working_directory: '\\wsl.localhost\Ubuntu-20.04\home\sarah'
 
