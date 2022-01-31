@@ -26,11 +26,11 @@ if [[ "$1" == "flashbang" ]]; then
     yq -i '.colors.primary.background = "#ffffff" | .colors.primary.foreground="#ffffff"' $ALACRITTY_CONFIG
     sleep 1
     yq -i '.colors.primary.background = "#cccccc"' $ALACRITTY_CONFIG
-    sleep 0.3
+    sleep 0.5
     yq -i '.colors.primary.background = "#888888"' $ALACRITTY_CONFIG
-    sleep 0.3
+    sleep 0.5
     yq -i '.colors.primary.background = "#333333"' $ALACRITTY_CONFIG
-    sleep 0.3
+    sleep 0.5
     yq -i '.colors.primary.background = "#000000"' $ALACRITTY_CONFIG
     sleep 3
     yq -i '.colors.primary.background = "'$BG'" | .colors.primary.foreground = "'$FG'"' $ALACRITTY_CONFIG

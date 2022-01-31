@@ -28,7 +28,7 @@ redeem () {
         reward=$(echo "$line" | jq -r '.reward.title')
         case $reward in
             "CHOO CHOO")
-                tmux select-pane -t $PANE
+                tmux select-pane -t stream-outer:0.$PANE
                 tmux resize-pane -Z
                 sl
                 tmux resize-pane -Z
@@ -36,10 +36,10 @@ redeem () {
             "Flashbang")
                 mpv --volume-max=200 $FLASHBANG_SFX &>/dev/null &
                 sleep 2.6
-                tmux select-pane -t $PANE
-                tmux resize-pane -Z
+                tmux select-pane -t outer-stream:0.$PANE
+                tmux resize-pane -Z -t stream-outer:0.$PANE
                 colorscheme flashbang
-                tmux resize-pane -Z
+                tmux resize-pane -Z -t stream-outer:0.$PANE
                 ;;
             "Theme:"*)
                 colorscheme "$(echo "$reward" | cut -d' ' -f2- | tr '[:upper:]' '[:lower:]')"
