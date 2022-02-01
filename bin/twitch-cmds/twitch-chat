@@ -14,7 +14,7 @@ parsechat() {
     if [[ "$1" == *" PRIVMSG "* ]]; then
         color=$(echo -n "$1" | grep -oP "color=.*?;" | cut -d'=' -f2- | tr -d '#;\n')
         name=$(echo -n "$1" | grep -oP "display-name=.*?;" | cut -d'=' -f2- | tr -d ';\n')
-        msg=$(printf "$1" | grep -oP "PRIVMSG.*$" | cut -d':' -f2-)
+        msg=$(echo -n "$1" | grep -oP "PRIVMSG.*$" | cut -d':' -f2-)
         if [[ "${#color}" != "6" ]]; then
             color=${"$(echo "$name" | md5sum)":3:9}
         fi
