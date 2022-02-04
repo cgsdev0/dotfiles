@@ -2,23 +2,7 @@
 
 FLASHBANG_SFX="/mnt/c/Users/sarah/Music/DeployingFlashbang.mp3"
 
-# Issue an access token for Twitch
-REFRESH_TOKEN="$(cat ~/.twitch_refresh)"
 source ~/.twitch_secrets
-
-RESPONSE=$(curl -Ss -X POST "https://id.twitch.tv/oauth2/token" \
-    -F "client_id=${TWITCH_CLIENT_ID}" \
-    -F "refresh_token=${REFRESH_TOKEN}" \
-    -F "client_secret=${TWITCH_CLIENT_SECRET}" \
-    -F 'grant_type=refresh_token' \
-    -F 'scope=chat:read chat:edit')
-
-REFRESH_TOKEN=$(echo "$RESPONSE" | jq -r '.refresh_token')
-ACCESS_TOKEN=$(echo "$RESPONSE" | jq -r '.access_token')
-
-echo "$ACCESS_TOKEN" > ~/.twitch_access_token
-
-echo "$REFRESH_TOKEN" > ~/.twitch_refresh
 
 PANE=$(tmux display -pt "${TMUX_PANE:?}" '#{pane_index}')
 
@@ -51,7 +35,7 @@ redeem () {
 }
 
 # Subscribe to channel points redemption events
-msg='{"type":"LISTEN","data":{"topics":["channel-points-channel-v1.56931496"],"auth_token":"'$ACCESS_TOKEN'"}}'
+msg='{"type":"LISTEN","data":{"topics":["channel-points-channel-v1.56931496"],"auth_token":"'$TWITCH_ACCESS_TOKEN'"}}'
 
 # Periodically ping the server to keep-alive
 ping='{"type": "PING"}'

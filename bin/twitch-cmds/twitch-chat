@@ -1,5 +1,7 @@
 #!/bin/zsh
 
+source ~/.twitch_secrets;
+
 rm -f /tmp/twitch_tunnel;
 mkfifo /tmp/twitch_tunnel;
 
@@ -97,7 +99,7 @@ reqreader() {
   done;
   exit 0;
 }
-(echo "CAP REQ :twitch.tv/tags twitch.tv/commands\r\nPASS oauth:$(cat ~/.twitch_access_token | tr -d '\n')\r\nNICK badcop_\r\nJOIN #${1}\r"; \
+(echo "CAP REQ :twitch.tv/tags twitch.tv/commands\r\nPASS oauth:${TWITCH_ACCESS_TOKEN}\r\nNICK badcop_\r\nJOIN #${1}\r"; \
     </tmp/twitch_tunnel | reqreader) \
     | websocat_linux64 wss://irc-ws.chat.twitch.tv:443 \
     | >/tmp/twitch_tunnel
