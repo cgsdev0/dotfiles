@@ -15,6 +15,6 @@ else
     tmux splitw -hfb -t $OUTER_SESSION_NAME
     tmux select-layout -t $OUTER_SESSION_NAME \
         "ce6f,137x40,0,0{101x40,0,0,3,35x40,102,0[35x12,102,0,0,35x1,102,13,1,35x25,102,15,2]}"
-    tmux send-keys -t $OUTER_SESSION_NAME 'TMUX="" tmux -L inner new-session' Enter
+    tmux send-keys -t $OUTER_SESSION_NAME 'TMUX="" tmux -L inner new-session -s Sarah' Enter
     tmux attach -t $OUTER_SESSION_NAME
 fi

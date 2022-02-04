@@ -8,7 +8,6 @@ while true; do
         | jq -r '.data[0].from_name' \
         | tr -d '\n')
 
-    clear
-    printf "Last Follow: $follower"
+    printf "\nLast Follow: $follower"
     sleep 20
 done

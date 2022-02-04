@@ -21,6 +21,9 @@ alias tz-atlanta="sudo ln -sf /usr/share/zoneinfo/America/New_York /etc/localtim
 alias tz-detroit="sudo ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime"
 alias tz-sanfrancisco="sudo ln -sf /usr/share/zoneinfo/America/Los_Angeles /etc/localtime"
 
+# Weather
+alias weather="curl v2d.wttr.in"
+
 # Program
 alias ll="ls -lhA"
 export TODOTXT_DEFAULT_ACTION=ls
@@ -73,7 +76,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 fi
 
 # Twitch things
-alias tw_chat="clear; watch-and-reload twitch-chat badcop_"
+alias tw_chat="clear; sleep 2; watch-and-reload twitch-chat badcop_"
 alias tw_chanpoints="clear; watch-and-reload channel-points"
 alias tw_follower="clear; watch-and-reload latest-follower"
 
