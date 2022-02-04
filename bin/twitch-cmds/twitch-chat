@@ -19,86 +19,81 @@ reply() {
     echo "PRIVMSG #badcop_ :$@\r\n"
 }
 parsecmd() {
-    if [[ "$1" == *" PRIVMSG "* ]]; then
-        msg=$(echo -n "$1" | grep -oP "PRIVMSG.*$" | cut -d':' -f2-)
-        name=$(echo -n "$1" | grep -oP "display-name=.*?;" | cut -d'=' -f2- | tr -d ';\n')
-        case $msg in
-            "!ping")
-                reply "pong!"
-                ;;
-            "!count")
-                count=$(cat ~/.twitch_counter)
-                count=$(( count + 1 ))
-                echo "$count" > ~/.twitch_counter
-                reply "$count"
-                ;;
-            "!play")
-                ;&
-            "!dice")
-                ;&
-            "!rollycubes")
-                if lsof -i:3000 &> /dev/null; then
-                    reply "Join my game: https://rollycubes.live"
-                else
-                    reply "rollycubes is not running right now :("
-                fi
-                ;;
-            "!lurk")
-                reply "ok $name, sounds good"
-                ;;
-            "!bot")
-                reply "i live here: https://github.com/cgsdev0/dotfiles/blob/main/bin/twitch-cmds/twitch-chat"
-                ;;
-            *"haha"*)
-                reply "lol"
-                ;;
-            *"heh"*)
-                reply "haha"
-                ;;
-            *"emacs"*)
-                reply "vim is better"
-                ;;
-            *"vim"*)
-                reply "emacs is better"
-                ;;
-        esac
-    fi
+    msg=$(echo -n "$1" | grep -oP "PRIVMSG.*$" | cut -d':' -f2-)
+    name=$(echo -n "$1" | grep -oP "display-name=.*?;" | cut -d'=' -f2- | tr -d ';\n')
+    case $msg in
+        "!ping")
+            reply "pong!"
+            ;;
+        "!count")
+            count=$(cat ~/.twitch_counter)
+            count=$(( count + 1 ))
+            echo "$count" > ~/.twitch_counter
+            reply "$count"
+            ;;
+        "!play")
+            ;&
+        "!dice")
+            ;&
+        "!rollycubes")
+            if lsof -i:3000 &> /dev/null; then
+                reply "Join my game: https://rollycubes.live"
+            else
+                reply "rollycubes is not running right now :("
+            fi
+            ;;
+        "!lurk")
+            reply "ok $name, sounds good"
+            ;;
+        "!bot")
+            reply "i live here: https://github.com/cgsdev0/dotfiles/blob/main/bin/twitch-cmds/twitch-chat"
+            ;;
+        *"haha"*)
+            reply "lol"
+            ;;
+        *"heh"*)
+            reply "haha"
+            ;;
+        *"emacs"*)
+            reply "vim is better"
+            ;;
+        *"vim"*)
+            reply "emacs is better"
+            ;;
+    esac
 }
 parsechat() {
-    if [[ "$1" == *" PRIVMSG "* ]]; then
-        color=$(echo -n "$1" | grep -oP "color=.*?;" | cut -d'=' -f2- | tr -d '#;\n')
-        name=$(echo -n "$1" | grep -oP "display-name=.*?;" | cut -d'=' -f2- | tr -d ';\n')
-        msg=$(echo -n "$1" | grep -oP "PRIVMSG.*$" | cut -d':' -f2-)
-        if [[ "${#color}" != "6" ]]; then
-            color=${"$(echo "$name" | md5sum)":3:9}
-        fi
-        if [[ "$1" == *"custom-reward-id=15569ace-d070-4037-986d-967f44196d74;"* ]]; then
-            colorize $color
-            echo "$name summoned a cow!"
-            cowsay "$msg"
-        elif [[ "$msg" == "!lolcat "* ]]; then
-            colorize $color
-            printf "$name"
-            printf '\033[0m'
-            echo -n ": "
-            echo "$msg" | cut -d' ' -f2- | lolcat
-        elif [[ "$msg" == $'\x01'"ACTION "* ]]; then
-            colorize $color
-            echo "$name" $(echo "$msg" | cut -d' ' -f2-)
-        else
-            colorize $color
-            printf "$name"
-            printf '\033[0m'
-            echo -n ": "
-            echo "$msg"
-        fi
+    color=$(echo -n "$1" | grep -oP "color=.*?;" | cut -d'=' -f2- | tr -d '#;\n')
+    name=$(echo -n "$1" | grep -oP "display-name=.*?;" | cut -d'=' -f2- | tr -d ';\n')
+    msg=$(echo -n "$1" | grep -oP "PRIVMSG.*$" | cut -d':' -f2-)
+    if [[ "${#color}" != "6" ]]; then
+        color=${"$(echo "$name" | md5sum)":3:9}
+    fi
+    if [[ "$1" == *"custom-reward-id=15569ace-d070-4037-986d-967f44196d74;"* ]]; then
+        colorize $color
+        echo "$name summoned a cow!"
+        cowsay "$msg"
+    elif [[ "$msg" == "!lolcat "* ]]; then
+        colorize $color
+        printf "$name"
+        printf '\033[0m'
+        echo -n ": "
+        echo "$msg" | cut -d' ' -f2- | lolcat
+    elif [[ "$msg" == $'\x01'"ACTION "* ]]; then
+        colorize $color
+        echo "$name" $(echo "$msg" | cut -d' ' -f2-)
+    else
+        colorize $color
+        printf "$name"
+        printf '\033[0m'
+        echo -n ": "
+        echo "$msg"
     fi
 }
 reqreader() {
   while IFS= read -r line; do
     [[ $line == "PING"* ]] && echo "PONG :tmi.twitch.tv\r";
-    parsechat "$line" 1>&2
-    parsecmd "$line"
+    [[ "$line" == *" PRIVMSG "* ]] && (parsechat "$line" 1>&2; parsecmd "$line")
   done;
   exit 0;
 }
