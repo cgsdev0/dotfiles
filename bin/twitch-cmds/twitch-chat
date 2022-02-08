@@ -27,11 +27,68 @@ parsecmd() {
         "!ping")
             reply "pong!"
             ;;
+        "!fish")
+            now=$(date +%s)
+            if [[ -f "$HOME/fishing-cooldowns/.$name.cooldown" ]]; then
+                cooldown=$(cat "$HOME/fishing-cooldowns/.$name.cooldown")
+                if [[ $cooldown -gt $now ]]; then
+                    return
+                fi
+            fi
+            fish=$(shuf -n 1 $HOME/fish)
+            most_count=$(cat ~/fishing-data/* \
+                | sort \
+                | uniq -c \
+                | sort -nr \
+                | head -n 1 \
+                | grep -oE '[0-9].*' \
+                | cut -d' ' -f1)
+            count=$(cat $HOME/fishing-data/* | grep "$fish" | wc -l)
+            description="a"
+            personalcount=$(cat "$HOME/fishing-data/$name" | grep "$fish" | wc -l)
+            if [[ $personalcount -eq 0 ]]; then
+                description="their first"
+            fi
+
+            rarity=$(bc <<< "scale=2; 100 - ( $count / $most_count * 100 )")
+            echo "$fish" >> "$HOME/fishing-data/$name"
+            echo $(( now + 120 )) > "$HOME/fishing-cooldowns/.$name.cooldown"
+            if [[ $count -eq 0 ]]; then
+            reply "@$name caught $description $fish! ( never caught before :O )"
+            else
+            reply "@$name caught $description $fish! ($rarity% rarity)"
+            fi
+            ;;
+        "!help")
+            ;&
+        "!commands")
+            reply "!fish, !fishdex, !roll, !count, !play"
+            ;;
+        "!fishdex all")
+            total=$(cat $HOME/fish | uniq | wc -l)
+            count=$(cat $HOME/fishing-data/* | uniq | wc -l)
+            reply "$count out of $total possible fish have been caught."
+            ;;
+        "!fishdex")
+            total=$(cat $HOME/fish | uniq | wc -l)
+            count=$(cat "$HOME/fishing-data/$name" | uniq | wc -l)
+            reply "@$name has caught $count out of $total possible fish!"
+            ;;
         "!count")
             count=$(cat ~/.twitch_counter)
             count=$(( count + 1 ))
             echo "$count" > ~/.twitch_counter
             reply "$count"
+            ;;
+        "!roll"*)
+            # !roll 20
+            val=$(echo -n "$msg" | cut -d' ' -f2)
+            re='^[0-9]+$'
+            if ! [[ $val =~ $re ]] ; then
+                reply "not a valid number!"
+            else
+                reply "$((1 + $RANDOM % $val))"
+            fi
             ;;
         "!play")
             ;&
