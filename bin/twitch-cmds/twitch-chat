@@ -64,14 +64,17 @@ parsecmd() {
         "!commands")
             reply "!fish, !fishdex, !roll, !count, !play"
             ;;
+        "!today")
+            reply "$(cat $HOME/.today)"
+            ;;
         "!fishdex all")
-            total=$(cat $HOME/fish | uniq | wc -l)
-            count=$(cat $HOME/fishing-data/* | uniq | wc -l)
+            total=$(cat $HOME/fish | sort -u | wc -l)
+            count=$(cat $HOME/fishing-data/* | sort -u | wc -l)
             reply "$count out of $total possible fish have been caught."
             ;;
         "!fishdex")
-            total=$(cat $HOME/fish | uniq | wc -l)
-            count=$(cat "$HOME/fishing-data/$name" | uniq | wc -l)
+            total=$(cat $HOME/fish | sort -u | wc -l)
+            count=$(cat "$HOME/fishing-data/$name" | sort -u | wc -l)
             reply "@$name has caught $count out of $total possible fish!"
             ;;
         "!count")
