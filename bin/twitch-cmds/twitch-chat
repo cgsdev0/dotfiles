@@ -12,6 +12,21 @@ colorize() {
     printf "\x1b[38;2;$(( 16#${1:0:2} ));$(( 16#${1:2:2} ));$(( 16#${1:4:2} ))m"
 }
 
+classify_fish() {
+    n=$1
+    if ((n == 1)); then
+        echo "LEGENDARY"
+    elif ((n >= 1 && n <= 5)); then
+        echo "EPIC"
+    elif ((n >= 6 && n <= 15)); then
+        echo "Rare"
+    elif ((n >= 16 && n <= 25)); then
+        echo "Uncommon"
+    else
+        echo "Common"
+    fi
+}
+
 reply() {
     colorize "ff0000" 1>&2
     echo -n "bot" 1>&2
@@ -44,7 +59,16 @@ parsecmd() {
                 | grep -oE '[0-9].*' \
                 | cut -d' ' -f1)
             count=$(cat $HOME/fishing-data/* | grep "$fish" | wc -l)
+            expected_count=$(cat $HOME/fish \
+                | sort \
+                | uniq -c \
+                | sort -n \
+                | awk '{$1=$1};1' \
+                | grep "$fish" \
+                | cut -d' ' -f1)
+            classification=$(classify_fish $expected_count)
             description="a"
+            touch "$HOME/fishing-data/$name"
             personalcount=$(cat "$HOME/fishing-data/$name" | grep "$fish" | wc -l)
             if [[ $personalcount -eq 0 ]]; then
                 description="their first"
@@ -54,9 +78,9 @@ parsecmd() {
             echo "$fish" >> "$HOME/fishing-data/$name"
             echo $(( now + 120 )) > "$HOME/fishing-cooldowns/.$name.cooldown"
             if [[ $count -eq 0 ]]; then
-            reply "@$name caught $description $fish! ( never caught before :O )"
+                reply "@$name caught $description $fish ($classification)! ( never caught before :O )"
             else
-            reply "@$name caught $description $fish! ($rarity% rarity)"
+                reply "@$name caught $description $fish ($classification)! ($rarity% rarity)"
             fi
             ;;
         "!help")
@@ -74,6 +98,7 @@ parsecmd() {
             ;;
         "!fishdex")
             total=$(cat $HOME/fish | sort -u | wc -l)
+            touch "$HOME/fishing-data/$name"
             count=$(cat "$HOME/fishing-data/$name" | sort -u | wc -l)
             reply "@$name has caught $count out of $total possible fish!"
             ;;
