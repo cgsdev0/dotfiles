@@ -1,6 +1,7 @@
 #!/bin/zsh
 
-source ~/.twitch_secrets;
+CHAN=$1
+source ~/.twitch_secrets_bot;
 
 rm -f /tmp/twitch_tunnel;
 mkfifo /tmp/twitch_tunnel;
@@ -33,14 +34,21 @@ reply() {
     printf '\033[0m' 1>&2
     echo -n ": " 1>&2
     echo "$@" 1>&2
-    echo "PRIVMSG #badcop_ :$@\r\n"
+    echo "PRIVMSG #${CHAN} :$@\r\n"
 }
 parsecmd() {
-    msg=$(echo -n "$1" | grep -oP "PRIVMSG.*$" | cut -d':' -f2-)
+    msg=$(echo -n "$1" | grep -oP "PRIVMSG.*$" | cut -d':' -f2- | tr '[:upper:]' '[:lower:]')
     name=$(echo -n "$1" | grep -oP "display-name=.*?;" | cut -d'=' -f2- | tr -d ';\n')
     case $msg in
         "!ping")
             reply "pong!"
+            ;;
+        "!fish leaderboard")
+            cd "$HOME/fishing-data/badcop_"
+            reply "$(wc -l * | head -n -1 | sort -nr | head -n 5 | paste -sd '|' | sed 's/|/ | /g')"
+            ;;
+        "!discord")
+            reply "join our discord! https://discord.gg/m2ZzF8CQrW"
             ;;
         "!fish")
             now=$(date +%s)
@@ -51,14 +59,14 @@ parsecmd() {
                 fi
             fi
             fish=$(shuf -n 1 $HOME/fish)
-            most_count=$(cat ~/fishing-data/* \
+            most_count=$(cat ~/fishing-data/${CHAN}/* \
                 | sort \
                 | uniq -c \
                 | sort -nr \
                 | head -n 1 \
                 | grep -oE '[0-9].*' \
                 | cut -d' ' -f1)
-            count=$(cat $HOME/fishing-data/* | grep "$fish" | wc -l)
+            count=$(cat $HOME/fishing-data/${CHAN}/* | grep "$fish" | wc -l)
             expected_count=$(cat $HOME/fish \
                 | sort \
                 | uniq -c \
@@ -68,14 +76,14 @@ parsecmd() {
                 | cut -d' ' -f1)
             classification=$(classify_fish $expected_count)
             description="a"
-            touch "$HOME/fishing-data/$name"
-            personalcount=$(cat "$HOME/fishing-data/$name" | grep "$fish" | wc -l)
+            touch "$HOME/fishing-data/${CHAN}/$name"
+            personalcount=$(cat "$HOME/fishing-data/${CHAN}/$name" | grep "$fish" | wc -l)
             if [[ $personalcount -eq 0 ]]; then
                 description="their first"
             fi
 
             rarity=$(bc <<< "scale=2; 100 - ( $count / $most_count * 100 )")
-            echo "$fish" >> "$HOME/fishing-data/$name"
+            echo "$fish" >> "$HOME/fishing-data/${CHAN}/$name"
             echo $(( now + 120 )) > "$HOME/fishing-cooldowns/.$name.cooldown"
             if [[ $count -eq 0 ]]; then
                 reply "@$name caught $description $fish ($classification)! ( never caught before :O )"
@@ -86,20 +94,23 @@ parsecmd() {
         "!help")
             ;&
         "!commands")
-            reply "!fish, !fishdex, !roll, !count, !play"
+            reply "!fish, !fishdex, !roll, !count, !play, !discord, !today, !jump"
             ;;
         "!today")
             reply "$(cat $HOME/.today)"
             ;;
+        "!jump")
+            reply "/me jumps"
+            ;;
         "!fishdex all")
             total=$(cat $HOME/fish | sort -u | wc -l)
-            count=$(cat $HOME/fishing-data/* | sort -u | wc -l)
+            count=$(cat $HOME/fishing-data/${CHAN}/* | sort -u | wc -l)
             reply "$count out of $total possible fish have been caught."
             ;;
         "!fishdex")
             total=$(cat $HOME/fish | sort -u | wc -l)
-            touch "$HOME/fishing-data/$name"
-            count=$(cat "$HOME/fishing-data/$name" | sort -u | wc -l)
+            touch "$HOME/fishing-data/${CHAN}/$name"
+            count=$(cat "$HOME/fishing-data/${CHAN}/$name" | sort -u | wc -l)
             reply "@$name has caught $count out of $total possible fish!"
             ;;
         "!count")
@@ -130,7 +141,7 @@ parsecmd() {
             fi
             ;;
         "!lurk")
-            reply "ok $name, sounds good"
+            reply "ok $name, enjoy your lurk"
             ;;
         "!bot")
             reply "i live here: https://github.com/cgsdev0/dotfiles/blob/main/bin/twitch-cmds/twitch-chat"
@@ -184,7 +195,7 @@ reqreader() {
   done;
   exit 0;
 }
-(echo "CAP REQ :twitch.tv/tags twitch.tv/commands\r\nPASS oauth:${TWITCH_ACCESS_TOKEN}\r\nNICK badcop_\r\nJOIN #${1}\r"; \
+(echo "CAP REQ :twitch.tv/tags twitch.tv/commands\r\nPASS oauth:${TWITCH_ACCESS_TOKEN}\r\nNICK goodcop_\r\nJOIN #${CHAN}\r"; \
     </tmp/twitch_tunnel | reqreader) \
     | websocat_linux64 wss://irc-ws.chat.twitch.tv:443 \
     | >/tmp/twitch_tunnel

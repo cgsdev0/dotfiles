@@ -1250,7 +1250,7 @@ Saddled bichir
 Saddled bichir
 Saddled bichir
 Saddled bichir
-Sakhalin Sturgeon
+Sakhalin sturgeon
 Salmon
 Salmon
 Salmon
