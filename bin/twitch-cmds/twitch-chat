@@ -123,6 +123,28 @@ parsecmd() {
             fi
             reply "Thanks! I've added the $entry_type game '$name' to the queue (position #$position)! (Made by $author)"
             ;;
+        "!game")
+            next_game=$(cat "$ld_state_file" | grep -vE " PLAYED$" | head -n1)
+            if [[ "$next_game" == "" ]]; then
+                reply "no more games in the queue NotLikeThis"
+                return
+            fi
+            resp=$(grep -E "^$next_game" "$ld_data_file" | cut -d' ' -f2-)
+            entry_type=$(echo "$resp" | jq -r '.type')
+            name=$(echo "$resp" | jq -r '.name')
+            author=$(echo "$resp" | jq -r '.author')
+            friends=$(echo "$resp" | jq -r '.authorCount')
+            slug=$(echo "$resp" | jq -r '.slug')
+            url=$(shorten-url \
+                "https://ldjam.com/events/ludum-dare/50/$next_game" \
+                $(echo "$author" | tr '[:upper:]' '[:lower:]') \
+                | jq -r '.shortCode')
+            if [[ "$friends" != "1" ]]; then
+                fc="$((friends-1))"
+                author="$author and $fc friends"
+            fi
+            reply "We are playing '$name' by $author ($entry_type entry) :D https://cgs.dev/0/$url"
+            ;;
         "!next")
             if [[ "$name" != "badcop_" ]]; then
                 return
@@ -146,6 +168,7 @@ parsecmd() {
                 fc="$((friends-1))"
                 author="$author and $fc friends"
             fi
+            # update state
             sed -i "s/^$slug/$slug PLAYED/" $ld_state_file
             reply "Up next! '$name' by $author ($entry_type entry) https://cgs.dev/0/$url"
             ;;
@@ -247,8 +270,7 @@ parsecmd() {
         "!link")
             ;&
         "!play")
-            reply 'https://ldj.am/$279624'
-            reply "https://ldjam.com/events/ludum-dare/50/plant"
+            reply "https://cgs.dev/0/ld50"
             ;;
         "!dice")
             ;&
