@@ -1,0 +1,16 @@
+#!/bin/bash
+
+API_KEY=$(cat "$HOME/.cgs-dev-key")
+
+request_body='{
+    "longUrl": "'$1'",
+    "customSlug": "'$2'",
+    "findIfExists": true
+}'
+
+curl -SsX POST \
+    "https://cgs.dev/0/rest/v2/short-urls" \
+    -H "X-Api-Key: $API_KEY" \
+    -H "Content-Type: application/json" \
+    -d "$request_body"
+
