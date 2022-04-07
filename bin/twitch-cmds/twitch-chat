@@ -9,8 +9,15 @@ mkfifo /tmp/twitch_tunnel;
 # Example chat msg:
 # @badge-info=;badges=;client-nonce=31ab40a7bef7162bfc8eade860eb185a;color=#DAA520;display-name=BuddysPizza;emotes=;first-msg=0;flags=;id=e86038a5-4d49-4868-aa96-b563da8fc689;mod=0;room-id=56931496;subscriber=0;tmi-sent-ts=1643181677955;turbo=0;user-id=42089909;user-type= :buddyspizza!buddyspizza@buddyspizza.tmi.twitch.tv PRIVMSG #badcop_ :!help
 
-ld_state_file="$HOME/.ld-jam-list"
-ld_data_file="$HOME/.ld-jam-data"
+ld_state_file="$HOME/ludum-dare/$CHAN/.ld-jam-list"
+ld_data_file="$HOME/ludum-dare/$CHAN/.ld-jam-data"
+
+mkdir -p $(dirname "$ld_state_file")
+mkdir -p $(dirname "$ld_data_file")
+
+touch "$ld_state_file"
+touch "$ld_data_file"
+
 
 # Following regex is based on https://www.rfc-editor.org/rfc/rfc3986#appendix-B with
 # additional sub-expressions to split authority into userinfo, host and port
@@ -92,6 +99,12 @@ parsecmd() {
     name=$(echo -n "$1" | grep -oP "display-name=.*?;" | cut -d'=' -f2- | tr -d ';\n')
     case $msg in
         # support ludum dare submission links
+        *"goodcop_"*)
+            reply "@$name don't at me"
+            ;;
+        *"do it live"*)
+            reply "heck yea @$name thecop2Do thecop2It thecop2Live1 thecop2Live2"
+            ;;
         *"https://ldjam.com/events/ludum-dare/50/"*)
             position_data=$(cat "$ld_state_file" | grep -vE " PLAYED$")
             uri=$(echo "$msg" | grep -oE "https://ldjam.com/[^ ]+")
@@ -99,69 +112,100 @@ parsecmd() {
             # reply  "https://api.ldjam.com/vx/node2/walk/1${id}?node&author"
             resp=$(curl -Ss "https://api.ldjam.com/vx/node2/walk/1${id}?node&author" | jq -rc '{ type: .node[0].subsubtype, name: .node[0].name, author: .node[1].name, authorCount: .node[0].meta.author | length, slug: .node[0].slug }')
             entry_type=$(echo "$resp" | jq -r '.type')
-            name=$(echo "$resp" | jq -r '.name')
+            gamename=$(echo "$resp" | jq -r '.name')
             author=$(echo "$resp" | jq -r '.author')
             friends=$(echo "$resp" | jq -r '.authorCount')
             slug=$(echo "$resp" | jq -r '.slug')
-            position=1
+            position=$( {cat "$ld_state_file"; echo "---"} | grep -vcE " PLAYED$" | cut -d':' -f1)
             if grep -q "$slug" "$ld_state_file"; then
                 pos=$(echo "$position_data" | grep -n "$slug" | cut -d':' -f1)
                 if [[ "$pos" == "" ]]; then
                     reply "We've already played that game! :O"
                 else
-                    reply "I already have that game :) (currently position #$pos in the queue)"
+                    reply "I already have that game :)"
                 fi
                 return
             fi
             # append to state file
-            echo "$slug" >> "$ld_state_file"
+            echo "$slug $name" >> "$ld_state_file"
             echo "$slug $resp" >> "$ld_data_file"
 
             if [[ "$friends" != "1" ]]; then
                 fc="$((friends-1))"
                 author="$author and $fc friends"
             fi
-            reply "Thanks! I've added the $entry_type game '$name' to the queue (position #$position)! (Made by $author)"
+
+            # de-dupe data file
+            cat "${ld_data_file}" | sort | uniq > "${ld_data_file}2"
+            mv "${ld_data_file}2" "${ld_data_file}"
+
+            reply "Thanks! I've added the $entry_type game '$gamename' to the queue (position: #$position)! (Made by $author) @$CHAN can use !next to advance the queue"
             ;;
         "!game")
-            next_game=$(cat "$ld_state_file" | grep -vE " PLAYED$" | head -n1)
+            next_game=$(cat "$ld_state_file" | grep " IN_PROGRESS$")
             if [[ "$next_game" == "" ]]; then
                 reply "no more games in the queue NotLikeThis"
                 return
             fi
-            resp=$(grep -E "^$next_game" "$ld_data_file" | cut -d' ' -f2-)
+            next_game_slug=$(echo "$next_game" | cut -d' ' -f1)
+            next_game_twitch=$(echo "$next_game" | cut -d' ' -f2)
+            resp=$(grep -E "^$next_game_slug" "$ld_data_file" | cut -d' ' -f2-)
             entry_type=$(echo "$resp" | jq -r '.type')
-            name=$(echo "$resp" | jq -r '.name')
+            gamename=$(echo "$resp" | jq -r '.name')
             author=$(echo "$resp" | jq -r '.author')
             friends=$(echo "$resp" | jq -r '.authorCount')
             slug=$(echo "$resp" | jq -r '.slug')
             url=$(shorten-url \
-                "https://ldjam.com/events/ludum-dare/50/$next_game" \
+                "https://ldjam.com/events/ludum-dare/50/$next_game_slug" \
                 $(echo "$author" | tr '[:upper:]' '[:lower:]') \
                 | jq -r '.shortCode')
             if [[ "$friends" != "1" ]]; then
                 fc="$((friends-1))"
                 author="$author and $fc friends"
             fi
-            reply "We are playing '$name' by $author ($entry_type entry) :D https://cgs.dev/0/$url"
+            reply "We are playing '$gamename' by $author ($entry_type entry) :D https://cgs.dev/0/$url"
             ;;
-        "!next")
-            if [[ "$name" != "badcop_" ]]; then
+        "!queue")
+            pos=$(grep -vE " PLAYED$" "$ld_state_file" | grep -vE " IN_PROGRESS$" | cut -d' ' -f2 | grep -n "$name" | head -n1 | cut -d':' -f1)
+            pos2=$(grep -E " IN_PROGRESS$" "$ld_state_file" | cut -d' ' -f2 | grep -n "$name")
+            unplayed=$(grep -vE " PLAYED$" "$ld_state_file" | wc -l)
+            if [[ "$unplayed" == "0" ]]; then
+                reply "There are no games in the queue. Yours can be next! Just paste the link in chat :)"
                 return
             fi
+            queuestr="Uploading current queue..."
+            if [[ "$pos2" != "" ]]; then
+                reply "Your game is being played right now! :O | $queuestr"
+            elif [[ "$pos" == "" ]]; then
+                reply "You are not in the queue. Paste the link in chat and I'll add it! | $queuestr"
+            else
+                reply "Your game is #$pos in the queue :) | $queuestr"
+            fi
+            reply "$(grep -vE "PLAYED$" "$ld_state_file" | cut -d' ' -f1 | sed 's@^@https://ldjam.com/events/ludum-dare/50/@' | nc termbin.com 9999)"
+            ;;
+        "!next")
+            if [[ "$name" != "$CHAN" ]] && [[ "$name" != "badcop_" ]]; then
+                return
+            fi
+
+            # mark any in progress games as played
+            sed -i "s/IN_PROGRESS$/PLAYED/" $ld_state_file
+
             next_game=$(cat "$ld_state_file" | grep -vE " PLAYED$" | head -n1)
+            next_game_slug=$(echo "$next_game" | cut -d' ' -f1)
+            next_game_twitch=$(echo "$next_game" | cut -d' ' -f2)
             if [[ "$next_game" == "" ]]; then
                 reply "no more games in the queue NotLikeThis"
                 return
             fi
-            resp=$(grep -E "^$next_game" "$ld_data_file" | cut -d' ' -f2-)
+            resp=$(grep -E "^$next_game_slug" "$ld_data_file" | cut -d' ' -f2-)
             entry_type=$(echo "$resp" | jq -r '.type')
             name=$(echo "$resp" | jq -r '.name')
             author=$(echo "$resp" | jq -r '.author')
             friends=$(echo "$resp" | jq -r '.authorCount')
             slug=$(echo "$resp" | jq -r '.slug')
             url=$(shorten-url \
-                "https://ldjam.com/events/ludum-dare/50/$next_game" \
+                "https://ldjam.com/events/ludum-dare/50/$next_game_slug" \
                 $(echo "$author" | tr '[:upper:]' '[:lower:]') \
                 | jq -r '.shortCode')
             if [[ "$friends" != "1" ]]; then
@@ -169,8 +213,9 @@ parsecmd() {
                 author="$author and $fc friends"
             fi
             # update state
-            sed -i "s/^$slug/$slug PLAYED/" $ld_state_file
+            sed -i "s/^\\($slug \\w*\\)$/\\1 IN_PROGRESS/" $ld_state_file
             reply "Up next! '$name' by $author ($entry_type entry) https://cgs.dev/0/$url"
+            reply "if @$next_game_twitch is still here, say hi!"
             ;;
         "!ping")
             reply "pong!"
@@ -179,7 +224,7 @@ parsecmd() {
             reply "/me waves"
             ;;
         "!fish leaderboard")
-            cd "$HOME/fishing-data/badcop_"
+            cd "$HOME/fishing-data/$CHAN"
             reply "$(wc -l * | head -n -1 | sort -nr | head -n 5 | paste -sd '|' | sed 's/|/ | /g')"
             ;;
         "!discord")
@@ -267,10 +312,15 @@ parsecmd() {
         "!submit")
             reply "just drop an ldjam.com link in chat and i'll add it to the queue :)"
             ;;
+        "!song")
+            reply "@$name i have no clue LUL"
+            ;;
         "!link")
             ;&
         "!play")
-            reply "https://cgs.dev/0/ld50"
+            if [[ "$CHAN" == "badcop_" ]]; then
+                reply "Here is my LD compo entry: https://badcop.games/LD50"
+            fi
             ;;
         "!dice")
             ;&
@@ -282,7 +332,7 @@ parsecmd() {
             fi
             ;;
         "!lurk")
-            reply "ok $name, enjoy your lurk"
+            reply "sounds good, $name :)"
             ;;
         "!bot")
             reply "i live here: https://github.com/cgsdev0/dotfiles/blob/main/bin/twitch-cmds/twitch-chat"
