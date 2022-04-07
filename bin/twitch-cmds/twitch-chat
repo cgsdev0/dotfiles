@@ -11,12 +11,15 @@ mkfifo /tmp/twitch_tunnel;
 
 ld_state_file="$HOME/ludum-dare/$CHAN/.ld-jam-list"
 ld_data_file="$HOME/ludum-dare/$CHAN/.ld-jam-data"
+ld_raffle_file="$HOME/ludum-dare/$CHAN/.ld-jam-raffle"
 
 mkdir -p $(dirname "$ld_state_file")
 mkdir -p $(dirname "$ld_data_file")
+mkdir -p $(dirname "$ld_raffle_file")
 
 touch "$ld_state_file"
 touch "$ld_data_file"
+touch "$ld_raffle_file"
 
 
 # Following regex is based on https://www.rfc-editor.org/rfc/rfc3986#appendix-B with
@@ -98,13 +101,69 @@ parsecmd() {
     msg=$(echo -n "$1" | grep -oP "PRIVMSG.*$" | cut -d':' -f2- | tr '[:upper:]' '[:lower:]')
     name=$(echo -n "$1" | grep -oP "display-name=.*?;" | cut -d'=' -f2- | tr -d ';\n')
     case $msg in
-        # support ludum dare submission links
         *"goodcop_"*)
             reply "@$name don't at me"
             ;;
         *"do it live"*)
             reply "heck yea @$name thecop2Do thecop2It thecop2Live1 thecop2Live2"
             ;;
+        "!endraffle")
+            rm -f "${ld_raffle_file}_LOCK"
+            winner=$(shuf "$ld_raffle_file" | head -n1)
+            # mark any in progress games as played
+            sed -i "s/IN_PROGRESS$/PLAYED/" $ld_state_file
+
+            next_game=$(cat "$ld_state_file" | grep -vE " PLAYED$" | grep -E "\\w* $winner" | head -n1)
+            next_game_slug=$(echo "$next_game" | cut -d' ' -f1)
+            next_game_twitch=$(echo "$next_game" | cut -d' ' -f2)
+            if [[ "$next_game" == "" ]]; then
+                reply "something has gone horribly wrong NotLikeThis"
+                return
+            fi
+            resp=$(grep -E "^$next_game_slug" "$ld_data_file" | cut -d' ' -f2-)
+            entry_type=$(echo "$resp" | jq -r '.type')
+            name=$(echo "$resp" | jq -r '.name')
+            author=$(echo "$resp" | jq -r '.author')
+            friends=$(echo "$resp" | jq -r '.authorCount')
+            slug=$(echo "$resp" | jq -r '.slug')
+            url=$(shorten-url \
+                "https://ldjam.com/events/ludum-dare/50/$next_game_slug" \
+                $(echo "$author" | tr '[:upper:]' '[:lower:]') \
+                | jq -r '.shortCode')
+            if [[ "$friends" != "1" ]]; then
+                fc="$((friends-1))"
+                author="$author and $fc friends"
+            fi
+            # update state
+            sed -i "s/^\\($slug \\w*\\)$/\\1 IN_PROGRESS/" $ld_state_file
+            reply "@$winner has won the raffle! Please introduce yourself and your game if you want :)"
+            reply "Up next! '$name' by $author ($entry_type entry) https://cgs.dev/0/$url"
+            ;;
+        "!raffle")
+            if test -f "${ld_raffle_file}_LOCK"; then
+                reply "a raffle is already going, end it with !endraffle first pls"
+                return
+            fi
+            if [[ "$name" != "$CHAN" ]] && [[ "$name" != "badcop_" ]]; then
+                return
+            fi
+            touch "${ld_raffle_file}_LOCK"
+            rm -f "$ld_raffle_file"
+            touch "$ld_raffle_file"
+            reply "A raffle has begun! type !join to enter (you must already have your game in the queue to join)"
+            ;;
+        "!join")
+            if ! test -f "${ld_raffle_file}_LOCK"; then
+                return
+            fi
+            queue_names=$(cat "$ld_state_file" | grep -vE " PLAYED$" | grep -vE " IN_PROGRESS$" | cut -d' ' -f2)
+            if (echo "$queue_names" | grep -vq "$name"); then
+                reply "@$name you need to paste the link to your game to register first!"
+                return
+            fi
+            echo "$name" >> "$ld_raffle_file"
+            ;;
+        # support ludum dare submission links
         *"https://ldjam.com/events/ludum-dare/50/"*)
             position_data=$(cat "$ld_state_file" | grep -vE " PLAYED$")
             uri=$(echo "$msg" | grep -oE "https://ldjam.com/[^ ]+")
