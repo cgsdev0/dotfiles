@@ -108,6 +108,10 @@ parsecmd() {
             reply "heck yea @$name thecop2Do thecop2It thecop2Live1 thecop2Live2"
             ;;
         "!endraffle")
+            if ! test -f "${ld_raffle_file}_LOCK"; then
+                reply "no raffle started. did you mean to do !raffle?"
+                return
+            fi
             rm -f "${ld_raffle_file}_LOCK"
             winner=$(shuf "$ld_raffle_file" | head -n1)
             # mark any in progress games as played
@@ -156,8 +160,12 @@ parsecmd() {
             if ! test -f "${ld_raffle_file}_LOCK"; then
                 return
             fi
+
+            if (cat "$ld_raffle_file" | cut -d' ' -f2 | grep -q "$name"); then
+                return
+            fi
             queue_names=$(cat "$ld_state_file" | grep -vE " PLAYED$" | grep -vE " IN_PROGRESS$" | cut -d' ' -f2)
-            if (echo "$queue_names" | grep -vq "$name"); then
+            if ! ( echo "$queue_names" | grep -q "$name" ); then
                 reply "@$name you need to paste the link to your game to register first!"
                 return
             fi
@@ -441,6 +449,7 @@ parsechat() {
 reqreader() {
   while IFS= read -r line; do
     [[ $line == "PING"* ]] && echo "PONG :tmi.twitch.tv\r";
+    [[ "$line" == "SYSTEM_EV "* ]] && reply "$(echo $line | sed 's/^SYSTEM_EV //')"
     [[ "$line" == *" PRIVMSG "* ]] && (parsechat "$line" 1>&2; parsecmd "$line")
   done;
   exit 0;

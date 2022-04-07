@@ -1,0 +1,3 @@
+#!/bin/bash
+
+echo "SYSTEM_EV $@" >> /tmp/twitch_tunnel
