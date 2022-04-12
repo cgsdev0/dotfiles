@@ -1,7 +1,0 @@
-#!/bin/bash
-
-# gnome-terminal
-# i3-sensible-terminal -e 'sh -c "cat ~/.cache/wal/sequences && '$1'"'
-
-# st
-i3-sensible-terminal -e $1
