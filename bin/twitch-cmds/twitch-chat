@@ -139,9 +139,6 @@ parsecmd() {
                 reply "$((1 + $RANDOM % $val))"
             fi
             ;;
-        "!submit")
-            reply "just drop an ldjam.com link in chat and i'll add it to the queue :)"
-            ;;
         "!song")
             reply "@$name i have no clue LUL"
             ;;
