@@ -1,0 +1,43 @@
+#!/bin/zsh
+
+rm -rf /tmp/obs_tunnel;
+mkfifo /tmp/obs_tunnel;
+
+wsl_host_ip() {
+    cat /etc/resolv.conf | grep nameserver | cut -d' ' -f2
+}
+
+hi='{"request-type":"SetSceneItemProperties","message-id":"idc","item":"Fish","visible":true}'
+setfish() {
+    echo '{"request-type":"SetSourceSettings","message-id":"idc","sourceName":"Fish","sourceSettings":{"file":"C:/Users/sarah/Pictures/fish-pics/'$@'.png"}}'
+}
+bye='{"request-type":"SetSceneItemProperties","message-id":"idc","item":"Fish","visible":false}'
+reqreader() {
+  while IFS= read -r line; do
+      updateType=$(echo "$line" | jq -r '."update-type"');
+      case $updateType in
+          "StreamStatus")
+              ;&
+          "SceneItemTransformChanged")
+              ;;
+            *)
+              echo "$line" | jq 1>&2;
+              ;;
+      esac
+  done;
+  exit 0;
+}
+
+show_fish() {
+    while true; do
+    while IFS= read -r line; do
+        echo "$(setfish $line)"
+        echo "$hi"
+        sleep 3
+        echo "$bye"
+    done
+    done
+}
+show_fish </tmp/obs_tunnel  \
+    | websocat_linux64 ws://$(wsl_host_ip):4444 \
+    | reqreader

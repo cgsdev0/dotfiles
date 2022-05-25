@@ -69,6 +69,7 @@ parsecmd() {
                 fi
             fi
             fish=$(shuf -n 1 $HOME/fish)
+            echo "$fish" | tr '[:upper:]' '[:lower:]' > /tmp/obs_tunnel
             most_count=$(cat ~/fishing-data/${CHAN}/* \
                 | sort \
                 | uniq -c \
@@ -96,7 +97,8 @@ parsecmd() {
             echo "$fish" >> "$HOME/fishing-data/${CHAN}/$name"
             echo $(( now + 120 )) > "$HOME/fishing-cooldowns/.$name.cooldown"
             if [[ $count -eq 0 ]]; then
-                reply "@$name caught $description $fish ($classification)! ( never caught before :O )"
+                description="THE FIRST"
+                reply "@$name caught and DISCOVERED $description $fish ($classification)! ( never caught before :O )"
             else
                 reply "@$name caught $description $fish ($classification)! ($rarity% rarity)"
             fi
@@ -158,7 +160,7 @@ parsecmd() {
                 reply "rollycubes is not running right now :("
             fi
             ;;
-        "!lurk")
+        "!lurk"*)
             reply "sounds good, $name :)"
             ;;
         "!bot")
@@ -188,7 +190,17 @@ parsechat() {
     if [[ "$1" == *"custom-reward-id=15569ace-d070-4037-986d-967f44196d74;"* ]]; then
         colorize $color
         echo "$name summoned a cow!"
-        cowsay "$msg"
+        if [[ "$msg" == *"bear"* ]]; then
+            if [[ "$msg" == "!lolcat "* ]]; then
+                echo "$msg" | cut -d' ' -f2- | cowsay -f bear -e O |  lolcat
+            else
+                echo "$msg" | cowsay -f bear -e O
+            fi
+        elif [[ "$msg" == "!lolcat "* ]]; then
+            echo "$msg" | cut -d' ' -f2- | cowsay  -f hellokitty | lolcat
+        else
+            cowsay "$msg"
+        fi
     elif [[ "$msg" == "!lolcat "* ]]; then
         colorize $color
         printf "$name"
