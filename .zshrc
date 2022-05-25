@@ -138,5 +138,8 @@ if which fnm > /dev/null; then
     eval "`fnm env`"
 fi
 
+# maven
+[ -f "/etc/profile.d/maven.sh" ] && . "/etc/profile.d/maven.sh"
+
 # make pasting fast
 zstyle ':bracketed-paste-magic' active-widgets '.self-*'

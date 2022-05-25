@@ -56,4 +56,5 @@ fi
 if [ "$NICKNAME" = "devbox" ] ; then
     export SSH_AUTH_SOCK=/tmp/.devbox_agent.sock
 fi
+
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"

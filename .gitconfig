@@ -28,10 +28,10 @@
     default = current
 
 [filter "lfs"]
-    required = true
-    clean = git-lfs clean -- %f
-    smudge = git-lfs smudge -- %f
-    process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
 
 [url "ssh://git@github.com/"]
     insteadOf = https://github.com/
