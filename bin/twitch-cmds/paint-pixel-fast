@@ -1,0 +1,25 @@
+#!/bin/bash
+
+echo "Painting $1"
+sleep 5
+curl 'https://gql.twitch.tv/gql' \
+  -H 'Accept: */*' \
+  -H 'Accept-Language: en-US' \
+  -H 'Authorization: OAuth 8l4ki3ls5drgq73qqw0r6sw9zgv7x2' \
+  -H 'Client-Id: kimne78kx3ncx6brgo4mv6wki5h1ko' \
+  -H 'Client-Session-Id: a9e2e5792d1652b1' \
+  -H 'Client-Version: 9e89a28e-cf68-4713-b622-daefae31aae5' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: text/plain;charset=UTF-8' \
+  -H 'Origin: https://www.twitch.tv' \
+  -H 'Referer: https://www.twitch.tv/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36' \
+  -H 'X-Device-Id: bBjFGxrtIOSfQJcagfosdVSLK7zTNXfA' \
+  -H 'sec-ch-ua: " Not A;Brand";v="99", "Chromium";v="100", "Google Chrome";v="100"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  --data-raw '[{"operationName":"RedeemCustomReward","variables":{"input":{"channelID":"422824066","cost":1,"prompt":null,"rewardID":"396533c3-5868-4b8c-a238-27d8d453e87b","textInput":"'$1'","title":"Paint","transactionID":"'$(head -c16 </dev/urandom|xxd -p -u)'"}},"extensions":{"persistedQuery":{"version":1,"sha256Hash":"d56249a7adb4978898ea3412e196688d4ac3cea1c0c2dfd65561d229ea5dcc42"}}}]' \
+  --compressed

@@ -1,0 +1,21 @@
+#!/bin/bash
+
+x="$1"
+y="$2"
+c="#$3"
+
+if [[ "$x" == "-"* ]]; then
+    exit 0
+fi
+if [ "$x" -gt "70" ]; then
+    exit 0
+fi
+if [[ "$y" == "-"* ]]; then
+    exit 0
+fi
+if [ "$y" -gt "50" ]; then
+    exit 0
+fi
+
+mv canvas.png canvas_raw.png
+convert canvas_raw.png -fill "$c" -draw "point $x,$y" canvas.png

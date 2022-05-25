@@ -1,0 +1,58 @@
+#!/bin/zsh
+
+CHAN=$1
+source ~/.twitch_secrets;
+
+rm -f /tmp/twitch_tunnel;
+mkfifo /tmp/twitch_tunnel;
+
+reply() {
+    colorize "ff0000" 1>&2
+    echo -n "bot" 1>&2
+    printf '\033[0m' 1>&2
+    echo -n ": " 1>&2
+    echo "$@" 1>&2
+    echo "PRIVMSG #${CHAN} :$@\r\n"
+}
+
+parsechat() {
+    name=$(echo -n "$1" | grep -oP "display-name=.*?;" | cut -d'=' -f2- | tr -d ';\n')
+    if [[ "$name" == "badcop_" ]]; then
+        return
+    fi
+    msg=$(echo -n "$1" | grep -oP "PRIVMSG.*$" | cut -d':' -f2- | tr '[:upper:]' '[:lower:]')
+    if [[ "$1" == *"custom-reward-id=396533c3-5868-4b8c-a238-27d8d453e87b;"* ]]; then
+        x=$(echo "$msg" | grep -oE '(x|X)[0-9]+' | grep -oE '[0-9]+')
+        y=$(echo "$msg" | grep -oE '(y|Y)[0-9]+' | grep -oE '[0-9]+')
+
+        re='^[0-9]+$'
+        if ! [[ $x =~ $re ]] ; then
+            return
+        fi
+        if ! [[ $y =~ $re ]] ; then
+            return
+        fi
+
+        ./save-pixel "$x" "$y" "${msg: -6}"
+        pixel=$(./get-pixel "$x" "$y")
+        if [[ "$pixel" == "00000000" ]]; then
+            return
+        fi
+        pixel=$(echo "$pixel" | cut -c -6 | tr '[:upper:]' '[:lower:]')
+        echo "$pixel"
+        if echo "$msg" | grep -v "c$pixel"; then
+            ./paint-pixel x${x}y${y}c${pixel} &
+        fi
+    fi
+}
+reqreader() {
+  while IFS= read -r line; do
+    [[ $line == "PING"* ]] && echo "PONG :tmi.twitch.tv\r";
+    [[ "$line" == *" PRIVMSG "* ]] && (parsechat "$line" 1>&2)
+  done;
+  exit 0;
+}
+(echo "CAP REQ :twitch.tv/tags twitch.tv/commands\r\nPASS oauth:${TWITCH_ACCESS_TOKEN}\r\nNICK badcop_\r\nJOIN #${CHAN}\r"; \
+    </tmp/twitch_tunnel | reqreader) \
+    | websocat_linux64 wss://irc-ws.chat.twitch.tv:443 \
+    | >/tmp/twitch_tunnel

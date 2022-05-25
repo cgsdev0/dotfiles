@@ -1,0 +1,28 @@
+#!/bin/bash
+
+x_offset=$(echo "$1" | sed 's/^0*//')
+y_offset=$(echo "$2" | sed 's/^0*//')
+
+x=$((x_offset-1))
+y=$((y_offset-32))
+
+echo -n "." >&2
+
+if [[ "$x" == "-"* ]]; then
+    echo "00000000"
+    exit 0
+fi
+if [ "$x" -gt "27" ]; then
+    echo "00000000"
+    exit 0
+fi
+if [[ "$y" == "-"* ]]; then
+    echo "00000000"
+    exit 0
+fi
+if [ "$y" -gt "12" ]; then
+    echo "00000000"
+    exit 0
+fi
+
+convert ./diamond_trail.png -format '%[hex:u.p{'${x}','${y}'}]' info:-
