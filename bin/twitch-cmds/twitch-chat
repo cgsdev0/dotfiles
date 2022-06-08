@@ -16,21 +16,6 @@ colorize() {
     printf "\x1b[38;2;$(( 16#${1:0:2} ));$(( 16#${1:2:2} ));$(( 16#${1:4:2} ))m"
 }
 
-classify_fish() {
-    n=$1
-    if ((n == 1)); then
-        echo "LEGENDARY"
-    elif ((n >= 1 && n <= 5)); then
-        echo "EPIC"
-    elif ((n >= 6 && n <= 15)); then
-        echo "Rare"
-    elif ((n >= 16 && n <= 25)); then
-        echo "Uncommon"
-    else
-        echo "Common"
-    fi
-}
-
 reply() {
     colorize "ff0000" 1>&2
     echo -n "bot" 1>&2
@@ -44,6 +29,9 @@ parsecmd() {
     msg=$(echo -n "$1" | grep -oP "PRIVMSG.*$" | cut -d':' -f2- | tr '[:upper:]' '[:lower:]')
     name=$(echo -n "$1" | grep -oP "display-name=.*?;" | cut -d'=' -f2- | tr -d ';\n')
     case $msg in
+        *"🦀"*)
+            reply "🦀🚫🦀🚫🦀🚫🦀🚫"
+            ;;
         *"goodcop_"*)
             reply "@$name don't at me"
             ;;
@@ -60,6 +48,9 @@ parsecmd() {
         "!discord")
             reply "join our discord! https://discord.gg/m2ZzF8CQrW"
             ;;
+        "!keyboard")
+            reply "massdrop alt high profile w/ novelkey olivia silk switches"
+            ;;
         "!fish")
             now=$(date +%s)
             if [[ -f "$HOME/fishing-cooldowns/.$name.cooldown" ]]; then
@@ -68,8 +59,11 @@ parsecmd() {
                     return
                 fi
             fi
-            fish=$(shuf -n 1 $HOME/fish)
-            echo "$fish" | tr '[:upper:]' '[:lower:]' > /tmp/obs_tunnel
+            fishing_rod=default
+            classification=$(shuf -n 1 $HOME/fishing-data/fishing-rods/${fishing_rod})
+            class_pretty=$(echo "$classification" | tr '_' ' ' | sed 's/.*/\L&/; s/[a-z]*/\u&/g')
+            fish=$(shuf -n 1 $HOME/fishing-data/fish-by-rarity/${classification})
+            echo "Fish" $(echo "$fish" | tr '[:upper:]' '[:lower:]') > /tmp/obs_tunnel
             most_count=$(cat ~/fishing-data/${CHAN}/* \
                 | sort \
                 | uniq -c \
@@ -78,14 +72,6 @@ parsecmd() {
                 | grep -oE '[0-9].*' \
                 | cut -d' ' -f1)
             count=$(cat $HOME/fishing-data/${CHAN}/* | grep "$fish" | wc -l)
-            expected_count=$(cat $HOME/fish \
-                | sort \
-                | uniq -c \
-                | sort -n \
-                | awk '{$1=$1};1' \
-                | grep "$fish" \
-                | cut -d' ' -f1)
-            classification=$(classify_fish $expected_count)
             description="a"
             touch "$HOME/fishing-data/${CHAN}/$name"
             personalcount=$(cat "$HOME/fishing-data/${CHAN}/$name" | grep "$fish" | wc -l)
@@ -95,12 +81,14 @@ parsecmd() {
 
             rarity=$(bc <<< "scale=2; 100 - ( $count / $most_count * 100 )")
             echo "$fish" >> "$HOME/fishing-data/${CHAN}/$name"
-            echo $(( now + 120 )) > "$HOME/fishing-cooldowns/.$name.cooldown"
+            if [[ "$name" != "$CHAN" ]]; then
+                echo $(( now + 120 )) > "$HOME/fishing-cooldowns/.$name.cooldown"
+            fi
             if [[ $count -eq 0 ]]; then
                 description="THE FIRST"
-                reply "@$name caught and DISCOVERED $description $fish ($classification)! ( never caught before :O )"
+                reply "@$name caught and DISCOVERED $description $fish ($class_pretty)! ( never caught before :O )"
             else
-                reply "@$name caught $description $fish ($classification)! ($rarity% rarity)"
+                reply "@$name caught $description $fish ($class_pretty)! ($rarity% rarity)"
             fi
             ;;
         "!help")
@@ -189,17 +177,18 @@ parsechat() {
     fi
     if [[ "$1" == *"custom-reward-id=15569ace-d070-4037-986d-967f44196d74;"* ]]; then
         colorize $color
+        colorize $color > ~/current_cow
         echo "$name summoned a cow!"
         if [[ "$msg" == *"bear"* ]]; then
             if [[ "$msg" == "!lolcat "* ]]; then
-                echo "$msg" | cut -d' ' -f2- | cowsay -f bear -e O |  lolcat
+                echo "$msg" | cut -d' ' -f2- | cowsay -f bear -e O |  lolcat -f >> ~/current_cow
             else
-                echo "$msg" | cowsay -f bear -e O
+                echo "$msg" | cowsay -f bear -e O >> ~/current_cow
             fi
         elif [[ "$msg" == "!lolcat "* ]]; then
-            echo "$msg" | cut -d' ' -f2- | cowsay  -f hellokitty | lolcat
+            echo "$msg" | cut -d' ' -f2- | cowsay  -f hellokitty | lolcat -f >> ~/current_cow
         else
-            cowsay "$msg"
+            cowsay "$msg" >> ~/current_cow
         fi
     elif [[ "$msg" == "!lolcat "* ]]; then
         colorize $color

@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@yaegassy/coc-tailwindcss3": ">=0.2.1",
     "coc-go": ">=0.13.3",
     "coc-jest": ">=1.1.4",
     "coc-json": ">=1.3.6",

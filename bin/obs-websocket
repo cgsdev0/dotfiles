@@ -7,11 +7,23 @@ wsl_host_ip() {
     cat /etc/resolv.conf | grep nameserver | cut -d' ' -f2
 }
 
-hi='{"request-type":"SetSceneItemProperties","message-id":"idc","item":"Fish","visible":true}'
-setfish() {
-    echo '{"request-type":"SetSourceSettings","message-id":"idc","sourceName":"Fish","sourceSettings":{"file":"C:/Users/sarah/Pictures/fish-pics/'$@'.png"}}'
+hi() {
+    sourceName=$(echo $1 | cut -d' ' -f1)
+    echo "$sourceName" 1>&2
+    echo '{"request-type":"SetSceneItemProperties","message-id":"idc","item":"'$sourceName'","visible":true}'
 }
-bye='{"request-type":"SetSceneItemProperties","message-id":"idc","item":"Fish","visible":false}'
+
+setfish() {
+    sourceName=$(echo $1 | cut -d' ' -f1)
+    fishPic=$(echo $1 | cut -d' ' -f2-)
+    echo '{"request-type":"SetSourceSettings","message-id":"idc","sourceName":"'$sourceName'","sourceSettings":{"file":"C:/Users/sarah/Pictures/fish-pics/'$fishPic'.png"}}'
+}
+
+bye() {
+    sourceName=$(echo $1 | cut -d' ' -f1)
+    echo '{"request-type":"SetSceneItemProperties","message-id":"idc","item":"'$sourceName'","visible":false}'
+}
+
 reqreader() {
   while IFS= read -r line; do
       updateType=$(echo "$line" | jq -r '."update-type"');
@@ -32,9 +44,9 @@ show_fish() {
     while true; do
     while IFS= read -r line; do
         echo "$(setfish $line)"
-        echo "$hi"
+        echo "$(hi $line)"
         sleep 3
-        echo "$bye"
+        echo "$(bye $line)"
     done
     done
 }

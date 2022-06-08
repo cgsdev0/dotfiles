@@ -11,6 +11,10 @@ redeem () {
         who=$(echo "$line" | jq -r '.user.display_name')
         reward=$(echo "$line" | jq -r '.reward.title')
         case $reward in
+            "cowsay")
+                sleep 1
+                echo "cowsay" > /tmp/obs_tunnel
+                ;;
             "CHOO CHOO")
                 tmux select-pane -t stream-outer:0.$PANE
                 tmux resize-pane -Z
