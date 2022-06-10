@@ -34,5 +34,6 @@
     "javascript.jsx",
     "typescript.tsx",
     "json"
-  ]
+  ],
+  "svelte.enable-ts-plugin": true
 }

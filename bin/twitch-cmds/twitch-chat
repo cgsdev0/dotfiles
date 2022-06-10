@@ -1,10 +1,13 @@
 #!/bin/zsh
 
+cd "${0%/*}"
+
 # twitch chat bot
 # twitch docs reference: https://dev.twitch.tv/docs/irc
 
 CHAN=$1
 source ~/.twitch_secrets_bot;
+source ./fish-cmds;
 
 rm -f /tmp/twitch_tunnel;
 mkfifo /tmp/twitch_tunnel;
@@ -27,13 +30,18 @@ reply() {
 
 parsecmd() {
     msg=$(echo -n "$1" | grep -oP "PRIVMSG.*$" | cut -d':' -f2- | tr '[:upper:]' '[:lower:]')
-    name=$(echo -n "$1" | grep -oP "display-name=.*?;" | cut -d'=' -f2- | tr -d ';\n')
+    headers=$(echo -n "$1" | grep -oP "^.*PRIVMSG")
+    name=$(echo -n "$headers" | grep -oP ";display-name=.*?;" | cut -d'=' -f2 | tr -d ';')
     case $msg in
         *"🦀"*)
             reply "🦀🚫🦀🚫🦀🚫🦀🚫"
             ;;
         *"goodcop_"*)
-            reply "@$name don't at me"
+            if [[ "$headers" == *"reply-parent-user-login=goodcop_;"* ]]; then
+                reply "@$name don't reply to me LUL"
+            else
+                reply "@$name don't at me"
+            fi
             ;;
         "!ping")
             reply "pong!"
@@ -42,8 +50,7 @@ parsecmd() {
             reply "/me waves"
             ;;
         "!fish leaderboard")
-            cd "$HOME/fishing-data/$CHAN"
-            reply "$(wc -l * | head -n -1 | sort -nr | head -n 5 | paste -sd '|' | sed 's/|/ | /g')"
+            reply "$(fish_leaderboard)"
             ;;
         "!discord")
             reply "join our discord! https://discord.gg/m2ZzF8CQrW"
@@ -52,44 +59,13 @@ parsecmd() {
             reply "massdrop alt high profile w/ novelkey olivia silk switches"
             ;;
         "!fish")
-            now=$(date +%s)
-            if [[ -f "$HOME/fishing-cooldowns/.$name.cooldown" ]]; then
-                cooldown=$(cat "$HOME/fishing-cooldowns/.$name.cooldown")
-                if [[ $cooldown -gt $now ]]; then
-                    return
-                fi
-            fi
-            fishing_rod=default
-            classification=$(shuf -n 1 $HOME/fishing-data/fishing-rods/${fishing_rod})
-            class_pretty=$(echo "$classification" | tr '_' ' ' | sed 's/.*/\L&/; s/[a-z]*/\u&/g')
-            fish=$(shuf -n 1 $HOME/fishing-data/fish-by-rarity/${classification})
-            echo "Fish" $(echo "$fish" | tr '[:upper:]' '[:lower:]') > /tmp/obs_tunnel
-            most_count=$(cat ~/fishing-data/${CHAN}/* \
-                | sort \
-                | uniq -c \
-                | sort -nr \
-                | head -n 1 \
-                | grep -oE '[0-9].*' \
-                | cut -d' ' -f1)
-            count=$(cat $HOME/fishing-data/${CHAN}/* | grep "$fish" | wc -l)
-            description="a"
-            touch "$HOME/fishing-data/${CHAN}/$name"
-            personalcount=$(cat "$HOME/fishing-data/${CHAN}/$name" | grep "$fish" | wc -l)
-            if [[ $personalcount -eq 0 ]]; then
-                description="their first"
-            fi
-
-            rarity=$(bc <<< "scale=2; 100 - ( $count / $most_count * 100 )")
-            echo "$fish" >> "$HOME/fishing-data/${CHAN}/$name"
-            if [[ "$name" != "$CHAN" ]]; then
-                echo $(( now + 120 )) > "$HOME/fishing-cooldowns/.$name.cooldown"
-            fi
-            if [[ $count -eq 0 ]]; then
-                description="THE FIRST"
-                reply "@$name caught and DISCOVERED $description $fish ($class_pretty)! ( never caught before :O )"
-            else
-                reply "@$name caught $description $fish ($class_pretty)! ($rarity% rarity)"
-            fi
+            reply "$(catch_fish)"
+            ;;
+        "!rod")
+            rod=$(get_rod)
+            rod_name=$(echo "$rod" | cut -d' ' -f1)
+            rod_uses=$(echo "$rod" | cut -d' ' -f2)
+            reply "@$name has a $rod_name rod ($rod_uses uses left)"
             ;;
         "!help")
             ;&
@@ -103,15 +79,10 @@ parsecmd() {
             reply "/me jumps"
             ;;
         "!fishdex all")
-            total=$(cat $HOME/fish | sort -u | wc -l)
-            count=$(cat $HOME/fishing-data/${CHAN}/* | sort -u | wc -l)
-            reply "$count out of $total possible fish have been caught."
+            reply "$(fishdex_all)"
             ;;
         "!fishdex")
-            total=$(cat $HOME/fish | sort -u | wc -l)
-            touch "$HOME/fishing-data/${CHAN}/$name"
-            count=$(cat "$HOME/fishing-data/${CHAN}/$name" | sort -u | wc -l)
-            reply "@$name has caught $count out of $total possible fish!"
+            reply "$(fishdex)"
             ;;
         "!count")
             count=$(cat ~/.twitch_counter)
