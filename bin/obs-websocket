@@ -32,9 +32,9 @@ reqreader() {
               ;&
           "SceneItemTransformChanged")
               ;;
-            *)
-              echo "$line" | jq 1>&2;
-              ;;
+            # *)
+            #   echo "$line" | jq 1>&2;
+            #   ;;
       esac
   done;
   exit 0;

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+USERNAME=$(cat ~/.hue_bridge_username)
+BASE_URL=http://192.168.50.38/api/${USERNAME}
+
+change_hue() {
+    curl -X PUT -Ss "${BASE_URL}/lights/1/state" --data '{"on":true, "sat":254, "bri":254,"hue":'$1'}' > /dev/null
+    curl -X PUT -Ss "${BASE_URL}/lights/2/state" --data '{"on":true, "sat":254, "bri":254,"hue":'$1'}' > /dev/null
+}
+
+reset_color() {
+    curl -X PUT -Ss "${BASE_URL}/lights/1/state" --data '{"on":true, "sat":194, "bri":254,"hue":51149}' > /dev/null
+    curl -X PUT -Ss "${BASE_URL}/lights/2/state" --data '{"on":true, "sat":194, "bri":254,"hue":51149}' > /dev/null
+}
+
+
+for j in {1..2}; do
+    for i in $(seq 0 10000 65565); do
+        change_hue $i
+        sleep 0.5
+    done
+done
+
+reset_color
+

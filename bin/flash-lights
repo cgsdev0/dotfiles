@@ -1,0 +1,27 @@
+#!/bin/bash
+
+USERNAME=$(cat ~/.hue_bridge_username)
+BASE_URL=http://192.168.50.38/api/${USERNAME}
+
+change_state() {
+    curl -X PUT -Ss "${BASE_URL}/lights/1/state" --data '{"on":'$1'}' > /dev/null
+    curl -X PUT -Ss "${BASE_URL}/lights/2/state" --data '{"on":'$1'}' > /dev/null
+}
+
+turn_on() {
+    change_state true
+}
+
+turn_off() {
+    change_state false
+}
+
+
+turn_off
+sleep 1
+turn_on
+sleep 1
+turn_off
+sleep 1
+turn_on
+sleep 1

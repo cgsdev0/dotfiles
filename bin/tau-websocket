@@ -1,0 +1,56 @@
+#!/bin/zsh
+
+
+reqreader() {
+  while IFS= read -r line; do
+      echo "$line" | jq
+      eventType=$(echo "$line" | jq -r '."event_type"');
+      echo "Incoming $eventType event..."
+      case $eventType in
+          "channel-subscription-gift")
+              is_anon=$(echo "$line" | jq -r '.event_data.is_anonymous');
+              who=$(echo "$line" | jq -r '.event_data.user_name');
+              if [[ "$is_anon" == "true" ]]; then
+                  who="An Anonymous Gifter"
+              fi
+              total=$(echo "$line" | jq -r '.event_data.total');
+              send-twitch-msg "$who is gifting $total subs to the channel!"
+              sleep 0.5
+              ;;
+          "channel-subscribe")
+              who=$(echo "$line" | jq -r '.event_data.user_name');
+              is_gift=$(echo "$line" | jq -r '.event_data.is_gift');
+              if [[ "$is_gift" == "true" ]]; then
+                  send-twitch-msg "$who just received a gift sub! :D"
+              else
+                  send-twitch-msg "$who just subscribed! :D"
+              fi
+              rainbow-lights
+              ;;
+          "channel-follow")
+              who=$(echo "$line" | jq -r '.event_data.user_name');
+              send-twitch-msg "@$who just followed! :)"
+              flash-lights
+              ;;
+          "channel-raid")
+              who=$(echo "$line" | jq -r '.event_data.from_broadcaster_user_name');
+              viewers=$(echo "$line" | jq -r '.event_data.viewers');
+              send-twitch-msg "@$who just raided with $viewers viewers! :O"
+              flash-lights
+              ;;
+            *)
+              echo "unhandled $eventType event happened";
+              ;;
+      esac
+  done;
+  exit 0;
+}
+
+authenticate() {
+    echo '{"token":"'$(cat ~/.tau_token)'"}'
+    sleep infinity
+}
+
+(authenticate) \
+    | websocat_linux64 wss://tau.cgs.dev/ws/twitch-events/ \
+    | reqreader
