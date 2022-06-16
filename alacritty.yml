@@ -24,6 +24,7 @@
   #TERM: alacritty
 
 #window:
+#  opacity: 0.2
   # Window dimensions (changes require restart)
   #
   # Number of lines/columns (not pixels) in the terminal. The number of columns
@@ -260,8 +261,8 @@ font:
 colors:
   # Default colors
   primary:
-    background: '#212121'
-    foreground: '#eeffff'
+    background: '#282828'
+    foreground: '#ebdbb2'
     # Bright and dim foreground colors
   #
 
@@ -413,14 +414,14 @@ colors:
 
   # Normal colors
   normal:
-    black: '#2b2b2b'
-    red: '#f07178'
-    green: '#c3e88d'
-    yellow: '#ffcb6b'
-    blue: '#82aaff'
-    magenta: '#c792ea'
-    cyan: '#89ddff'
-    white: '#eeffff'
+    black: '#928374'
+    red: '#cc241d'
+    green: '#98971a'
+    yellow: '#d79921'
+    blue: '#458588'
+    magenta: '#b16286'
+    cyan: '#689d6a'
+    white: '#a89984'
     # Bright colors
 #bright:
 
@@ -672,7 +673,7 @@ colors:
 
 #   - (Windows) powershell
 shell:
-  program: 'C:\Windows\system32\wsl.exe'
+  program: 'C:\Windows\System32\wsl.exe'
 working_directory: '\\wsl.localhost\Ubuntu-20.04\home\sarah'
 
 #  args:
@@ -798,6 +799,8 @@ working_directory: '\\wsl.localhost\Ubuntu-20.04\home\sarah'
 #   binding:
 
 #     key: U
+key_bindings:
+  - { key: F18, mods: None, action: None }
 
 #     mods: Control|Shift
 
