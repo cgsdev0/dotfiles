@@ -3,7 +3,7 @@
 
 reqreader() {
   while IFS= read -r line; do
-      echo "$line" | jq
+      # echo "$line" | jq
       eventType=$(echo "$line" | jq -r '."event_type"');
       echo "Incoming $eventType event..."
       case $eventType in
