@@ -25,3 +25,7 @@ turn_off
 sleep 1
 turn_on
 sleep 1
+turn_off
+sleep 1
+turn_on
+sleep 1
