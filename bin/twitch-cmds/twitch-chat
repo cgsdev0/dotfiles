@@ -188,5 +188,5 @@ reqreader() {
 }
 (echo "CAP REQ :twitch.tv/tags twitch.tv/commands\r\nPASS oauth:${TWITCH_ACCESS_TOKEN}\r\nNICK goodcop_\r\nJOIN #${CHAN}\r"; \
     </tmp/twitch_tunnel | reqreader) \
-    | websocat_linux64 wss://irc-ws.chat.twitch.tv:443 \
+    | websocat_linux64 -vvv wss://irc-ws.chat.twitch.tv:443 \
     | >/tmp/twitch_tunnel

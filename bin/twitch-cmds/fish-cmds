@@ -95,7 +95,7 @@ give_rod() {
     if grep -q "$rod_type" "$rod_file"; then
         current_quantity=$(grep "$rod_type" "$rod_file" | cut -d' ' -f2)
         new_quantity=$((current_quantity + quantity))
-        sed -i "s/$current_quantity/$new_quantity/" "$rod_file"
+        sed -i "s/$rod_type $current_quantity/$rod_type $new_quantity/" "$rod_file"
     else
         # Append
         echo "$rod_type $quantity" >> "$rod_file"
