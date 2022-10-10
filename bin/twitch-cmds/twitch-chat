@@ -6,8 +6,13 @@ cd "${0%/*}"
 # twitch docs reference: https://dev.twitch.tv/docs/irc
 
 CHAN=$1
+LDJAM_INDEX=51
+LDJAM_ENABLED=true
+
 source ~/.twitch_secrets_bot;
 source ./fish-cmds;
+source ../utils/url-parsing;
+source ./ld-cmds;
 
 rm -f /tmp/twitch_tunnel;
 mkfifo /tmp/twitch_tunnel;
@@ -45,6 +50,17 @@ parsecmd() {
             ;;
         "!ping")
             reply "pong!"
+            ;;
+        "!botsnack")
+            count=$(cat ~/.twitch_snack_counter)
+            count=$(( count + 1 ))
+            echo "$count" > ~/.twitch_snack_counter
+            if (( $count % 5 == 0 ))
+            then
+              reply "my tummy hurts :("
+            else
+              reply "yum, thanks :)"
+            fi
             ;;
         "!hi")
             reply "/me waves"
@@ -107,7 +123,7 @@ parsecmd() {
             ;&
         "!play")
             if [[ "$CHAN" == "badcop_" ]]; then
-                reply "Here is my LD compo entry: https://badcop.games/LD50"
+                reply "Here is my LD compo entry: https://cgs.dev/0/ld51"
             fi
             ;;
         "!dice")
@@ -131,12 +147,39 @@ parsecmd() {
         *"heh"*)
             reply "haha"
             ;;
-#        *"emacs"*)
-#            reply "vim is better"
-#            ;;
-#        *"vim"*)
-#            reply "emacs is better"
-#            ;;
+        # support ludum dare submission links
+        *"https://ldjam.com/events/ludum-dare/51/"*)
+            [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_submit_cmd)"
+            ;;
+        "!endraffle")
+            [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_endraffle_cmd)"
+            ;;
+        "!raffle")
+            [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_raffle_cmd)"
+            ;;
+        "!join")
+            [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_join_cmd)"
+            ;;
+        "!game")
+            [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_game_cmd)"
+            ;;
+        "!queue")
+            [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_queue_cmd)"
+            ;;
+        "!next")
+            [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_next_cmd)"
+            ;;
+       *"emacs"*)
+           reply "vim is better"
+           ;;
+       *"kuviman"*)
+           if [[ "$headers" != *"reply-parent-user-login=kuviman;"* ]]; then
+             reply "rust is better"
+           fi
+           ;;
+       *"vim"*)
+           reply "emacs is better"
+           ;;
     esac
 }
 parsechat() {
