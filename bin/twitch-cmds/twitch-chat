@@ -122,10 +122,10 @@ parsecmd() {
         "!link")
             ;&
         "!play")
-            if [[ "$CHAN" == "badcop_" ]]; then
-                reply "Here is my LD compo entry: https://cgs.dev/0/ld51"
-            fi
-            ;;
+            # if [[ "$CHAN" == "badcop_" ]]; then
+            #     reply "Here is my LD compo entry: https://cgs.dev/0/ld51"
+            # fi
+            ;&
         "!dice")
             ;&
         "!rollycubes")
