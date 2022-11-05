@@ -89,7 +89,7 @@ parsecmd() {
             reply "!fish, !fishdex, !roll, !count, !play, !discord, !today, !jump"
             ;;
         "!today")
-            reply "$(cat $HOME/.today)"
+            reply "$(head -n1 $HOME/.today)"
             ;;
         "!jump")
             reply "/me jumps"
@@ -180,6 +180,9 @@ parsecmd() {
        *"vim"*)
            reply "emacs is better"
            ;;
+       *"linux"*)
+           reply "i use arch btw"
+           ;;
     esac
 }
 parsechat() {
@@ -231,5 +234,5 @@ reqreader() {
 }
 (echo "CAP REQ :twitch.tv/tags twitch.tv/commands\r\nPASS oauth:${TWITCH_ACCESS_TOKEN}\r\nNICK goodcop_\r\nJOIN #${CHAN}\r"; \
     </tmp/twitch_tunnel | reqreader) \
-    | websocat_linux64 -vvv wss://irc-ws.chat.twitch.tv:443 \
+    | websocat_linux64 -E -vvv wss://irc-ws.chat.twitch.tv:443 \
     | >/tmp/twitch_tunnel

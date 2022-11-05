@@ -119,6 +119,7 @@ catch_fish() {
     classification=$(shuf -n 1 $HOME/fishing-data/fishing-rods/${fishing_rod})
     class_pretty=$(echo "$classification" | tr '_' ' ' | sed 's/.*/\L&/; s/[a-z]*/\u&/g')
     fish=$(shuf -n 1 $HOME/fishing-data/fish-by-rarity/${classification})
+    # TODO
     echo "Fish" $(echo "$fish" | tr '[:upper:]' '[:lower:]') > /tmp/obs_tunnel
     most_count=$(find * -maxdepth 0 -type f \
         | xargs cat \
