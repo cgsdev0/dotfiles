@@ -61,8 +61,17 @@ msg='{"type":"LISTEN","data":{"topics":["channel-points-channel-v1.56931496"],"a
 ping='{"type": "PING"}'
 
 
-(echo "$msg"; while true; do sleep 280; echo "$ping"; done) \
-    | websocat_linux64 wss://pubsub-edge.twitch.tv \
-    | jq -r --unbuffered 'select(.type == "MESSAGE") | .data.message' \
-    | jq -c --unbuffered '.data.redemption' \
-    | redeem
+set -o pipefail;
+while true; do
+  (echo "$msg"; while true; do sleep 280; echo "$ping"; done) \
+      | websocat_linux64 wss://pubsub-edge.twitch.tv -E --ping-timeout 15 --ping-interval 10 \
+      | jq -r --unbuffered 'select(.type == "MESSAGE") | .data.message' \
+      | jq -c --unbuffered '.data.redemption' \
+      | redeem
+  FAILED=$?
+  echo "$FAILED"
+  if [[ "$FAILED" -ge 130 ]]; then
+    exit 0
+  fi
+  echo "IT CRASHED, RESTARTING"
+done

@@ -51,6 +51,15 @@ authenticate() {
     sleep infinity
 }
 
-(authenticate) \
-    | websocat_linux64 wss://tau.cgs.dev/ws/twitch-events/ \
-    | reqreader
+set -o pipefail;
+while true; do
+  (authenticate) \
+      | websocat_linux64 -E wss://tau.cgs.dev/ws/twitch-events/ --ping-interval 10 --ping-timeout 15 \
+      | reqreader
+  FAILED=$?
+  echo "$FAILED"
+  if [[ "$FAILED" -ge 130 ]]; then
+    exit 0
+  fi
+  echo "IT CRASHED, RESTARTING"
+done

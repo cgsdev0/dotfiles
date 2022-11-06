@@ -226,13 +226,24 @@ parsechat() {
 }
 reqreader() {
   while IFS= read -r line; do
-    [[ $line == "PING"* ]] && echo "PONG :tmi.twitch.tv\r";
+    [[ $line == "PING"* ]] && echo "PONG :tmi.twitch.tv";
     [[ "$line" == "SYSTEM_EV "* ]] && reply "$(echo $line | sed 's/^SYSTEM_EV //')"
     [[ "$line" == *" PRIVMSG "* ]] && (parsechat "$line" 1>&2; parsecmd "$line")
   done;
   exit 0;
 }
-(echo "CAP REQ :twitch.tv/tags twitch.tv/commands\r\nPASS oauth:${TWITCH_ACCESS_TOKEN}\r\nNICK goodcop_\r\nJOIN #${CHAN}\r"; \
-    </tmp/twitch_tunnel | reqreader) \
-    | websocat_linux64 -E -vvv wss://irc-ws.chat.twitch.tv:443 \
-    | >/tmp/twitch_tunnel
+
+set -o pipefail;
+while true; do
+  (echo "CAP REQ :twitch.tv/tags twitch.tv/commands\r\nPASS oauth:${TWITCH_ACCESS_TOKEN}\r\nNICK goodcop_\r\nJOIN #${CHAN}\r"; \
+      </tmp/twitch_tunnel | reqreader) \
+      | websocat_linux64 -E -vvv wss://irc-ws.chat.twitch.tv:443 --ping-timeout 15 --ping-interval 10 \
+      | >/tmp/twitch_tunnel;
+  FAILED=$?
+  echo "$FAILED"
+  if [[ "$FAILED" -ge 130 ]]; then
+    exit 0
+  fi
+  echo "IT CRASHED, RESTARTING"
+  refresh-token-bot
+done
