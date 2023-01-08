@@ -1,9 +1,6 @@
 # Bitwarden CLI
 bw_unlock() { export BW_SESSION=$(bw unlock | head -n4 | tail -n1 | cut -d'=' -f2- | tr -d '"'); }
 
-# Make nvr work
-alias vim="nvim"
-
 # Git
 alias g="git"
 alias gl="git l"

@@ -121,11 +121,6 @@ eval "$(direnv hook bash)"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
-# fnm
-export PATH=$HOME/.fnm:$PATH
-eval "`fnm env`"
-
-
 [ -f "$HOME/.cargo/env" ] && "$HOME/.cargo/env"
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!

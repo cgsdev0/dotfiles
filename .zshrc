@@ -132,12 +132,6 @@ fi
 
 eval "$(direnv hook zsh)"
 
-# fnm
-if which fnm > /dev/null; then
-    export PATH=$HOME/.fnm:$PATH
-    eval "`fnm env`"
-fi
-
 # maven
 [ -f "/etc/profile.d/maven.sh" ] && . "/etc/profile.d/maven.sh"
 
