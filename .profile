@@ -50,6 +50,9 @@ if [ ! -z "$SSH_TTY" ]; then
 else
     if [[ "$OSTYPE" == "linux-gnu" ]]; then
         eval $(ssh-agent) &> /dev/null
+        for key in $(find "$HOME/.ssh" -type f -iname 'id_*' | grep -v ".pub$"); do 
+          ssh-add "$key" &> /dev/null
+        done
     fi
 fi
 
