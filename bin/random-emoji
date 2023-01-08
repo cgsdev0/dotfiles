@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+echo -e "\U000$(printf '%x\n' $((`od -vAn -N4 -tu4 < /dev/urandom` % 79 + 128512)))"
