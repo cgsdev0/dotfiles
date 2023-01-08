@@ -11,7 +11,7 @@ if [ $has_local_changes -ne 0 ]; then
     git stash
 fi
 
-git pull origin master --rebase
+git pull origin main --rebase
 ./_install.sh
 
 if [ $has_local_changes -ne 0 ]; then
