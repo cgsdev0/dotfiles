@@ -1,6 +1,6 @@
 [user]
     name = Sarah Schulte
-    email = sarah.schulte@samsara.com
+    email = git@sarah.engineer
 
 [core]
     editor = vim
@@ -33,5 +33,5 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 
-[url "ssh://git@github.com/"]
-    insteadOf = https://github.com/
+# [url "ssh://git@github.com/"]
+#    insteadOf = https://github.com/

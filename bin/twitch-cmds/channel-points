@@ -6,7 +6,7 @@ FLASHBANG_SFX="/mnt/c/Users/sarah/Music/DeployingFlashbang.mp3"
 
 CHAN="badcop_"
 
-source ~/.twitch_secrets
+source ~/.twitch_secrets_bot;
 source ./fish-cmds
 
 PANE=$(tmux display -pt "${TMUX_PANE:?}" '#{pane_index}')
@@ -55,7 +55,7 @@ redeem () {
 }
 
 # Subscribe to channel points redemption events
-msg='{"type":"LISTEN","data":{"topics":["channel-points-channel-v1.56931496"],"auth_token":"'$TWITCH_ACCESS_TOKEN'"}}'
+msg='{"type":"LISTEN","data":{"topics":["community-points-channel-v1.56931496"],"auth_token":"'$TWITCH_ACCESS_TOKEN'"}}'
 
 # Periodically ping the server to keep-alive
 ping='{"type": "PING"}'

@@ -237,11 +237,12 @@ set -o pipefail;
 while true; do
   (echo "CAP REQ :twitch.tv/tags twitch.tv/commands\r\nPASS oauth:${TWITCH_ACCESS_TOKEN}\r\nNICK goodcop_\r\nJOIN #${CHAN}\r"; \
       </tmp/twitch_tunnel | reqreader) \
-      | websocat_linux64 -E -vvv wss://irc-ws.chat.twitch.tv:443 --ping-timeout 15 --ping-interval 10 \
+      | websocat_linux64 -E wss://irc-ws.chat.twitch.tv:443 --ping-timeout 15 --ping-interval 10 \
       | >/tmp/twitch_tunnel;
   FAILED=$?
   echo "$FAILED"
   if [[ "$FAILED" -ge 130 ]]; then
+    echo "I THINK YOU MEANT TO EXIT? IDK LOL"
     exit 0
   fi
   echo "IT CRASHED, RESTARTING"
