@@ -164,14 +164,14 @@ uncaught_fish() {
 
 fishdex_all() {
     cd "$HOME/fishing-data/$CHAN"
-    total=$(cat $HOME/fish | sort -u | wc -l)
+    total=$(cat ~/fishing-data/fish-by-rarity/* | sort -u | wc -l)
     count=$(find * -maxdepth 0 -type f | xargs cat | sort -u | wc -l)
     echo "$count out of $total possible fish have been caught."
 }
 
 fishdex() {
     cd "$HOME/fishing-data/$CHAN"
-    total=$(cat $HOME/fish | sort -u | wc -l)
+    total=$(cat ~/fishing-data/fish-by-rarity/* | sort -u | wc -l)
     touch "$HOME/fishing-data/${CHAN}/$name"
     count=$(cat "$HOME/fishing-data/${CHAN}/$name" | sort -u | wc -l)
     echo "@$name has caught $count out of $total possible fish!"
