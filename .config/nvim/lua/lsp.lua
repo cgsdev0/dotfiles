@@ -4,6 +4,20 @@ require("mason-lspconfig").setup()
 require("neodev").setup({
 	-- add any options here, or leave empty to use the default settings
 })
+
+-- vim.cmd([[autocmd! ColorScheme * highlight NormalFloat guibg=#1f2335]])
+-- vim.cmd([[autocmd! ColorScheme * highlight FloatBorder guifg=white guibg=#1f2335]])
+
+local border = "rounded"
+
+-- override globally
+local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
+function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+	opts = opts or {}
+	opts.border = opts.border or border
+	return orig_util_open_floating_preview(contents, syntax, opts, ...)
+end
+
 -- Mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
 local opts = { noremap = true, silent = true }

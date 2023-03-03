@@ -12,10 +12,13 @@ vim.keymap.set("v", "<CR>", "y/\\V<C-R>=escape(@\",'\\/')<CR><CR>", bufopts)
 vim.keymap.set("n", "<C-s>", ":w<CR>", bufopts)
 vim.keymap.set("n", "<C-\\>", ":vsplit<CR>", bufopts)
 vim.keymap.set("n", "<C-N>", ":NERDTreeFind<CR>", bufopts)
-vim.keymap.set("n", "<C-p>", ":Files<CR>", bufopts)
+
+vim.keymap.set("n", "<C-p>", ":Telescope find_files<CR>", bufopts)
+vim.keymap.set("n", "<C-g>", ":Telescope live_grep<CR>", bufopts)
 
 -- edit vim config
 vim.keymap.set("n", "<leader>,", ":e ~/.config/nvim/init.vim<CR>", bufopts)
+vim.keymap.set("n", "<leader>r", ":luafile %<CR>", bufopts)
 
 -- tmux navigation
 vim.keymap.set("n", "<C-H>", ":TmuxNavigateLeft<cr>", bufopts)

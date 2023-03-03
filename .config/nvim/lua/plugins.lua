@@ -47,8 +47,9 @@ return require("packer").startup(function(use)
 
 	-- colorscheme + aesthetics
 	use("morhetz/gruvbox")
-	use("vim-airline/vim-airline")
-	use("vim-airline/vim-airline-themes")
+	use("folke/tokyonight.nvim")
+	use("nvim-lualine/lualine.nvim")
+	use("kdheepak/tabline.nvim")
 
 	-- language servers
 	use("williamboman/mason.nvim")
@@ -66,8 +67,4 @@ return require("packer").startup(function(use)
 	use("hrsh7th/nvim-cmp")
 	use("hrsh7th/cmp-vsnip")
 	use("hrsh7th/vim-vsnip")
-
-	-- external tools
-	use("junegunn/fzf")
-	use("junegunn/fzf.vim")
 end)
