@@ -1,0 +1,13 @@
+#!/bin/bash
+
+cmd="$1"
+whichcmd="$(which $cmd)"
+shift
+
+while true; do
+    $cmd "$@" &
+
+    inotifywait -qq "$whichcmd" -e MODIFY -e MOVE_SELF
+    pkill "$cmd"
+    echo "Hot reloading..."
+done
