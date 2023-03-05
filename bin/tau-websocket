@@ -58,7 +58,7 @@ authenticate() {
 set -o pipefail;
 while true; do
   (authenticate) \
-      | websocat_linux64 -E wss://tau.cgs.dev/ws/twitch-events/ --ping-interval 10 --ping-timeout 15 \
+      | websocat -E wss://tau.cgs.dev/ws/twitch-events/ --ping-interval 10 --ping-timeout 15 \
       | reqreader
   FAILED=$?
   echo "$FAILED"

@@ -64,7 +64,7 @@ ping='{"type": "PING"}'
 set -o pipefail;
 while true; do
   (echo "$msg"; while true; do sleep 280; echo "$ping"; done) \
-      | websocat_linux64 wss://pubsub-edge.twitch.tv -E --ping-timeout 15 --ping-interval 10 \
+      | websocat wss://pubsub-edge.twitch.tv -E --ping-timeout 15 --ping-interval 10 \
       | jq -r --unbuffered 'select(.type == "MESSAGE") | .data.message' \
       | jq -c --unbuffered '.data.redemption' \
       | redeem
