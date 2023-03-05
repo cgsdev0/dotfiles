@@ -1,5 +1,8 @@
 #!/bin/zsh
 
+cd "${0%/*}"
+
+source ./twitch-cmds/fish-cmds
 
 reqreader() {
   while IFS= read -r line; do
@@ -9,6 +12,26 @@ reqreader() {
       if [[ "$event_key" != "keep_alive" ]]; then
         echo "Incoming $eventType event..."
         case $eventType in
+            "channel-channel_points_custom_reward_redemption-add")
+
+                who=$(echo "$line" | jq -r '.event_data.user_name');
+                reward=$(echo "$line" | jq -r '.event_data.reward.title');
+                echo "$who redeemed '$reward'!"
+                case $reward in
+                    "Good Rod")
+                        name=$who
+                        give_rod good 30 1>&2
+                        ;;
+                    "Super Rod")
+                        name=$who
+                        give_rod super 30 1>&2
+                        ;;
+                    "NULL Rod")
+                        name=$who
+                        give_rod null 1 1>&2
+                        ;;
+                esac
+                ;;
             "channel-subscription-gift")
                 is_anon=$(echo "$line" | jq -r '.event_data.is_anonymous');
                 who=$(echo "$line" | jq -r '.event_data.user_name');

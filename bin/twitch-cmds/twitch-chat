@@ -25,6 +25,9 @@ colorize() {
 }
 
 reply() {
+    if [[ "$*" == "" ]]; then
+      return
+    fi
     colorize "ff0000" 1>&2
     echo -n "bot" 1>&2
     printf '\033[0m' 1>&2
@@ -240,9 +243,7 @@ while true; do
       | websocat -E wss://irc-ws.chat.twitch.tv:443 --ping-timeout 15 --ping-interval 10 \
       | >/tmp/twitch_tunnel;
   FAILED=$?
-  echo "$FAILED"
   if [[ "$FAILED" -ge 130 ]]; then
-    echo "I THINK YOU MEANT TO EXIT? IDK LOL"
     exit 0
   fi
   echo "IT CRASHED, RESTARTING"

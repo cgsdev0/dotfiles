@@ -2,14 +2,10 @@
 
 cd "${0%/*}"
 
-FLASHBANG_SFX="/mnt/c/Users/sarah/Music/DeployingFlashbang.mp3"
-
 CHAN="badcop_"
 
 source ~/.twitch_secrets_bot;
 source ./fish-cmds
-
-PANE=$(tmux display -pt "${TMUX_PANE:?}" '#{pane_index}')
 
 redeem () {
     while IFS= read -r line; do
