@@ -37,5 +37,5 @@ while true; do
 
     inotifywait -qq "${deps[@]}" -e MODIFY -e MOVE_SELF
     kill $PID
-    echo "Hot reloading..."
+    echo "reloading..."
 done
