@@ -1,13 +1,41 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
+if ! which inotifywait &> /dev/null; then
+  echo "please install inotify-tools"
+  exit 1
+fi
+
+USAGE="Usage: $(basename $0) command [...deps] [-- ...args]"
+
+if [ "$#" == "0" ]; then
+	echo "$USAGE"
+	exit 1
+fi
+
+declare -a deps
 cmd="$1"
-whichcmd="$(which $cmd)"
 shift
+
+while (( "$#" )); do
+
+  # these are the args to pass through
+  if [[ "$1" == '--' ]]; then
+    shift
+    break
+  fi
+
+  # dependencies
+  deps+=("$1")
+  shift
+done
+
+deps+=("$(which $cmd)")
 
 while true; do
     $cmd "$@" &
+    PID=$!
 
-    inotifywait -qq "$whichcmd" -e MODIFY -e MOVE_SELF
-    pkill "$cmd"
+    inotifywait -qq "${deps[@]}" -e MODIFY -e MOVE_SELF
+    kill $PID
     echo "Hot reloading..."
 done
