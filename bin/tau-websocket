@@ -2,6 +2,7 @@
 
 cd "${0%/*}"
 
+CHAN="badcop_"
 source ./twitch-cmds/fish-cmds
 
 reqreader() {

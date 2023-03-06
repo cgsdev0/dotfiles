@@ -8,6 +8,9 @@ require("formatter").setup({
 			-- "lua" filetype
 			require("formatter.filetypes.lua").stylua,
 		},
+		css = {
+			require("formatter.filetypes.css").prettier,
+		},
 		json = {
 			require("formatter.filetypes.json").prettier,
 		},
