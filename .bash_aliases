@@ -77,7 +77,7 @@ alias tw_chat="clear; sleep 2; watch-and-reload twitch-chat badcop_"
 alias tw_chanpoints="clear; watch-and-reload channel-points"
 alias tw_follower="clear; watch-and-reload latest-follower"
 alias chat="send-twitch-msg"
-alias ichat='clear; while read -r line; do send-twitch-msg "$line"; clear; done'
+alias ichat='clear; echo -n "chat > "; while read -r line; do send-twitch-msg "$line"; clear; echo -n "chat > "; done'
 
 # =============== STUPID stuff ===============
 

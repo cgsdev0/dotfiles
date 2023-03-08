@@ -86,6 +86,9 @@ parsecmd() {
             rod_uses=$(echo "$rod" | cut -d' ' -f2)
             reply "@$name has a $rod_name rod ($rod_uses uses left)"
             ;;
+        "!tomorrow")
+            reply "rust stream?"
+            ;;
         "!help")
             ;&
         "!commands")
