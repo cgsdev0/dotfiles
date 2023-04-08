@@ -240,6 +240,7 @@ parsechat() {
 }
 reqreader() {
   while IFS= read -r line; do
+    printf "%s\n" "$line" >> ~/twitch_raw.log
     [[ $line == "PING"* ]] && echo "PONG :tmi.twitch.tv";
     [[ "$line" == "SYSTEM_EV "* ]] && reply "$(echo $line | sed 's/^SYSTEM_EV //')"
     [[ ! -z "DISABLE_COMMANDS" ]] && [[ "$line" == *" PRIVMSG "* ]] && (parsechat "$line" 1>&2; parsecmd "$line")
