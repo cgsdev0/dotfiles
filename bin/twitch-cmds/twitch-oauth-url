@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+SCOPES=(
+  "channel:manage:polls"
+  "channel:read:polls"
+  "bits:read"
+)
+
+urlencode() {
+    # Usage: urlencode "string"
+    local LC_ALL=C
+    for (( i = 0; i < ${#1}; i++ )); do
+        : "${1:i:1}"
+        case "$_" in
+            [+a-zA-Z0-9.~_-])
+                printf '%s' "$_"
+            ;;
+
+            *)
+                printf '%%%02X' "'$_"
+            ;;
+        esac
+    done
+    printf '\n'
+}
+
+SCOPES_ESCAPED=$(urlencode `echo "${SCOPES[@]}" | tr ' ' '+'`)
+
+echo """https://id.twitch.tv/oauth2/authorize
+?response_type=code
+&client_id=$(cat ~/.twitch_client_id)
+&client_=$(cat ~/.twitch_client_id)
+&redirect_uri=http://localhost:3000
+&scope=${SCOPES_ESCAPED}
+""" | tr -d '\n'
+
+echo
+echo -n "response url: "
+read -r LINE
+
+CODE=$(echo "$LINE" \
+  | grep -oE "code=.*&" \
+  | cut -d'=' -f2 \
+  | tr -d '&')
+
+RESPONSE=$(curl -X POST "https://id.twitch.tv/oauth2/token" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "client_id=$(cat ~/.twitch_client_id)&client_secret=$(cat ~/.twitch_client_secret)&code=${CODE}&grant_type=authorization_code&redirect_uri=http://localhost:3000")
+
+echo "$RESPONSE"
+
+echo "$RESPONSE" | jq -r '.access_token' > ~/.twitch_access_token_bot
+echo "$RESPONSE" | jq -r '.refresh_token' > ~/.twitch_refresh_bot

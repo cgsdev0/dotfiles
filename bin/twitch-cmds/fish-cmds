@@ -1,9 +1,5 @@
 #!/bin/zsh
 
-FISH_PLOP_SOUND="/mnt/c/Users/sarah/Desktop/fish_plop.mp3"
-FISH_LEGENDARY_SOUND="/mnt/c/Users/sarah/Desktop/fish_legendary.mp3"
-FISH_NULL_SOUND="/mnt/c/Users/sarah/Desktop/fish_null.mp3"
-
 fish_leaderboard() {
     cd "$HOME/fishing-data/$CHAN"
     find * -maxdepth 0 -type f \
@@ -140,7 +136,11 @@ catch_fish() {
     rarity=$(bc <<< "scale=2; 100 - ( $count / $most_count * 100 )")
     echo "$fish" >> "$HOME/fishing-data/${CHAN}/$name"
     if [[ "$name" != "$CHAN" ]]; then
+      if [[ "$IS_SUBSCRIBER" == "1" ]]; then
+        echo $(( now + 90 )) > "$HOME/fishing-cooldowns/.$name.cooldown"
+      else
         echo $(( now + 120 )) > "$HOME/fishing-cooldowns/.$name.cooldown"
+      fi
     fi
     if [[ $count -eq 0 ]]; then
         description="THE FIRST"

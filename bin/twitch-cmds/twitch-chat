@@ -40,7 +40,10 @@ parsecmd() {
     msg=$(echo -n "$1" | grep -oP "PRIVMSG.*$" | cut -d':' -f2- | tr '[:upper:]' '[:lower:]')
     headers=$(echo -n "$1" | grep -oP "^.*PRIVMSG")
     name=$(echo -n "$headers" | grep -oP ";display-name=.*?;" | cut -d'=' -f2 | tr -d ';')
+    IS_SUBSCRIBER=$(echo -n "$headers" | grep -oP ";subscriber=.*?;" | cut -d'=' -f2 | tr -d ';')
     case $msg in
+        "!crab")
+            ;&
         *"🦀"*)
             reply "🦀🚫🦀🚫🦀🚫🦀🚫"
             ;;
@@ -53,6 +56,9 @@ parsecmd() {
             ;;
         "!ping")
             reply "pong!"
+            ;;
+        "!stack")
+            reply "we are building bash stack, a web framework in bash: http://bashsta.cc"
             ;;
         "!botsnack")
             count=$(cat ~/.twitch_snack_counter)
@@ -72,11 +78,13 @@ parsecmd() {
             reply "$(fish_leaderboard)"
             ;;
         "!discord")
-            reply "join our discord! https://discord.gg/m2ZzF8CQrW"
+            reply "join our discord! https://discord.badcop.games/"
             ;;
         "!keyboard")
             reply "massdrop alt high profile w/ novelkey olivia silk switches"
             ;;
+        "!fish "*)
+            ;&
         "!fish")
             reply "$(catch_fish)"
             ;;
