@@ -9,7 +9,11 @@ CHAN=$1
 LDJAM_INDEX=51
 LDJAM_ENABLED=false
 
-source ~/.twitch_secrets_bot;
+if [[ ! -z "$BADCOP" ]]; then
+  source ~/.twitch_secrets;
+else
+  source ~/.twitch_secrets_bot;
+fi
 source ./fish-cmds;
 source ../utils/url-parsing;
 source ./ld-cmds;
@@ -243,7 +247,7 @@ reqreader() {
     printf "%s\n" "$line" >> ~/twitch_raw.log
     [[ $line == "PING"* ]] && echo "PONG :tmi.twitch.tv";
     [[ "$line" == "SYSTEM_EV "* ]] && reply "$(echo $line | sed 's/^SYSTEM_EV //')"
-    [[ ! -z "DISABLE_COMMANDS" ]] && [[ "$line" == *" PRIVMSG "* ]] && (parsechat "$line" 1>&2; parsecmd "$line")
+    [[ -z "$DISABLE_COMMANDS" ]] && [[ "$line" == *" PRIVMSG "* ]] && (parsechat "$line" 1>&2; parsecmd "$line")
   done;
   exit 0;
 }
