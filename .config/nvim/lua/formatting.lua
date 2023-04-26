@@ -26,6 +26,9 @@ require("formatter").setup({
 		typescriptreact = {
 			require("formatter.filetypes.typescriptreact").prettier,
 		},
+		rust = {
+			require("formatter.filetypes.rust").rustfmt,
+		},
 		-- Use the special "*" filetype for defining formatter configurations on
 		-- any filetype
 		["*"] = {

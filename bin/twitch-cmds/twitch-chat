@@ -135,7 +135,7 @@ parsecmd() {
             fi
             ;;
         "!song")
-            reply "@$name i have no clue LUL"
+            reply "$(baton status | head -n2 | cut -d':' -f2- | paste -sd' ')"
             ;;
         "!link")
             ;&
@@ -153,6 +153,9 @@ parsecmd() {
                 reply "rollycubes is not running right now :("
             fi
             ;;
+        "!modules")
+            reply "they are orthogonal to namespaces"
+            ;;
         "!lurk"*)
             reply "sounds good, $name :)"
             ;;
@@ -161,6 +164,11 @@ parsecmd() {
             ;;
         *"haha"*)
             reply "lol"
+            ;;
+        "!itch")
+            ;&
+        "!games")
+            reply "https://badcop.itch.io/"
             ;;
         *"heh"*)
             reply "haha"
@@ -199,7 +207,7 @@ parsecmd() {
            reply "emacs is better"
            ;;
        *"linux"*)
-           reply "i use arch btw"
+           # reply "i use arch btw"
            ;;
     esac
 }
@@ -254,7 +262,7 @@ reqreader() {
 
 set -o pipefail;
 while true; do
-  (echo "CAP REQ :twitch.tv/tags twitch.tv/commands\r\nPASS oauth:${TWITCH_ACCESS_TOKEN}\r\nNICK goodcop_\r\nJOIN #${CHAN}\r"; \
+  (echo "CAP REQ :twitch.tv/tags twitch.tv/commands\r\nPASS oauth:${TWITCH_ACCESS_TOKEN}\r\nNICK ${TWITCH_NICK}\r\nJOIN #${CHAN}\r"; \
       </tmp/twitch_tunnel | reqreader) \
       | websocat -E wss://irc-ws.chat.twitch.tv:443 --ping-timeout 15 --ping-interval 10 \
       | >/tmp/twitch_tunnel;

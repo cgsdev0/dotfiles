@@ -148,13 +148,6 @@ catch_fish() {
     else
         echo "@$name caught $description $fish ($class_pretty)! ($rarity% rarity) ($fishing_rod rod used)"
     fi
-    if [[ "$classification" == "legendary" ]]; then
-        mpv --volume-max=200 $FISH_LEGENDARY_SOUND &>/dev/null &
-    elif [[ "$classification" == "null" ]]; then
-        mpv --volume-max=200 $FISH_NULL_SOUND &>/dev/null &
-    else
-        mpv --volume-max=200 $FISH_PLOP_SOUND &>/dev/null &
-    fi
 }
 
 uncaught_fish() {

@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+TERMINAL_CONF="C:/Users/sarah/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json"
+
+vim_cmd() {
+  find /run/user/1000/ -iname 'nvim*' 2> /dev/null \
+  | xargs -I {} nvim --server {} --remote-send "$1" &
+}
+
+hotdog() {
+  ssh sarah@192.168.50.65 "powershell.exe Set-Content -Path ${TERMINAL_CONF} -Value ( (Get-Content -Path ${TERMINAL_CONF} -Raw) -Replace '\\\"colorScheme\\\": \\\"tokyonight-storm\\\"','\\\"colorScheme\\\": \\\"Hotdog\\\"')"
+  vim_cmd '<Esc>:colorscheme default<CR>'
+}
+
+not_hotdog() {
+  sleep 120
+  ssh sarah@192.168.50.65 "powershell.exe Set-Content -Path ${TERMINAL_CONF} -Value ( (Get-Content -Path ${TERMINAL_CONF} -Raw) -Replace '\\\"colorScheme\\\": \\\"Hotdog\\\"','\\\"colorScheme\\\": \\\"tokyonight-storm\\\"')";
+  vim_cmd '<Esc>:colorscheme tokyonight-storm<CR>'
+}
+
+if [[ "$1" == "on" ]]; then
+  hotdog
+else
+  not_hotdog
+fi
