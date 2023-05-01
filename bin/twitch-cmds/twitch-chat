@@ -6,8 +6,8 @@ cd "${0%/*}"
 # twitch docs reference: https://dev.twitch.tv/docs/irc
 
 CHAN=$1
-LDJAM_INDEX=51
-LDJAM_ENABLED=false
+LDJAM_INDEX=53
+LDJAM_ENABLED=true
 
 if [[ ! -z "$BADCOP" ]]; then
   source ~/.twitch_secrets;
@@ -174,7 +174,7 @@ parsecmd() {
             reply "haha"
             ;;
         # support ludum dare submission links
-        *"https://ldjam.com/events/ludum-dare/51/"*)
+        *"https://ldjam.com/events/ludum-dare/${LDJAM_INDEX}/"*)
             [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_submit_cmd)"
             ;;
         "!endraffle")
