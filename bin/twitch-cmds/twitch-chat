@@ -137,12 +137,14 @@ parsecmd() {
         "!song")
             reply "$(baton status | head -n2 | cut -d':' -f2- | paste -sd' ')"
             ;;
+        "!ld")
+            ;&
         "!link")
             ;&
         "!play")
-            # if [[ "$CHAN" == "badcop_" ]]; then
-            #     reply "Here is my LD compo entry: https://cgs.dev/0/ld51"
-            # fi
+            if [[ "$CHAN" == "badcop_" ]]; then
+                reply "Here is my LD compo entry: https://ldjam.com/events/ludum-dare/53/giggle-groove"
+            fi
             ;&
         "!dice")
             ;&

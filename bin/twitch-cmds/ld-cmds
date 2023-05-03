@@ -3,6 +3,7 @@
 ld_state_file="$HOME/ludum-dare/$CHAN/.ld-jam-list"
 ld_data_file="$HOME/ludum-dare/$CHAN/.ld-jam-data"
 ld_raffle_file="$HOME/ludum-dare/$CHAN/.ld-jam-raffle"
+ld_tickets_file="$HOME/ludum-dare/$CHAN/.ld-jam-tickets"
 
 mkdir -p $(dirname "$ld_state_file")
 mkdir -p $(dirname "$ld_data_file")
@@ -11,6 +12,7 @@ mkdir -p $(dirname "$ld_raffle_file")
 touch "$ld_state_file"
 touch "$ld_data_file"
 touch "$ld_raffle_file"
+touch "$ld_tickets_file"
 
 ld_raffle_cmd() {
   if test -f "${ld_raffle_file}_LOCK"; then
@@ -24,6 +26,7 @@ ld_raffle_cmd() {
   rm -f "$ld_raffle_file"
   touch "$ld_raffle_file"
   echo "A raffle has begun! type !join to enter (you must already have your game in the queue to join)"
+  echo 'SYSTEM_EV {"message_type": "wheel-show", "source": "bash", "data": {}}' > /tmp/tau_tunnel
 }
 
 ld_submit_cmd() {
@@ -89,12 +92,20 @@ ld_game_cmd() {
 }
 
 ld_endraffle_cmd() {
+  if [[ "$name" != "$CHAN" ]] && [[ "$name" != "badcop_" ]]; then
+      return
+  fi
   if ! test -f "${ld_raffle_file}_LOCK"; then
       echo "no raffle started. did you mean to do !raffle?"
       return
   fi
   rm -f "${ld_raffle_file}_LOCK"
-  winner=$(shuf "$ld_raffle_file" | head -n1)
+  echo "Spinning the wheel..."
+  echo 'SYSTEM_EV {"message_type": "wheel-spin", "source": "bash", "data": {}}' > /tmp/tau_tunnel
+}
+
+ld_endraffle_cmd2() {
+  winner=$1
   # mark any in progress games as played
   sed -i "s/IN_PROGRESS$/PLAYED/" $ld_state_file
 
@@ -121,7 +132,7 @@ ld_endraffle_cmd() {
   fi
   # update state
   sed -i "s/^\\($slug \\w*\\)$/\\1 IN_PROGRESS/" $ld_state_file
-  echo "@$winner has won the raffle! Please introduce yourself and your game if you want :)"
+  echo -n "@$winner has won the raffle! Please introduce yourself and your game if you want :) "
   echo "Up next! '$name' by $author ($entry_type entry) https://cgs.dev/0/$url"
 }
 
@@ -139,6 +150,15 @@ ld_join_cmd() {
       return
   fi
   echo "$name" >> "$ld_raffle_file"
+  TICKETS=1
+  if has_tickets=$(grep "^$name " "$ld_tickets_file"); then
+    TICKETS=$(echo "$has_tickets" | cut -d' ' -f2)
+    sed -i "s/^$name $TICKETS$/$name $(( TICKETS + 1 ))/" "$ld_tickets_file"
+  else
+      echo "$name 2" >> "$ld_tickets_file"
+  fi
+
+  echo 'SYSTEM_EV {"message_type": "wheel-add-user", "source": "bash", "data": {"name": "'${name}'", "weight": '$TICKETS'}}' > /tmp/tau_tunnel
 }
 
 ld_queue_cmd() {
@@ -151,13 +171,12 @@ ld_queue_cmd() {
   fi
   queuestr="Uploading current queue..."
   if [[ "$pos2" != "" ]]; then
-      echo "Your game is being played right now! :O | $queuestr"
+      echo "Your game is being played right now! :O "
   elif [[ "$pos" == "" ]]; then
-      echo "You are not in the queue. Paste the link in chat and I'll add it! | $queuestr"
+      echo "You are not in the queue. Paste the link in chat and I'll add it! "
   else
-      echo "Your game is #$pos in the queue :) | $queuestr"
+      echo "Your game is #$pos in the queue :) "
   fi
-  echo "$(grep -vE "PLAYED$" "$ld_state_file" | cut -d' ' -f1 | sed 's@^@https://ldjam.com/events/ludum-dare/'$LDJAM_INDEX'/@' | nc termbin.com 9999)"
 }
 
 ld_next_cmd() {

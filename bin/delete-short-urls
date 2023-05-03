@@ -1,0 +1,15 @@
+#!/bin/bash
+
+API_KEY=$(cat "$HOME/.cgs-dev-key")
+
+CODES=$(curl -SsX GET \
+    "https://cgs.dev/0/rest/v2/short-urls?itemsPerPage=1000" \
+    -H "X-Api-Key: $API_KEY" \
+    -H "Content-Type: application/json" \
+    | jq -r '.shortUrls.data | .[].shortCode')
+
+for CODE in $CODES; do
+  curl -SsX DELETE \
+    "https://cgs.dev/0/rest/v2/short-urls/$CODE" \
+    -H "X-Api-Key: $API_KEY"
+done

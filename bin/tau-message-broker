@@ -1,0 +1,49 @@
+#!/bin/zsh
+
+cd "${0%/*}"
+
+CHAN="badcop_"
+source ./twitch-cmds/fish-cmds
+
+rm -f /tmp/tau_tunnel;
+mkfifo /tmp/tau_tunnel;
+
+LDJAM_INDEX=53
+LDJAM_ENABLED=true
+source ./twitch-cmds/ld-cmds;
+
+reqreader() {
+  while IFS= read -r line; do
+    if [[ "$line" == "SYSTEM_EV "* ]]; then
+      echo "$line" | cut -d' ' -f2-
+    else
+      # parse incoming messages
+      MESSAGE_TYPE=$(echo "$line" | jq -r '.message_type')
+      echo "'$MESSAGE_TYPE'" 1>&2
+      case $MESSAGE_TYPE in
+        "wheel-result")
+          WINNER=$(echo "$line" | jq -r '.data.winner')
+          send-twitch-msg "$(ld_endraffle_cmd2 "$WINNER")"
+        ;;
+      esac
+    fi
+  done;
+  exit 0;
+}
+
+authenticate() {
+    echo '{"token":"'$(cat ~/.tau_token)'"}'
+}
+
+set -o pipefail;
+while true; do
+  (authenticate; </tmp/tau_tunnel | reqreader) \
+      | websocat -E 'wss://tau.cgs.dev/ws/message-broker/' --ping-interval 10 --ping-timeout 15 \
+      | >/tmp/tau_tunnel;
+  FAILED=$?
+  echo "$FAILED"
+  if [[ "$FAILED" -ge 130 ]]; then
+    exit 0
+  fi
+  echo "IT CRASHED, RESTARTING"
+done
