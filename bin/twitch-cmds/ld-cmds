@@ -26,7 +26,7 @@ ld_raffle_cmd() {
   rm -f "$ld_raffle_file"
   touch "$ld_raffle_file"
   echo "A raffle has begun! type !join to enter (you must already have your game in the queue to join)"
-  echo 'SYSTEM_EV {"message_type": "wheel-show", "source": "bash", "data": {}}' > /tmp/tau_tunnel
+  tbus-send "wheel-show"
 }
 
 ld_submit_cmd() {
@@ -101,7 +101,7 @@ ld_endraffle_cmd() {
   fi
   rm -f "${ld_raffle_file}_LOCK"
   echo "Spinning the wheel..."
-  echo 'SYSTEM_EV {"message_type": "wheel-spin", "source": "bash", "data": {}}' > /tmp/tau_tunnel
+  tbus-send "wheel-spin"
 }
 
 ld_endraffle_cmd2() {
@@ -158,7 +158,7 @@ ld_join_cmd() {
       echo "$name 2" >> "$ld_tickets_file"
   fi
 
-  echo 'SYSTEM_EV {"message_type": "wheel-add-user", "source": "bash", "data": {"name": "'${name}'", "weight": '$TICKETS'}}' > /tmp/tau_tunnel
+  tbus-send "wheel-spin" '{"name": "'${name}'", "weight": '$TICKETS'}'
 }
 
 ld_queue_cmd() {

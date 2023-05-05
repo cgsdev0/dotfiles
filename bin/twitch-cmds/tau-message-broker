@@ -3,14 +3,14 @@
 cd "${0%/*}"
 
 CHAN="badcop_"
-source ./twitch-cmds/fish-cmds
+source ./fish-cmds
 
 rm -f /tmp/tau_tunnel;
 mkfifo /tmp/tau_tunnel;
 
 LDJAM_INDEX=53
 LDJAM_ENABLED=true
-source ./twitch-cmds/ld-cmds;
+source ./ld-cmds;
 
 reqreader() {
   while IFS= read -r line; do
