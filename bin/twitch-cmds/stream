@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+refresh-token
+refresh-token-bot
+
+# use concurrently to spawn our processes
+conc -n chat,tau,bus \
+  "watch-and-reload twitch-chat \
+    ~/bin/twitch-cmds/fish-cmds \
+    ~/bin/twitch-cmds/ld-cmds \
+    -- badcop_" \
+  "watch-and-reload tau-websocket" \
+  "watch-and-reload tau-message-broker"

@@ -179,6 +179,9 @@ parsecmd() {
         *"https://ldjam.com/events/ludum-dare/${LDJAM_INDEX}/"*)
             [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_submit_cmd)"
             ;;
+        "!submit")
+            [[ "$LDJAM_ENABLED" == "true" ]] && reply "Just paste the link in the chat :)"
+            ;;
         "!endraffle")
             [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_endraffle_cmd)"
             ;;

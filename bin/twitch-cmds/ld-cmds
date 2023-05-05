@@ -41,7 +41,7 @@ ld_submit_cmd() {
   friends=$(echo "$resp" | jq -r '.authorCount')
   slug=$(echo "$resp" | jq -r '.slug')
   position=$( {cat "$ld_state_file"; echo "---"} | grep -vcE " PLAYED$" | cut -d':' -f1)
-  if grep -q "$slug" "$ld_state_file"; then
+  if grep -q "$slug " "$ld_state_file"; then
       pos=$(echo "$position_data" | grep -n "$slug" | cut -d':' -f1)
       if [[ "$pos" == "" ]]; then
           echo "We've already played that game! :O"
@@ -116,7 +116,7 @@ ld_endraffle_cmd2() {
       echo "something has gone horribly wrong NotLikeThis"
       return
   fi
-  resp=$(grep -E "^$next_game_slug" "$ld_data_file" | cut -d' ' -f2-)
+  resp=$(grep -E "^$next_game_slug " "$ld_data_file" | cut -d' ' -f2-)
   entry_type=$(echo "$resp" | jq -r '.type')
   name=$(echo "$resp" | jq -r '.name')
   author=$(echo "$resp" | jq -r '.author')
