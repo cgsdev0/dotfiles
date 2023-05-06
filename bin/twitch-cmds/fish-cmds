@@ -148,6 +148,8 @@ catch_fish() {
     else
         echo "@$name caught $description $fish ($class_pretty)! ($rarity% rarity) ($fishing_rod rod used)"
     fi
+    FISH_JSON='{"fish":"'$fish'","classification":"'$classification'"}'
+    tbus-send "fish-catch" "$FISH_JSON"
 }
 
 uncaught_fish() {

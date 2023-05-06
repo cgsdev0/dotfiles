@@ -158,7 +158,7 @@ ld_join_cmd() {
       echo "$name 2" >> "$ld_tickets_file"
   fi
 
-  tbus-send "wheel-spin" '{"name": "'${name}'", "weight": '$TICKETS'}'
+  tbus-send "wheel-add-user" '{"name": "'${name}'", "weight": '$TICKETS'}'
 }
 
 ld_queue_cmd() {
