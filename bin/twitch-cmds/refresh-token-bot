@@ -14,5 +14,9 @@ RESPONSE=$(curl -Ss -X POST "https://id.twitch.tv/oauth2/token" \
 TWITCH_REFRESH_TOKEN=$(echo "$RESPONSE" | jq -r '.refresh_token')
 TWITCH_ACCESS_TOKEN=$(echo "$RESPONSE" | jq -r '.access_token')
 
-echo "$TWITCH_ACCESS_TOKEN" > ~/.twitch_access_token_bot
-echo "$TWITCH_REFRESH_TOKEN" > ~/.twitch_refresh_bot
+if [[ "$TWITCH_ACCESS_TOKEN" != "null" ]]; then
+  echo "$TWITCH_ACCESS_TOKEN" > ~/.twitch_access_token_bot
+fi
+if [[ "$TWITCH_REFRESH_TOKEN" != "null" ]]; then
+  echo "$TWITCH_REFRESH_TOKEN" > ~/.twitch_refresh_bot
+fi
