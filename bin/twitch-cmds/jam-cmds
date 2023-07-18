@@ -1,0 +1,151 @@
+#!/bin/zsh
+
+itch_state_file="$HOME/ludum-dare/$CHAN/itch-jam-list"
+itch_data_file="$HOME/ludum-dare/$CHAN/itch-jam-data"
+itch_raffle_file="$HOME/ludum-dare/$CHAN/itch-jam-raffle"
+itch_tickets_file="$HOME/ludum-dare/$CHAN/itch-jam-tickets"
+
+mkdir -p $(dirname "$itch_state_file")
+mkdir -p $(dirname "$itch_data_file")
+mkdir -p $(dirname "$itch_raffle_file")
+
+touch "$itch_state_file"
+touch "$itch_data_file"
+touch "$itch_raffle_file"
+touch "$itch_tickets_file"
+
+itch_raffle_cmd() {
+  if test -f "${itch_raffle_file}_LOCK"; then
+      echo "a raffle is already going, end it with !endraffle first pls"
+      return
+  fi
+  if [[ "$name" != "$CHAN" ]] && [[ "$name" != "badcop_" ]]; then
+      return
+  fi
+  touch "${itch_raffle_file}_LOCK"
+  rm -f "$itch_raffle_file"
+  touch "$itch_raffle_file"
+  echo "A raffle has begun! type !join to enter (you must already have your game in the queue to join)"
+  tbus-send "wheel-show"
+}
+
+itch_submit_cmd() {
+  position_data=$(cat "$itch_state_file" | grep -vE " PLAYED$")
+  uri=$(echo "$msg " | cut -d' ' -f2)
+  if [[ "$uri" == "" ]]; then
+    echo "please do: !submit [link]"
+    return
+  fi
+  position=$( {cat "$itch_state_file"; echo "---"} | grep -vcE " PLAYED$" | cut -d':' -f1)
+  if grep -q "^$name " "$itch_state_file"; then
+      echo "You've already submitted!"
+      return
+  fi
+  # append to state file
+  echo "$name $uri" >> "$itch_state_file"
+
+  echo "Thanks! I've added it to the queue (position: #$position)!"
+}
+
+itch_game_cmd() {
+  next_game=$(cat "$itch_state_file" | grep " IN_PROGRESS$")
+  if [[ "$next_game" == "" ]]; then
+      echo "no more games in the queue NotLikeThis"
+      return
+  fi
+  next_game_name=$(echo "$next_game" | cut -d' ' -f1)
+  next_game_uri=$(echo "$next_game" | cut -d' ' -f2)
+  echo "Up next! $next_game_uri by $next_game_name"
+}
+
+itch_endraffle_cmd() {
+  if [[ "$name" != "$CHAN" ]] && [[ "$name" != "badcop_" ]]; then
+      return
+  fi
+  if ! test -f "${itch_raffle_file}_LOCK"; then
+      echo "no raffle started. did you mean to do !raffle?"
+      return
+  fi
+  rm -f "${itch_raffle_file}_LOCK"
+  echo "Spinning the wheel..."
+  tbus-send "wheel-spin"
+}
+
+itch_endraffle_cmd2() {
+  winner=$1
+  # mark any in progress games as played
+  sed -i "s/IN_PROGRESS$/PLAYED/" $itch_state_file
+
+  next_game=$(cat "$itch_state_file" | grep -vE " PLAYED$" | grep -E "^$winner " | head -n1)
+  next_game_name=$(echo "$next_game" | cut -d' ' -f1)
+  next_game_uri=$(echo "$next_game" | cut -d' ' -f2)
+  if [[ "$next_game" == "" ]]; then
+      echo "something has gone horribly wrong NotLikeThis"
+      return
+  fi
+  # update state
+  sed -i "s/^\\($winner [^ ]*\\)$/\\1 IN_PROGRESS/" $itch_state_file
+  echo "@$winner has won the raffle! $next_game_uri"
+}
+
+itch_join_cmd() {
+  if ! test -f "${itch_raffle_file}_LOCK"; then
+      return
+  fi
+
+  if (cat "$itch_raffle_file" | cut -d' ' -f2 | grep -q "$name"); then
+      return
+  fi
+  queue_names=$(cat "$itch_state_file" | grep -vE " PLAYED$" | grep -vE " IN_PROGRESS$" | cut -d' ' -f1)
+  if ! ( echo "$queue_names" | grep -q "$name" ); then
+      echo "@$name you need to !submit the link to your game first!"
+      return
+  fi
+  echo "$name" >> "$itch_raffle_file"
+  TICKETS=1
+  if has_tickets=$(grep "^$name " "$itch_tickets_file"); then
+    TICKETS=$(echo "$has_tickets" | cut -d' ' -f2)
+    sed -i "s/^$name $TICKETS$/$name $(( TICKETS + 1 ))/" "$itch_tickets_file"
+  else
+      echo "$name 2" >> "$itch_tickets_file"
+  fi
+
+  tbus-send "wheel-add-user" '{"name": "'${name}'", "weight": '$TICKETS'}'
+}
+
+itch_queue_cmd() {
+  pos=$(grep -vE " PLAYED$" "$itch_state_file" | grep -vE " IN_PROGRESS$" | cut -d' ' -f1 | grep -n "$name" | head -n1 | cut -d':' -f1)
+  pos2=$(grep -E " IN_PROGRESS$" "$itch_state_file" | cut -d' ' -f1 | grep -n "$name")
+  unplayed=$(grep -vE " PLAYED$" "$itch_state_file" | wc -l)
+  if [[ "$unplayed" == "0" ]]; then
+      echo "There are no games in the queue. Yours can be next! Just paste the link in chat :)"
+      return
+  fi
+  queuestr="Uploading current queue..."
+  if [[ "$pos2" != "" ]]; then
+      echo "Your game is being played right now! :O "
+  elif [[ "$pos" == "" ]]; then
+      echo "You are not in the queue. Paste the link in chat and I'll add it! "
+  else
+      echo "Your game is #$pos in the queue :) "
+  fi
+}
+
+itch_next_cmd() {
+  if [[ "$name" != "$CHAN" ]] && [[ "$name" != "badcop_" ]]; then
+      return
+  fi
+
+  # mark any in progress games as played
+  sed -i "s/IN_PROGRESS$/PLAYED/" $itch_state_file
+
+  next_game=$(cat "$itch_state_file" | grep -vE " PLAYED$" | head -n1)
+  next_game_name=$(echo "$next_game" | cut -d' ' -f1)
+  next_game_uri=$(echo "$next_game" | cut -d' ' -f2)
+  if [[ "$next_game" == "" ]]; then
+      echo "no more games in the queue NotLikeThis"
+      return
+  fi
+  sed -i "s/^\\($next_game_name [^ ]*\\)$/\\1 IN_PROGRESS/" $itch_state_file
+  echo "Up next! $next_game_uri by $next_game_name"
+}

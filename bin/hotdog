@@ -8,12 +8,12 @@ vim_cmd() {
 }
 
 hotdog() {
-  ssh sarah@192.168.50.65 "powershell.exe Set-Content -Path ${TERMINAL_CONF} -Value ( (Get-Content -Path ${TERMINAL_CONF} -Raw) -Replace '\\\"colorScheme\\\": \\\"tokyonight-storm\\\"','\\\"colorScheme\\\": \\\"Hotdog\\\"')"
+  ssh sarah@192.168.0.206 "powershell.exe Set-Content -Path ${TERMINAL_CONF} -Value ( (Get-Content -Path ${TERMINAL_CONF} -Raw) -Replace '\\\"colorScheme\\\": \\\"tokyonight-storm\\\"','\\\"colorScheme\\\": \\\"Hotdog\\\"')"
   vim_cmd '<Esc>:colorscheme default<CR>'
 }
 
 not_hotdog() {
-  ssh sarah@192.168.50.65 "powershell.exe Set-Content -Path ${TERMINAL_CONF} -Value ( (Get-Content -Path ${TERMINAL_CONF} -Raw) -Replace '\\\"colorScheme\\\": \\\"Hotdog\\\"','\\\"colorScheme\\\": \\\"tokyonight-storm\\\"')";
+  ssh sarah@192.168.0.206 "powershell.exe Set-Content -Path ${TERMINAL_CONF} -Value ( (Get-Content -Path ${TERMINAL_CONF} -Raw) -Replace '\\\"colorScheme\\\": \\\"Hotdog\\\"','\\\"colorScheme\\\": \\\"tokyonight-storm\\\"')";
   vim_cmd '<Esc>:colorscheme tokyonight-storm<CR>'
 }
 

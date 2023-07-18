@@ -1,7 +1,7 @@
 #!/bin/bash
 
 USERNAME=$(cat ~/.hue_bridge_username)
-BASE_URL=http://192.168.50.38/api/${USERNAME}
+BASE_URL=http://192.168.0.140/api/${USERNAME}
 
 change_hue() {
     curl -X PUT -Ss "${BASE_URL}/lights/1/state" --data '{"on":true, "sat":254, "bri":254,"hue":'$1'}' > /dev/null
@@ -22,4 +22,3 @@ for j in {1..2}; do
 done
 
 reset_color
-

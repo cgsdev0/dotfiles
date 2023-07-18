@@ -8,6 +8,7 @@ conc -n chat,tau,bus \
   "watch-and-reload twitch-chat \
     ~/bin/twitch-cmds/fish-cmds \
     ~/bin/twitch-cmds/ld-cmds \
+    ~/bin/twitch-cmds/jam-cmds \
     -- badcop_" \
   "watch-and-reload tau-websocket" \
   "watch-and-reload tau-message-broker"

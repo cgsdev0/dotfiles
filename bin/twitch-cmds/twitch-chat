@@ -7,7 +7,8 @@ cd "${0%/*}"
 
 CHAN=$1
 LDJAM_INDEX=53
-LDJAM_ENABLED=true
+LDJAM_ENABLED=false
+ITCHJAM_ENABLED=true
 
 if [[ ! -z "$BADCOP" ]]; then
   source ~/.twitch_secrets;
@@ -17,6 +18,7 @@ fi
 source ./fish-cmds;
 source ../utils/url-parsing;
 source ./ld-cmds;
+source ./jam-cmds;
 
 rm -f /tmp/twitch_tunnel;
 mkfifo /tmp/twitch_tunnel;
@@ -179,26 +181,33 @@ parsecmd() {
         *"https://ldjam.com/events/ludum-dare/${LDJAM_INDEX}/"*)
             [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_submit_cmd)"
             ;;
-        "!submit")
+        "!submit"*)
             [[ "$LDJAM_ENABLED" == "true" ]] && reply "Just paste the link in the chat :)"
+            [[ "$ITCHJAM_ENABLED" == "true" ]] && reply "$(itch_submit_cmd)"
             ;;
         "!endraffle")
             [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_endraffle_cmd)"
+            [[ "$ITCHJAM_ENABLED" == "true" ]] && reply "$(itch_endraffle_cmd)"
             ;;
         "!raffle")
             [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_raffle_cmd)"
+            [[ "$ITCHJAM_ENABLED" == "true" ]] && reply "$(itch_raffle_cmd)"
             ;;
         "!join")
             [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_join_cmd)"
+            [[ "$ITCHJAM_ENABLED" == "true" ]] && reply "$(itch_join_cmd)"
             ;;
         "!game")
             [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_game_cmd)"
+            [[ "$ITCHJAM_ENABLED" == "true" ]] && reply "$(itch_game_cmd)"
             ;;
         "!queue")
             [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_queue_cmd)"
+            [[ "$ITCHJAM_ENABLED" == "true" ]] && reply "$(itch_queue_cmd)"
             ;;
         "!next")
             [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_next_cmd)"
+            [[ "$ITCHJAM_ENABLED" == "true" ]] && reply "$(itch_next_cmd)"
             ;;
        *"emacs"*)
            reply "vim is better"

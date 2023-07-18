@@ -14,6 +14,9 @@ require("formatter").setup({
 		json = {
 			require("formatter.filetypes.json").prettier,
 		},
+		go = {
+			require("formatter.filetypes.go").gofmt,
+		},
 		javascript = {
 			require("formatter.filetypes.javascript").prettier,
 		},

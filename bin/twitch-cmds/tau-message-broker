@@ -9,8 +9,10 @@ rm -f /tmp/tau_tunnel;
 mkfifo /tmp/tau_tunnel;
 
 LDJAM_INDEX=53
-LDJAM_ENABLED=true
+LDJAM_ENABLED=false
+ITCHJAM_ENABLED=true
 source ./ld-cmds;
+source ./jam-cmds;
 
 reqreader() {
   while IFS= read -r line; do
@@ -25,7 +27,8 @@ reqreader() {
       case $MESSAGE_TYPE in
         "wheel-result")
           WINNER=$(echo "$line" | jq -r '.data.winner')
-          send-twitch-msg "$(ld_endraffle_cmd2 "$WINNER")"
+          [[ "$LDJAM_ENABLED" == true ]] && send-twitch-msg "$(ld_endraffle_cmd2 "$WINNER")"
+          [[ "$ITCHJAM_ENABLED" == true ]] && send-twitch-msg "$(itch_endraffle_cmd2 "$WINNER")"
         ;;
       esac
     fi
