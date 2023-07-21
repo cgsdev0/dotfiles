@@ -8,7 +8,7 @@ cd "${0%/*}"
 CHAN=$1
 LDJAM_INDEX=53
 LDJAM_ENABLED=false
-ITCHJAM_ENABLED=true
+ITCHJAM_ENABLED=false
 
 if [[ ! -z "$BADCOP" ]]; then
   source ~/.twitch_secrets;
@@ -20,6 +20,9 @@ source ../utils/url-parsing;
 source ./ld-cmds;
 source ./jam-cmds;
 
+COW_DATA="$HOME/cows/$CHAN/"
+mkdir -p "$COW_DATA"
+
 rm -f /tmp/twitch_tunnel;
 mkfifo /tmp/twitch_tunnel;
 
@@ -28,6 +31,23 @@ mkfifo /tmp/twitch_tunnel;
 
 colorize() {
     printf "\x1b[38;2;$(( 16#${1:0:2} ));$(( 16#${1:2:2} ));$(( 16#${1:4:2} ))m"
+}
+
+get_cow() {
+  if test -f "$COW_DATA/$1"; then
+    cat "$COW_DATA/$1"
+  else
+    echo default.cow
+  fi
+}
+
+set_cow() {
+  COW="/usr/share/cowsay/cows/$2.cow"
+  if test -f "$COW"; then
+    echo "$COW" > "$COW_DATA/$1"
+    return 0
+  fi
+  return 1
 }
 
 reply() {
@@ -65,6 +85,14 @@ parsecmd() {
             ;;
         "!stack")
             reply "we are building bash stack, a web framework in bash: http://bashsta.cc"
+            ;;
+        "!setcow "*)
+            cow=$(echo -n "$msg" | cut -d' ' -f2)
+            if set_cow "$name" "$cow"; then
+              reply "Cow set!"
+            else
+              reply "invalid cow!"
+            fi
             ;;
         "!botsnack")
             count=$(cat ~/.twitch_snack_counter)
@@ -235,18 +263,14 @@ parsechat() {
     if [[ "$1" == *"custom-reward-id=15569ace-d070-4037-986d-967f44196d74;"* ]]; then
         colorize $color
         colorize $color > ~/current_cow
-        echo "$name summoned a cow!"
-        if [[ "$msg" == *"bear"* ]]; then
-            if [[ "$msg" == "!lolcat "* ]]; then
-                echo "$msg" | cut -d' ' -f2- | cowsay -f bear -e O |  lolcat -f >> ~/current_cow
-            else
-                echo "$msg" | cowsay -f bear -e O >> ~/current_cow
-            fi
-        elif [[ "$msg" == "!lolcat "* ]]; then
-            echo "$msg" | cut -d' ' -f2- | cowsay  -f hellokitty | lolcat -f >> ~/current_cow
+        echo "$name has a message for you!" >> ~/current_cow
+        cow=$(get_cow "$name")
+        if [[ "$msg" == "!lolcat "* ]]; then
+            echo "$msg" | cut -d' ' -f2- | cowsay -f "$cow" | lolcat -f >> ~/current_cow
         else
-            cowsay "$msg" >> ~/current_cow
+            echo "$msg" | cowsay -f "$cow" >> ~/current_cow
         fi
+        tmux display-popup -h 80% -w 80% cat ~/current_cow
     elif [[ "$msg" == "!lolcat "* ]]; then
         colorize $color
         printf "$name"
