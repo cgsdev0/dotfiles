@@ -63,10 +63,10 @@ reply() {
 }
 
 parsecmd() {
-    msg=$(echo -n "$1" | grep -oP "PRIVMSG.*$" | cut -d':' -f2- | tr '[:upper:]' '[:lower:]')
-    headers=$(echo -n "$1" | grep -oP "^.*PRIVMSG")
-    name=$(echo -n "$headers" | grep -oP ";display-name=.*?;" | cut -d'=' -f2 | tr -d ';')
-    IS_SUBSCRIBER=$(echo -n "$headers" | grep -oP ";subscriber=.*?;" | cut -d'=' -f2 | tr -d ';')
+    msg=$(echo -n "$1" | grep -aoP "PRIVMSG.*$" | cut -d':' -f2- | tr '[:upper:]' '[:lower:]')
+    headers=$(echo -n "$1" | grep -aoP "^.*PRIVMSG")
+    name=$(echo -n "$headers" | grep -aoP ";display-name=.*?;" | cut -d'=' -f2 | tr -d ';')
+    IS_SUBSCRIBER=$(echo -n "$headers" | grep -aoP ";subscriber=.*?;" | cut -d'=' -f2 | tr -d ';')
     case $msg in
         "!crab")
             ;&
@@ -164,6 +164,14 @@ parsecmd() {
                 reply "$((1 + $RANDOM % $val))"
             fi
             ;;
+        "!sync")
+            if [[ "$name" == "badcop_" ]]; then
+                cd ~/fishing-data
+                git add -A &> /dev/null
+                git commit -am "sync" &> /dev/null
+                git push &> /dev/null
+            fi
+            ;;
         "!song")
             reply "$(baton status | head -n2 | cut -d':' -f2- | paste -sd' ')"
             ;;
@@ -245,6 +253,11 @@ parsecmd() {
              reply "rust is better"
            fi
            ;;
+       *"evanmmo"*)
+           if [[ "$headers" != *"reply-parent-user-login=evanmmo;"* ]]; then
+             reply "balloon! *pop* *pop* *pop* *pop*"
+           fi
+           ;;
        *"vim"*)
            reply "emacs is better"
            ;;
@@ -254,9 +267,9 @@ parsecmd() {
     esac
 }
 parsechat() {
-    color=$(echo -n "$1" | grep -oP "color=.*?;" | cut -d'=' -f2- | tr -d '#;\n')
-    name=$(echo -n "$1" | grep -oP "display-name=.*?;" | cut -d'=' -f2- | tr -d ';\n')
-    msg=$(echo -n "$1" | grep -oP "PRIVMSG.*$" | cut -d':' -f2-)
+    color=$(echo -n "$1" | grep -aoP "color=.*?;" | cut -d'=' -f2- | tr -d '#;\n')
+    name=$(echo -n "$1" | grep -aoP "display-name=.*?;" | cut -d'=' -f2- | tr -d ';\n')
+    msg=$(echo -n "$1" | grep -aoP "PRIVMSG.*$" | cut -d':' -f2-)
     if [[ "${#color}" != "6" ]]; then
         color=${"$(echo "$name" | md5sum)":3:9}
     fi
