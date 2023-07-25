@@ -67,4 +67,7 @@ return require("packer").startup(function(use)
 	use("hrsh7th/nvim-cmp")
 	use("hrsh7th/cmp-vsnip")
 	use("hrsh7th/vim-vsnip")
+
+	-- memes
+	use("eandrju/cellular-automaton.nvim")
 end)

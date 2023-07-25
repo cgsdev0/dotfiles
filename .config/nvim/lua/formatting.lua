@@ -16,6 +16,7 @@ require("formatter").setup({
 		},
 		go = {
 			require("formatter.filetypes.go").gofmt,
+			require("formatter.filetypes.go").goimports,
 		},
 		javascript = {
 			require("formatter.filetypes.javascript").prettier,

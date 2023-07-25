@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+vim_cmd() {
+  find /run/user/1000/ -iname 'nvim*' 2> /dev/null \
+  | xargs -I {} nvim --server {} --remote-send "$1" &
+}
+
+vim_cmd '<Esc>:CellularAutomaton make_it_rain<CR>'

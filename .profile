@@ -52,13 +52,15 @@ if [ ! -z "$SSH_TTY" ]; then
     if [ -f "$HOME/.nickname" ] ; then
         export NICKNAME=`cat $HOME/.nickname`
     fi
-else
-    if [[ "$OSTYPE" == "linux-gnu" ]]; then
-        eval $(ssh-agent) &> /dev/null
-        for key in $(find "$HOME/.ssh" -type f -iname 'id_*' | grep -v ".pub$"); do 
-          ssh-add "$key" &> /dev/null
-        done
-    fi
+fi
+
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+  if ! ssh-add -l &> /dev/null; then
+    eval $(ssh-agent) &> /dev/null
+    for key in $(find "$HOME/.ssh" -type f -iname 'id_*' | grep -v ".pub$"); do 
+      ssh-add "$key" &> /dev/null
+    done
+  fi
 fi
 
 if [ "$NICKNAME" = "devbox" ] ; then
