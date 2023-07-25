@@ -66,6 +66,7 @@ parsecmd() {
     msg=$(echo -n "$1" | grep -aoP "PRIVMSG.*$" | cut -d':' -f2- | tr '[:upper:]' '[:lower:]')
     headers=$(echo -n "$1" | grep -aoP "^.*PRIVMSG")
     name=$(echo -n "$headers" | grep -aoP ";display-name=.*?;" | cut -d'=' -f2 | tr -d ';')
+    mod=$(echo -n "$headers" | grep -aoP ";mod=.*?;" | cut -d'=' -f2 | tr -d ';')
     IS_SUBSCRIBER=$(echo -n "$headers" | grep -aoP ";subscriber=.*?;" | cut -d'=' -f2 | tr -d ';')
     case $msg in
         "!crab")
@@ -136,8 +137,13 @@ parsecmd() {
         "!commands")
             reply "!fish, !fishdex, !roll, !count, !play, !discord, !today, !jump"
             ;;
+        "!settoday "*)
+            if [[ "$mod" != "0" ]]; then
+              echo "$msg" | cut -d' ' -f2- >> "$HOME/.today"
+            fi
+            ;;
         "!today")
-            reply "$(head -n1 $HOME/.today)"
+            reply "$(tail -n1 $HOME/.today)"
             ;;
         "!jump")
             reply "/me jumps"
