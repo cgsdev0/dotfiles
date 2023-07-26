@@ -36,5 +36,6 @@
         "/home/sarah/.local/share/nvim/site/pack/packer/start/cmp-path/after",
         "/home/sarah/.local/share/nvim/site/pack/packer/start/cmp-vsnip/after",
         "${3rd}/luassert/library"
-    ]
+    ],
+    "workspace.checkThirdParty": false
 }
