@@ -289,18 +289,12 @@ parsechat() {
         colorize $color > ~/current_cow
         echo "$name has a message for you!" >> ~/current_cow
         cow=$(get_cow "$name")
-        if [[ "$msg" == "!lolcat "* ]]; then
-            echo "$msg" | cut -d' ' -f2- | cowsay -f "$cow" | lolcat -f >> ~/current_cow
+        echo "$msg" | cowsay -f "$cow" >> ~/current_cow
+        if [[ "$name" == "kuviman" ]]; then
+          tmux display-popup -h 80% -w 80% "glitchcat ~/current_cow --duration infinite --glitchness 30 --amount 30"
         else
-            echo "$msg" | cowsay -f "$cow" >> ~/current_cow
+          tmux display-popup -h 80% -w 80% "cat ~/current_cow"
         fi
-        tmux display-popup -h 80% -w 80% cat ~/current_cow
-    elif [[ "$msg" == "!lolcat "* ]]; then
-        colorize $color
-        printf "$name"
-        printf '\033[0m'
-        echo -n ": "
-        echo "$msg" | cut -d' ' -f2- | lolcat
     elif [[ "$msg" == $'\x01'"ACTION "* ]]; then
         colorize $color
         echo "$name" $(echo "$msg" | cut -d' ' -f2-)
