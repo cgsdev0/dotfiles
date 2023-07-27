@@ -1,0 +1,11 @@
+#!/bin/bash
+
+ echo -n " Please purchase tmux license               │ x "
+ echo -n "────────────────────────────────────────────╰───"
+ echo -n "                                  ╭───────────╮ "
+ echo -n "  Please note that tmux is not    │    Buy    │ "
+ echo -n "  free software. After a 40       ╰───────────╯ "
+ echo -n "  day trial period you must       ╭───────────╮ "
+ echo -n "  either buy a license or remove  │    Help   │ "
+ echo -n "  it from your computer.          ╰───────────╯ "
+ tput civis
