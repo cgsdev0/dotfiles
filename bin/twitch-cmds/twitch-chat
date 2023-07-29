@@ -20,6 +20,8 @@ source ../utils/url-parsing;
 source ./ld-cmds;
 source ./jam-cmds;
 
+LOG_FILE="~/twitch-logs/$(date "+%m-%d-%Y_%H-%M-%S").log"
+
 COW_DATA="$HOME/cows/$CHAN/"
 mkdir -p "$COW_DATA"
 
@@ -109,7 +111,7 @@ parsecmd() {
         "!winrar")
             ;&
         "!tmux")
-            tmux display-popup -h 12 -w 50 winrar-tmux-popup
+            tmux display-popup -h 12 -w 50 winrar-tmux-popup &
             ;;
         "!hi")
             reply "/me waves"
@@ -291,9 +293,9 @@ parsechat() {
         cow=$(get_cow "$name")
         echo "$msg" | cowsay -f "$cow" >> ~/current_cow
         if [[ "$name" == "kuviman" ]]; then
-          tmux display-popup -h 80% -w 80% "glitchcat ~/current_cow --duration infinite --glitchness 30 --amount 30"
+          tmux display-popup -h 80% -w 80% "glitchcat ~/current_cow --duration infinite --glitchness 30 --amount 30" &
         else
-          tmux display-popup -h 80% -w 80% "cat ~/current_cow"
+          tmux display-popup -h 80% -w 80% "cat ~/current_cow" &
         fi
     elif [[ "$msg" == $'\x01'"ACTION "* ]]; then
         colorize $color
@@ -308,7 +310,7 @@ parsechat() {
 }
 reqreader() {
   while IFS= read -r line; do
-    printf "%s\n" "$line" >> ~/twitch_raw.log
+    printf "%s\n" "$line" >> "$LOG_FILE"
     [[ $line == "PING"* ]] && echo "PONG :tmi.twitch.tv";
     [[ "$line" == "SYSTEM_EV "* ]] && reply "$(echo $line | sed 's/^SYSTEM_EV //')"
     [[ -z "$DISABLE_COMMANDS" ]] && [[ "$line" == *" PRIVMSG "* ]] && (parsechat "$line" 1>&2; parsecmd "$line")

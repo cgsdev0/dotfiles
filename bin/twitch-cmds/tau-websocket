@@ -37,10 +37,10 @@ reqreader() {
                         (sleep 120; hotdog not) &
                         ;;
                     "CHOO CHOO")
-                        tmux display-popup -h 100% -w 100% -E sl
+                        tmux display-popup -h 100% -w 100% -E sl &
                         ;;
                     "Enable gravity")
-                        make-it-rain
+                        make-it-rain &
                 esac
                 ;;
             "channel-subscription-gift")
