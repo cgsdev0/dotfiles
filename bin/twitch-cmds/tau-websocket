@@ -41,6 +41,10 @@ reqreader() {
                         ;;
                     "Enable gravity")
                         make-it-rain &
+                        ;;
+                    "Game of life")
+                        game-of-life &
+                        ;;
                 esac
                 ;;
             "channel-subscription-gift")

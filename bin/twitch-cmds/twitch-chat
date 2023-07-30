@@ -20,7 +20,8 @@ source ../utils/url-parsing;
 source ./ld-cmds;
 source ./jam-cmds;
 
-LOG_FILE="~/twitch-logs/$(date "+%m-%d-%Y_%H-%M-%S").log"
+LOG_FILE="$HOME/twitch-logs/$(date "+%m-%d-%Y_%H-%M-%S").log"
+touch "$LOG_FILE"
 
 COW_DATA="$HOME/cows/$CHAN/"
 mkdir -p "$COW_DATA"
@@ -125,6 +126,8 @@ parsecmd() {
         "!keyboard")
             reply "massdrop alt high profile w/ novelkey olivia silk switches"
             ;;
+        *"badcop3fish"*)
+            ;&
         "!fish "*)
             ;&
         "!fish")
