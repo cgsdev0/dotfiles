@@ -261,6 +261,10 @@ parsecmd() {
             [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_next_cmd)"
             [[ "$ITCHJAM_ENABLED" == "true" ]] && reply "$(itch_next_cmd)"
             ;;
+        # make the bot sassy
+       *"golang"*)
+           reply "more like nolang"
+           ;;
        *"emacs"*)
            reply "vim is better"
            ;;
