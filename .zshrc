@@ -143,3 +143,24 @@ export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 
 if [ -e /home/sarah/.nix-profile/etc/profile.d/nix.sh ]; then . /home/sarah/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+
+# emacs is a way of life, so it's best to always be inside emacs
+# (also unrelated, this makes pure prompt not fuck with the title)
+export INSIDE_EMACS=true
+printf '\033]2;%s\033\\' "$(hostname)"
+
+ssh() {
+  if [[ ! -z "$TMUX" ]]; then
+    config=$(command ssh "$@" -G)
+    host=$(echo "$config" | grep -E "^hostname " | head -n1 | cut -d' ' -f2)
+    port=$(echo "$config" | grep -E "^port " | head -n1 | cut -d' ' -f2)
+    if [[ "$port" != "22" ]]; then
+      host="${host}:${port}"
+    fi
+    printf '\033]2;%s\033\\' "$host"
+    command ssh "$@"
+    printf '\033]2;%s\033\\' "$(hostname)"
+  else
+    command ssh "$@"
+  fi
+}

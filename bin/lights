@@ -1,0 +1,30 @@
+#!/bin/bash
+
+USERNAME=$(cat ~/.hue_bridge_username)
+BASE_URL=http://192.168.0.140/api/${USERNAME}
+
+change_state() {
+    curl -X PUT -Ss "${BASE_URL}/lights/1/state" --data '{"on":'$1'}' > /dev/null
+    curl -X PUT -Ss "${BASE_URL}/lights/2/state" --data '{"on":'$1'}' > /dev/null
+    curl -X PUT -Ss "${BASE_URL}/lights/3/state" --data '{"on":'$1'}' > /dev/null
+    curl -X PUT -Ss "${BASE_URL}/lights/4/state" --data '{"on":'$1'}' > /dev/null
+    curl -X PUT -Ss "${BASE_URL}/lights/5/state" --data '{"on":'$1'}' > /dev/null
+    curl -X PUT -Ss "${BASE_URL}/lights/6/state" --data '{"on":'$1'}' > /dev/null
+    curl -X PUT -Ss "${BASE_URL}/lights/7/state" --data '{"on":'$1'}' > /dev/null
+    curl -X PUT -Ss "${BASE_URL}/lights/8/state" --data '{"on":'$1'}' > /dev/null
+    curl -X PUT -Ss "${BASE_URL}/lights/9/state" --data '{"on":'$1'}' > /dev/null
+}
+
+turn_on() {
+    change_state true
+}
+
+turn_off() {
+    change_state false
+}
+
+if [[ "$1" == "on" ]]; then
+  turn_on
+elif [[ "$1" == "off" ]]; then
+  turn_off
+fi

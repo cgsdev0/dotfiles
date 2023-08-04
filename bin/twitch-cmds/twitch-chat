@@ -126,6 +126,9 @@ parsecmd() {
         "!keyboard")
             reply "massdrop alt high profile w/ novelkey olivia silk switches"
             ;;
+        "!font")
+            reply "I use the hack font: https://sourcefoundry.org/hack/"
+            ;;
         *"badcop3fish"*)
             ;&
         "!fish "*)
@@ -208,6 +211,10 @@ parsecmd() {
             else
                 reply "rollycubes is not running right now :("
             fi
+            ;;
+        # memes
+        "!sha2")
+            reply "It is balderdash by scam artists trying to bamboozle people into buying fintech snake oil"
             ;;
         "!modules")
             reply "they are orthogonal to namespaces"
