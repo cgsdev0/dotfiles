@@ -1,0 +1,100 @@
+#!/bin/bash
+
+set -eu
+
+if [[ ! -f ~/.digital_ocean_token ]]; then
+  echo "no access token found"
+  exit 1
+fi
+
+CF_TOKEN=$(cat ~/.cloudflare_token)
+DO_TOKEN=$(cat ~/.digital_ocean_token)
+TAG="bashstack:ephemeral"
+MY_KEYS="$(ssh-add -L | sed 's/\(.*\)/"\1"/' | paste -sd,)"
+
+_cloudinit() {
+  cat <<EOF
+#!/bin/sh
+sudo apt-get update
+sudo apt-get install -y ucspi-tcp unzip ripgrep
+echo 'hello me'
+EOF
+}
+
+cloudinit() {
+  _cloudinit #| awk '{printf "%s\\n", $0}'
+}
+
+cloudflare() {
+  curl -Ss -H "Authorization: Bearer $CF_TOKEN" \
+     -H "Content-Type:application/json" "$@"
+}
+
+digitalocean() {
+  curl -Ss -H "Authorization: Bearer $DO_TOKEN" \
+     -H "Content-Type:application/json" "$@"
+}
+
+get_ip() {
+  DROPLET_ID="$1"
+  IP="null"
+  while [[ "$IP" == "null" ]]; do
+    echo "waiting for IP..." 1>&2
+    sleep 1
+    IP=$(digitalocean -X GET \
+        "https://api.digitalocean.com/v2/droplets/$DROPLET_ID" \
+        | jq -r '.droplet.networks.v4 | map(select(.type == "public"))[0].ip_address')
+  done
+  echo "$IP"
+}
+_up() {
+  digitalocean -X POST \
+      "https://api.digitalocean.com/v2/droplets" \
+      -d "$(cat <<EOF
+{
+  "name":"bashbox",
+  "size":"s-2vcpu-4gb-amd",
+  "region":"sfo3",
+  "image":"ubuntu-22-04-x64",
+  "tags":["$TAG"],
+  "ssh_keys": ["a0:dc:4c:42:19:21:b8:c8:48:3a:5b:d1:6e:32:bc:30"],
+  "user_data": "$(cloudinit)",
+  apt-get install -y ucspi-tcp unzip ripgrep", "vpc_uuid":"0ebd9ffa-9670-4def-8559-d25aefc557e2"}
+EOF
+)" | jq -r '.droplet.id'
+}
+
+update_dns() {
+echo -n "Updated cloudflare DNS: "
+cloudflare -X PATCH \
+  --url "https://api.cloudflare.com/client/v4/zones/de655d7f62eb43cc366f1d83b48f6ecc/dns_records/02d9a1878389c3e2dae9ae66a3e37e62" \
+  --data '{
+  "content": "'$1'",
+  "name": "dev.bashsta.cc",
+  "proxied": false,
+  "type": "A",
+  "tags": [],
+  "comment": "",
+  "ttl": 60
+}' | jq -r .success
+}
+
+up() {
+  ID=$(_up)
+  IP=$(get_ip "$ID")
+  echo "Devbox up and running at $IP"
+  update_dns "$IP"
+  echo "all done!"
+}
+
+down() {
+  digitalocean -X DELETE \
+      "https://api.digitalocean.com/v2/droplets/?tag_name=$TAG"
+  echo "All devboxes destroyed."
+}
+
+if [[ "$1" == "up" ]]; then
+  up
+elif [[ "$1" == "down" ]]; then
+  down
+fi

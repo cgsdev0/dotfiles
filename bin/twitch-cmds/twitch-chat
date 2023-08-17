@@ -20,7 +20,7 @@ source ../utils/url-parsing;
 source ./ld-cmds;
 source ./jam-cmds;
 
-LOG_FILE="$HOME/twitch-logs/$(date "+%m-%d-%Y_%H-%M-%S").log"
+LOG_FILE="$HOME/twitch-logs/$(date "+%Y-%m-%d_%H-%M-%S").log"
 touch "$LOG_FILE"
 
 COW_DATA="$HOME/cows/$CHAN/"
@@ -194,15 +194,15 @@ parsecmd() {
         "!song")
             reply "$(baton status | head -n2 | cut -d':' -f2- | paste -sd' ')"
             ;;
-        "!ld")
-            ;&
-        "!link")
-            ;&
-        "!play")
-            if [[ "$CHAN" == "badcop_" ]]; then
-                reply "Here is my LD compo entry: https://ldjam.com/events/ludum-dare/53/giggle-groove"
-            fi
-            ;&
+        # "!ld")
+        #     ;&
+        # "!link")
+        #     ;&
+        # "!play")
+        #     if [[ "$CHAN" == "badcop_" ]]; then
+        #         reply "Here is my LD compo entry: https://ldjam.com/events/ludum-dare/53/giggle-groove"
+        #     fi
+        #     ;&
         "!dice")
             ;&
         "!rollycubes")
@@ -285,9 +285,9 @@ parsecmd() {
              reply "balloon! *pop* *pop* *pop* *pop*"
            fi
            ;;
-       *"vim"*)
-           reply "emacs is better"
-           ;;
+       # *"vim"*)
+       #     reply "emacs is better"
+       #     ;;
        *"linux"*)
            # reply "i use arch btw"
            ;;
@@ -324,7 +324,7 @@ parsechat() {
 }
 reqreader() {
   while IFS= read -r line; do
-    printf "%s\n" "$line" >> "$LOG_FILE"
+    printf "time=%s;%s\n" $(date "+%Y-%m-%d_%H:%M:%S") "$line" >> "$LOG_FILE"
     [[ $line == "PING"* ]] && echo "PONG :tmi.twitch.tv";
     [[ "$line" == "SYSTEM_EV "* ]] && reply "$(echo $line | sed 's/^SYSTEM_EV //')"
     [[ -z "$DISABLE_COMMANDS" ]] && [[ "$line" == *" PRIVMSG "* ]] && (parsechat "$line" 1>&2; parsecmd "$line")
