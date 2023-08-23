@@ -149,6 +149,11 @@ if [ -e /home/sarah/.nix-profile/etc/profile.d/nix.sh ]; then . /home/sarah/.nix
 export INSIDE_EMACS=true
 printf '\033]2;%s\033\\' "$(hostname)"
 
+if [[ -d "$HOME/.fly" ]]; then
+  export FLYCTL_INSTALL="$HOME/.fly"
+  export PATH="$FLYCTL_INSTALL/bin:$PATH"
+fi
+
 ssh() {
   if [[ ! -z "$TMUX" ]]; then
     config=$(command ssh "$@" -G)

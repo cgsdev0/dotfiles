@@ -59,7 +59,7 @@ _up() {
   "tags":["$TAG"],
   "ssh_keys": ["a0:dc:4c:42:19:21:b8:c8:48:3a:5b:d1:6e:32:bc:30"],
   "user_data": "$(cloudinit)",
-  apt-get install -y ucspi-tcp unzip ripgrep", "vpc_uuid":"0ebd9ffa-9670-4def-8559-d25aefc557e2"}
+  "vpc_uuid":"0ebd9ffa-9670-4def-8559-d25aefc557e2"}
 EOF
 )" | jq -r '.droplet.id'
 }
