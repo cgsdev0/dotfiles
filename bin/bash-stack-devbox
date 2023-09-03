@@ -16,7 +16,7 @@ _cloudinit() {
   cat <<EOF
 #!/bin/sh
 sudo apt-get update
-sudo apt-get install -y ucspi-tcp unzip ripgrep moreutils
+sudo apt-get install -y ucspi-tcp unzip ripgrep moreutils inotify-tools
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - &&\
 sudo apt-get install -y nodejs
 npm install --global -D tailwindcss
