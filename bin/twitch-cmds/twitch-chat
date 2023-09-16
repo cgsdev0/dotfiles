@@ -67,6 +67,7 @@ reply() {
 
 parsecmd() {
     msg=$(echo -n "$1" | grep -aoP "PRIVMSG.*$" | cut -d':' -f2- | tr '[:upper:]' '[:lower:]')
+    msg_loud=$(echo -n "$1" | grep -aoP "PRIVMSG.*$" | cut -d':' -f2-)
     headers=$(echo -n "$1" | grep -aoP "^.*PRIVMSG")
     name=$(echo -n "$headers" | grep -aoP ";display-name=.*?;" | cut -d'=' -f2 | tr -d ';')
     mod=$(echo -n "$headers" | grep -aoP ";mod=.*?;" | cut -d'=' -f2 | tr -d ';')
@@ -152,7 +153,7 @@ parsecmd() {
             ;;
         "!settoday "*)
             if [[ "$mod" != "0" ]] || [[ "$name" == "badcop_" ]]; then
-              echo "$msg" | cut -d' ' -f2- >> "$HOME/.today"
+              echo "$msg_loud" | cut -d' ' -f2- >> "$HOME/.today"
             fi
             ;;
         "!today")

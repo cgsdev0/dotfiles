@@ -39,6 +39,7 @@ return require("packer").startup(function(use)
 			ts_update()
 		end,
 	})
+	use("nvim-treesitter/playground")
 	use({
 		"nvim-telescope/telescope.nvim",
 		tag = "0.1.1",

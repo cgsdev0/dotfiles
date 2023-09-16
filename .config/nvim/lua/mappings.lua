@@ -19,6 +19,7 @@ vim.keymap.set("n", "<C-g>", ":Telescope live_grep<CR>", bufopts)
 -- edit vim config
 vim.keymap.set("n", "<leader>,", ":e ~/.config/nvim/init.vim<CR>", bufopts)
 vim.keymap.set("n", "<leader>r", ":luafile %<CR>", bufopts)
+vim.keymap.set("n", "<leader>T", ":TSPlaygroundToggle<CR>", bufopts)
 
 -- tmux navigation
 vim.keymap.set("n", "<C-H>", ":TmuxNavigateLeft<cr>", bufopts)

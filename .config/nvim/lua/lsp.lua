@@ -14,7 +14,7 @@ local border = "rounded"
 local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
 function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
 	opts = opts or {}
-	opts.border = opts.border or border
+	opts.border = border
 	return orig_util_open_floating_preview(contents, syntax, opts, ...)
 end
 
@@ -74,6 +74,25 @@ require("lspconfig")["rust_analyzer"].setup({
 require("lspconfig")["cssls"].setup({
 	on_attach = on_attach,
 	capabilities = capabilities,
+})
+
+local lspconfig = require("lspconfig")
+local configs = require("lspconfig/configs")
+
+if not configs.htmx then
+	configs.htmx = {
+		default_config = {
+			cmd = { "htmx-lsp", "--level", "DEBUG" },
+			root_dir = lspconfig.util.root_pattern(".git", "go.mod"),
+			filetypes = { "sh" },
+			autostart = true,
+		},
+	}
+end
+
+configs.htmx.setup({
+	capabilities = capabilities,
+	on_attach = on_attach,
 })
 
 require("lspconfig")["lua_ls"].setup({
