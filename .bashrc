@@ -117,13 +117,17 @@ if ! shopt -oq posix; then
 fi
 
 export PATH=$(pwd -P)/../../opt/node$NODE_VERSION/bin:$PATH
-eval "$(direnv hook bash)"
+if which direnv &>/dev/null; then
+  eval "$(direnv hook bash)"
+fi
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 # fnm
-export PATH=$HOME/.fnm:$PATH
-eval "`fnm env`"
+if which fnm &>/dev/null; then
+    export PATH=$HOME/.fnm:$PATH
+    eval "`fnm env`"
+fi
 
 
 [ -f "$HOME/.cargo/env" ] && "$HOME/.cargo/env"

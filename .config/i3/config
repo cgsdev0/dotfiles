@@ -14,9 +14,8 @@ set $urgentbgcolor      #E53935
 set $active             #aaaaaa
 
 # Default Programs
-set $term i3-sensible-terminal
+set $preferredTerminalEmulator /usr/bin/alacritty
 set $webbrowse google-chrome
-set $TERMINAL urxvt
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -24,7 +23,7 @@ floating_modifier $mod
 mouse_warping none
 
 # start a terminal
-bindsym $mod+Return exec --no-startup-id $term
+bindsym $mod+Return exec --no-startup-id $preferredTerminalEmulator
 bindsym $mod+Shift+Return exec --no-startup-id $term -e devbox-connect
 bindsym $mod+Ctrl+Return exec --no-startup-id $term -e mac-connect
 
@@ -32,7 +31,7 @@ bindsym $mod+Ctrl+Return exec --no-startup-id $term -e mac-connect
 bindsym $mod+Shift+q kill
 
 # start dmenu (a program launcher)
-bindsym $mod+d exec rofi -show run -config ~/.config/i3/rofi.conf
+bindsym $mod+d exec rofi -show run
 
 # There also is the (new) i3-dmenu-desktop which only displays applications
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
@@ -174,14 +173,8 @@ client.urgent           $urgentcolor    $bgcolor        $textcolor      $urgentc
 # Start polybar
 exec_always --no-startup-id ~/.config/polybar/launch.sh
 
-exec_always --no-startup-id /usr/lib/x86_64-linux-gnu/libexec/kdeconnectd
+# exec_always --no-startup-id /usr/lib/x86_64-linux-gnu/libexec/kdeconnectd
 
-# Start scratch terminal
-exec --no-startup-id st -c scratchterm
-exec --no-startup-id gnome-calculator
-bindsym $mod+c [class="^Gnome-calculator$"] scratchpad show
-bindsym $mod+x [class="^scratchterm$"] scratchpad show
-bindsym $mod+Shift+x [class="^scratchterm$"] move scratchpad
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 # bar {
@@ -213,8 +206,14 @@ gaps outer 15
 gaps inner 10
 # gaps right 440
 
+# scratch
+bindsym $mod+Shift+x move scratchpad
+bindsym $mod+x scratchpad show
+
 # Keyboard configuration
-exec_always --no-startup-id autorandr --change; wal -Rts && feh --bg-scale ~/.config/wall.png
+set $lockScreenWallpaper ~/Pictures/wallpaper.png
+exec_always --no-startup-id feh --bg-scale $lockScreenWallpaper
+# exec_always --no-startup-id autorandr --change; wal -Rts && feh --bg-scale ~/.config/wall.png
 exec_always --no-startup-id setxkbmap -option caps:escape
 exec_always --no-startup-id xset r rate 250 45
 exec_always --no-startup-id xinput --set-prop "Logitech USB Receiver Mouse" "Coordinate Transformation Matrix" 0.7 0 0 0 0.7 0 0 0 1
@@ -224,7 +223,7 @@ bindsym $mod+Shift+plus exec --no-startup-id ~/bin/terminal_transparency up
 bindsym $mod+Shift+minus exec --no-startup-id ~/bin/terminal_transparency down
 
 # Start picom
-exec_always --no-startup-id picom --experimental-backends -c --config ~/.config/compton.conf -b &> /dev/null
+exec_always --no-startup-id picom --experimental-backends -c --config ~/.config/picom.conf -b &> /dev/null
 
 # Start dunst
 exec_always --no-startup-id killall dunst; dunst -lb "$bgcolor" -nb "$bgcolor" -cb "$bgcolor" -lf "$textcolor" -nf "$textcolor" -cf "$urgentcolor"
@@ -238,7 +237,7 @@ bindsym Ctrl+Print exec --no-startup-id ~/bin/screenshot-mac
 bindsym $mod+Tab workspace back_and_forth
 
 # Mod+Shift+C = toggle picom
-bindsym $mod+Shift+c exec --no-startup-id killall picom || picom --experimental-backends -c --config ~/.config/compton.conf -b &> /dev/null
+bindsym $mod+Shift+c exec --no-startup-id killall picom || picom --experimental-backends -c --config ~/.config/picom.conf -b &> /dev/null
 
 # Pulse Audio controls
 bindsym XF86AudioRaiseVolume exec --no-startup-id volume up #increase sound volume
@@ -254,6 +253,60 @@ bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 20 # increase s
 bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 20 # decrease screen brightness
 
 # Lock screen
-bindsym $mod+Delete exec --no-startup-id ~/.i3/lock -b=0x5
-bindsym XF86Sleep exec --no-startup-id ~/.i3/lock -b=0x5 && systemctl suspend
-bindsym $mod+Shift+Delete exec --no-startup-id ~/.i3/lock -b=0x5 && systemctl suspend
+bindsym $mod+Delete exec --no-startup-id i3lock-fancy
+bindsym XF86Sleep exec --no-startup-id i3lock-fancy && systemctl suspend
+bindsym $mod+Shift+Delete exec --no-startup-id i3lock-fancy && systemctl suspend
+
+# Open specific applications in floating mode
+for_window [title="alsamixer"] floating enable border pixel 1
+for_window [class="calamares"] floating enable border normal
+for_window [class="Clipgrab"] floating enable
+for_window [title="File Transfer*"] floating enable
+for_window [class="bauh"] floating enable
+for_window [class="Galculator"] floating enable border pixel 1
+for_window [class="GParted"] floating enable border normal
+for_window [title="i3_help"] floating enable sticky enable border normal
+for_window [class="Lightdm-settings"] floating enable
+for_window [class="Lxappearance"] floating enable border normal
+for_window [class="Garuda Settings Manager"] floating enable border normal
+for_window [title="MuseScore: Play Panel"] floating enable
+for_window [class="azote"] floating enable sticky enable border normal
+for_window [class="Oblogout"] fullscreen enable
+for_window [class="octopi"] floating enable
+for_window [title="About Pale Moon"] floating enable
+for_window [class="Pamac-manager"] floating enable
+for_window [class="Pamac-updater"] floating enable
+for_window [class="Pavucontrol"] floating enable
+for_window [class="Qtconfig-qt4"] floating enable border normal
+for_window [class="qt5ct"] floating enable sticky enable border normal
+#for_window [title="sudo"] floating enable border normal
+for_window [class="Simple-scan"] floating enable border normal
+for_window [class="(?i)System-config-printer.py"] floating enable border normal
+for_window [class="Skype"] floating enable border normal
+for_window [class="Timeshift-gtk"] floating enable border normal
+for_window [class="(?i)virtualbox"] floating enable border normal
+for_window [class="Xfburn"] floating enable
+for_window [class="keepassxc"] floating enable
+for_window [class="garuda-welcome"] floating enable
+
+# window rules, you can find the window class using xprop
+for_window [class=".*"] border pixel 2
+assign [class=URxvt] 1
+for_window [class=Viewnior|feh|Audacious|File-roller|Lxappearance|Lxtask|Pavucontrol|upgrade2ultimate.sh] floating enable
+for_window [class=URxvt|firedragon|Geany|Evince|Soffice|libreoffice*|mpv|Ghb|Xfburn|Gimp*|Inkscape|Vlc|Lxappearance|Audacity] focus
+for_window [class=Xfburn|GParted|System-config-printer.py|Lxtask|Pavucontrol|Exo-helper*|Lxrandr|Arandr] focus
+
+# bar {
+#     font pango:Hack Nerd Font 14
+#     position top
+#     status_command /usr/bin/i3status-rs ~/.config/i3status-rust/config.toml
+#     colors {
+#         separator #666666
+#         background #222222
+#         statusline #dddddd
+#         focused_workspace #0088CC #0088CC #ffffff
+#         active_workspace #333333 #333333 #ffffff
+#         inactive_workspace #333333 #333333 #888888
+#         urgent_workspace #2f343a #900000 #ffffff
+#     }
+# }
