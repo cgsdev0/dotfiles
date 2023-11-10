@@ -2,6 +2,10 @@ if [[ -d ~/completions ]]; then
   fpath=(~/completions $fpath)
 fi
 
+print() {
+  [ 0 -eq $# -a "prompt_pure_precmd" = "${funcstack[-1]}" ] || builtin print "$@";
+}
+
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 

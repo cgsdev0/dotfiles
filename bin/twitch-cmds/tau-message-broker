@@ -8,9 +8,11 @@ source ./fish-cmds
 rm -f /tmp/tau_tunnel;
 mkfifo /tmp/tau_tunnel;
 
-LDJAM_INDEX=53
-LDJAM_ENABLED=false
-ITCHJAM_ENABLED=true
+# TODO: move this somewhere else
+LDJAM_INDEX=54
+LDJAM_ENABLED=true
+ITCHJAM_ENABLED=false
+
 source ./ld-cmds;
 source ./jam-cmds;
 

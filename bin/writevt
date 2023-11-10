@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [[ -z "$1" ]] || [[ -z "$2" ]]; then
+  echo "required args: [tty] [text]"
+  exit 1
+fi
+
+cat <<-EOF | base64 -d | gcc -xc - && ./a.out "$1" "$2"
+I2luY2x1ZGUgPHN0ZGlvLmg+CiNpbmNsdWRlIDxmY250bC5oPgojaW5jbHVkZSA8dGVyb
+Wlvcy5oPgojaW5jbHVkZSA8c3lzL2lvY3RsLmg+CiNpbmNsdWRlIDx1bmlzdGQuaD4KaW
+50IG1haW4oaW50IGEsY2hhcioqYil7aW50IGMsZDtjaGFyKmU9TlVMTDtjaGFyKmY9TlV
+MTDtkPTE7ZT1iW2QrK107Zj1iW2QrK107Yz1vcGVuKGUsT19SRE9OTFkpO2lmKGM8MCl7
+cGVycm9yKGUpO2ZwcmludGYoc3RkZXJyLCJjb3VsZCBub3Qgb3BlbiB0dHlcbiIpO3Jld
+HVybiAxO313aGlsZSgqZil7aWYoaW9jdGwoYyxUSU9DU1RJLGYpKXtwZXJyb3IoImlvY3
+RsIik7cmV0dXJuIDE7fWYrKzt9cmV0dXJuIDA7fQ==
+EOF

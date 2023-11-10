@@ -6,8 +6,8 @@ cd "${0%/*}"
 # twitch docs reference: https://dev.twitch.tv/docs/irc
 
 CHAN=$1
-LDJAM_INDEX=53
-LDJAM_ENABLED=false
+LDJAM_INDEX=54
+LDJAM_ENABLED=true
 ITCHJAM_ENABLED=false
 
 if [[ ! -z "$BADCOP" ]]; then
@@ -195,15 +195,15 @@ parsecmd() {
         "!song")
             reply "$(baton status | head -n2 | cut -d':' -f2- | paste -sd' ')"
             ;;
-        # "!ld")
-        #     ;&
-        # "!link")
-        #     ;&
-        # "!play")
-        #     if [[ "$CHAN" == "badcop_" ]]; then
-        #         reply "Here is my LD compo entry: https://ldjam.com/events/ludum-dare/53/giggle-groove"
-        #     fi
-        #     ;&
+        "!ld")
+            ;&
+        "!link")
+            ;&
+        "!play")
+            if [[ "$CHAN" == "badcop_" ]]; then
+                reply "Here is my LD compo entry: https://ldjam.com/events/ludum-dare/54/bit-golf"
+            fi
+            ;;
         "!dice")
             ;&
         "!rollycubes")
@@ -222,6 +222,9 @@ parsecmd() {
             ;;
         "!lurk"*)
             reply "sounds good, $name :)"
+            ;;
+        "!dotfiles")
+            reply "https://github.com/cgsdev0/dotfiles"
             ;;
         "!bot")
             reply "i live here: https://github.com/cgsdev0/dotfiles/blob/main/bin/twitch-cmds/twitch-chat"
@@ -260,10 +263,6 @@ parsecmd() {
         "!game")
             [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_game_cmd)"
             [[ "$ITCHJAM_ENABLED" == "true" ]] && reply "$(itch_game_cmd)"
-            ;;
-        "!queue")
-            [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_queue_cmd)"
-            [[ "$ITCHJAM_ENABLED" == "true" ]] && reply "$(itch_queue_cmd)"
             ;;
         "!next")
             [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_next_cmd)"
