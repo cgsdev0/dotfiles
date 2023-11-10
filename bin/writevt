@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# https://github.com/grawity/code/blob/main/thirdparty/writevt.c
+
 if [[ -z "$1" ]] || [[ -z "$2" ]]; then
   echo "required args: [tty] [text]"
   exit 1
