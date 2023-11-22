@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo -n "Did the thing go good? (y/n) "
+read -n1 CHAR
+echo
+
+if [[ "$CHAR" == "y" ]] || [[ "$CHAR" == "Y" ]]; then
+  exit 0
+fi
+exit 1

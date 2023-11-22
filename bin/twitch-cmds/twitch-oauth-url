@@ -80,5 +80,5 @@ RESPONSE=$(curl -X POST "https://id.twitch.tv/oauth2/token" \
 
 echo "$RESPONSE"
 
-echo "$RESPONSE" | jq -r '.access_token' > ~/.twitch_access_token_bot
-echo "$RESPONSE" | jq -r '.refresh_token' > ~/.twitch_refresh_bot
+echo "$RESPONSE" | jq -r '.access_token' > ~/.twitch_access_token
+echo "$RESPONSE" | jq -r '.refresh_token' > ~/.twitch_refresh
