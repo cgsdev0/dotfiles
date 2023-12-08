@@ -27,6 +27,10 @@ reqreader() {
       MESSAGE_TYPE=$(echo "$line" | jq -r '.message_type')
       echo "'$MESSAGE_TYPE'" 1>&2
       case $MESSAGE_TYPE in
+        "fish-champion")
+          mkdir -p "$HOME/fishing-data/$CHAN/hall-of-fame"
+          echo "$line" | jq -cr '.data' >> "$HOME/fishing-data/$CHAN/hall-of-fame/json"
+        ;;
         "wheel-result")
           WINNER=$(echo "$line" | jq -r '.data.winner')
           [[ "$LDJAM_ENABLED" == true ]] && send-twitch-msg "$(ld_endraffle_cmd2 "$WINNER")"

@@ -7,7 +7,7 @@ cd "${0%/*}"
 
 CHAN=$1
 LDJAM_INDEX=54
-LDJAM_ENABLED=true
+LDJAM_ENABLED=false
 ITCHJAM_ENABLED=false
 
 if [[ ! -z "$BADCOP" ]]; then
@@ -88,6 +88,15 @@ parsecmd() {
         "!ping")
             reply "pong!"
             ;;
+        "!variant")
+            reply "this state is hard to achieve"
+            ;;
+        "!posix")
+            reply "https://twitter.com/badcop_/status/1692837652477718917"
+            ;;
+        "!aoc")
+            reply "check out my advent of code 2023 solutions! https://github.com/cgsdev0/aoc-2023"
+            ;;
         "!stack")
             reply "we are building bash stack, a web framework in bash: http://bashsta.cc"
             ;;
@@ -110,6 +119,13 @@ parsecmd() {
               reply "yum, thanks :)"
             fi
             ;;
+        "!yt")
+            ;&
+        "!youtube")
+            ;&
+        "!bashcop")
+            reply "https://youtube.com/@bashcop"
+            ;;
         "!winrar")
             ;&
         "!tmux")
@@ -124,8 +140,12 @@ parsecmd() {
         "!discord")
             reply "join our discord! https://discord.badcop.games/"
             ;;
+        "!theme")
+            reply "tokyonight https://github.com/folke/tokyonight.nvim"
+            ;;
         "!keyboard")
-            reply "massdrop alt high profile w/ novelkey olivia silk switches"
+            # reply "massdrop alt high profile w/ novelkey olivia silk switches"
+            reply "NK65 olivia edition https://novelkeys.com/collections/keyboards/products/nk65-olivia-edition"
             ;;
         "!font")
             reply "I use the hack font: https://sourcefoundry.org/hack/"
@@ -167,6 +187,10 @@ parsecmd() {
             ;;
         "!fishdex")
             reply "$(fishdex)"
+            ;;
+        "!fishdex "*)
+            USER="$(basename "$(echo "$msg_loud" | cut -d' ' -f2)")"
+            reply "$(fishdex_check "$USER")"
             ;;
         "!count")
             count=$(cat ~/.twitch_counter)

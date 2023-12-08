@@ -11,6 +11,17 @@ fish_leaderboard() {
         | sed 's/|/ | /g'
 }
 
+hall_of_fame() {
+  (figlet hall of fame; \
+    (echo "RANK,WINS,CAUGHT BY,SPECIES"; cat ~/fishing-data/badcop_/hall-of-fame/json \
+      | jq -r '[.stats.wins, .caughtBy, .fishType] | @tsv' \
+      | sort -nr \
+      | nl -w 1 \
+      | tr '\t' ',') \
+      | column -t -s ",") \
+    | less
+}
+
 gen_loot_tables() {
     (repeat 300 echo "common";\
     repeat 200 echo "fairly_common";\
@@ -56,6 +67,9 @@ get_rod() {
     usable_rods=$(grep ' [1-9][0-9]*$' "$rod_file" | cut -d' ' -f1)
     best_rod="old"
     case $usable_rods in
+        *"admin"*)
+            best_rod="admin"
+            ;;
         *"null"*)
             best_rod="null"
             ;;
@@ -112,6 +126,7 @@ catch_fish() {
         echo "You have an invalid fishing rod!"
         return
     fi
+    PRECHECK="$(fishdex check)"
     classification=$(shuf -n 1 $HOME/fishing-data/fishing-rods/${fishing_rod})
     class_pretty=$(echo "$classification" | tr '_' ' ' | sed 's/.*/\L&/; s/[a-z]*/\u&/g')
     fish=$(shuf -n 1 $HOME/fishing-data/fish-by-rarity/${classification})
@@ -148,8 +163,11 @@ catch_fish() {
     else
         echo "@$name caught $description $fish ($class_pretty)! ($rarity% rarity) ($fishing_rod rod used)"
     fi
-    FISH_JSON='{"fish":"'$fish'","classification":"'$classification'"}'
+    FISH_JSON='{"fish":"'$fish'","classification":"'$classification'","caught_by":"'$name'"}'
     tbus-send "fish-catch" "$FISH_JSON"
+    if [[ "$(fishdex check)" != "$PRECHECK" ]]; then
+      send-twitch-msg "@$name HAS COMPLETED THEIR FISHDEX!!!!!!!!"
+    fi
 }
 
 uncaught_fish() {
@@ -164,10 +182,24 @@ fishdex_all() {
     echo "$count out of $total possible fish have been caught."
 }
 
+fishdex_check() {
+    cd "$HOME/fishing-data/$CHAN"
+    total=$(cat ~/fishing-data/fish-by-rarity/* | sort -u | wc -l)
+    if [[ ! -f "$HOME/fishing-data/${CHAN}/$1" ]]; then
+      echo "No fishdex found!"
+    fi
+    count=$(cat "$HOME/fishing-data/${CHAN}/$1" | sort -u | wc -l)
+    echo "@$1 has caught $count out of $total possible fish!"
+}
+
 fishdex() {
     cd "$HOME/fishing-data/$CHAN"
     total=$(cat ~/fishing-data/fish-by-rarity/* | sort -u | wc -l)
     touch "$HOME/fishing-data/${CHAN}/$name"
     count=$(cat "$HOME/fishing-data/${CHAN}/$name" | sort -u | wc -l)
-    echo "@$name has caught $count out of $total possible fish!"
+    if [[ -z "$1" ]]; then
+      echo "@$name has caught $count out of $total possible fish!"
+    else
+      echo "$total > $count" | bc
+    fi
 }
