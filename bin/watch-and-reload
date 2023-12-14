@@ -37,5 +37,6 @@ while true; do
 
     inotifywait -qq "${deps[@]}" -e MODIFY -e MOVE_SELF
     pkill -TERM -P $PID &> /dev/null
+    kill -SIGTERM $PID
     echo "reloading..."
 done
