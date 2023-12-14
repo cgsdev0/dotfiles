@@ -171,6 +171,11 @@ parsecmd() {
         "!commands")
             reply "!fish, !fishdex, !roll, !count, !play, !discord, !today, !jump"
             ;;
+        "!q "*)
+            printf "%s %s: " "$(date "+%Y-%m-%d %H:%M")" "$name" >> "$HOME/.queue"
+            echo "$msg_loud" | cut -d' ' -f2- >> "$HOME/.queue"
+            reply "@$name Message queued for later!"
+            ;;
         "!settoday "*)
             if [[ "$mod" != "0" ]] || [[ "$name" == "badcop_" ]]; then
               echo "$msg_loud" | cut -d' ' -f2- >> "$HOME/.today"
@@ -243,6 +248,11 @@ parsecmd() {
             ;;
         "!modules")
             reply "they are orthogonal to namespaces"
+            ;;
+        "!pronouns")
+            ;&
+        "!gender")
+            reply "i prefer to go by she/her or they/them pronouns"
             ;;
         "!lurk"*)
             reply "sounds good, $name :)"
