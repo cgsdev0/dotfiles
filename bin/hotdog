@@ -37,7 +37,9 @@ not_hotdog() {
 }
 
 if [[ "$1" == "pane" ]]; then
-  cat ~/themes/overrides/hotdog
+  cat ~/themes/override/hotdog
+elif [[ "$1" == "reset" ]]; then
+  cat ~/themes/override/reset
 elif [[ "$1" == "not" ]]; then
   not_hotdog &> /dev/null
 elif [[ "$1" == "night" ]]; then

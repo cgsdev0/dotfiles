@@ -160,6 +160,11 @@ fi
 
 ssh() {
   if [[ ! -z "$TMUX" ]]; then
+    if [[ "$1" == "rcdb" ]]; then
+      if which hotdog &> /dev/null; then
+        hotdog pane
+      fi
+    fi
     config=$(command ssh "$@" -G)
     host=$(echo "$config" | grep -E "^hostname " | head -n1 | cut -d' ' -f2)
     port=$(echo "$config" | grep -E "^port " | head -n1 | cut -d' ' -f2)
