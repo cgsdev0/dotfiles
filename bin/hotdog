@@ -7,18 +7,43 @@ vim_cmd() {
   | xargs -I {} nvim --server {} --remote-send "$1" &
 }
 
+save_theme() {
+  echo "$1" > ~/.theme
+}
+
+daydog() {
+  THEME=tokyonight-day
+  ssh sarah@192.168.0.206 "powershell.exe Set-Content -Path ${TERMINAL_CONF} -Value ( (Get-Content -Path ${TERMINAL_CONF} -Raw) -Replace '\\\"colorScheme\\\": \\\"tokyonight-storm\\\"','\\\"colorScheme\\\": \\\"tokyonight-day\\\"')"
+  vim_cmd '<Esc>:colorscheme tokyonight-day<CR>'
+  save_theme "$THEME"
+}
+
 hotdog() {
   ssh sarah@192.168.0.206 "powershell.exe Set-Content -Path ${TERMINAL_CONF} -Value ( (Get-Content -Path ${TERMINAL_CONF} -Raw) -Replace '\\\"colorScheme\\\": \\\"tokyonight-storm\\\"','\\\"colorScheme\\\": \\\"Hotdog\\\"')"
   vim_cmd '<Esc>:colorscheme default<CR>'
 }
 
-not_hotdog() {
-  ssh sarah@192.168.0.206 "powershell.exe Set-Content -Path ${TERMINAL_CONF} -Value ( (Get-Content -Path ${TERMINAL_CONF} -Raw) -Replace '\\\"colorScheme\\\": \\\"Hotdog\\\"','\\\"colorScheme\\\": \\\"tokyonight-storm\\\"')";
+nightdog() {
+  THEME=tokyonight-storm
+  ssh sarah@192.168.0.206 "powershell.exe Set-Content -Path ${TERMINAL_CONF} -Value ( (Get-Content -Path ${TERMINAL_CONF} -Raw) -Replace '\\\"colorScheme\\\": \\\"tokyonight-day\\\"','\\\"colorScheme\\\": \\\"tokyonight-storm\\\"')";
   vim_cmd '<Esc>:colorscheme tokyonight-storm<CR>'
+  save_theme "$THEME"
 }
 
-if [[ "$1" == "not" ]]; then
+not_hotdog() {
+  THEME="$(cat ~/.theme)"
+  ssh sarah@192.168.0.206 "powershell.exe Set-Content -Path ${TERMINAL_CONF} -Value ( (Get-Content -Path ${TERMINAL_CONF} -Raw) -Replace '\\\"colorScheme\\\": \\\"Hotdog\\\"','\\\"colorScheme\\\": \\\"$THEME\\\"')";
+  vim_cmd '<Esc>:colorscheme '$THEME'<CR>'
+}
+
+if [[ "$1" == "pane" ]]; then
+  cat ~/themes/overrides/hotdog
+elif [[ "$1" == "not" ]]; then
   not_hotdog &> /dev/null
+elif [[ "$1" == "night" ]]; then
+  nightdog &> /dev/null
+elif [[ "$1" == "day" ]]; then
+  daydog &> /dev/null
 else
   hotdog &> /dev/null
 fi

@@ -35,6 +35,19 @@ require("nvim-treesitter.configs").setup({
 	},
 })
 
+local function read_file(path)
+	local file = io.open(path, "rb") -- r read mode and b binary mode
+	if not file then
+		print("file not found fml")
+		return nil
+	end
+	local content = file:read("*all") -- *a or *all reads the whole file
+	file:close()
+	return content
+end
+
+local theme = read_file(os.getenv("HOME") .. "/.theme")
+
 require("tokyonight").setup({
 	dim_inactive = false,
 	-- transparent = true,
@@ -55,7 +68,12 @@ require("tokyonight").setup({
 		hl.TelescopePreviewBorder = { bg = "NONE" }
 	end,
 })
-vim.cmd([[colorscheme tokyonight]])
+
+if theme == nil then
+	theme = "tokyonight"
+end
+
+vim.cmd("colorscheme " .. theme)
 
 require("lualine").setup({
 	options = {

@@ -97,8 +97,14 @@ parsecmd() {
         "!aoc")
             reply "check out my advent of code 2023 solutions! https://github.com/cgsdev0/aoc-2023"
             ;;
+        "!blue")
+            reply "it is my favorite color"
+            ;;
         "!stack")
             reply "we are building bash stack, a web framework in bash: http://bashsta.cc"
+            ;;
+        "!cows")
+            reply "$(find /usr/share/cowsay/cows -type f | grep -o '[^/]*.cow$' | cut -d'.' -f1 | tr '\n' ' ')"
             ;;
         "!setcow "*)
             cow=$(echo -n "$msg" | cut -d' ' -f2)
@@ -150,6 +156,8 @@ parsecmd() {
         "!font")
             reply "I use the hack font: https://sourcefoundry.org/hack/"
             ;;
+        "sabaping"*)
+            ;&
         *"badcop3fish"*)
             ;&
         "!fish "*)

@@ -1,6 +1,6 @@
 [[task]]
   id = "stream"
-  type = "group"
+  type = "long"
   dependencies = ["chat", "tau", "bus"]
 
 [[task]]

@@ -2,6 +2,9 @@
     name = Sarah Schulte
     email = git@sarah.engineer
 
+[help]
+    autocorrect = 1
+
 [core]
     editor = vim
 
