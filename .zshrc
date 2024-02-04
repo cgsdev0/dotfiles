@@ -162,6 +162,7 @@ ssh() {
   if [[ ! -z "$TMUX" ]]; then
     if [[ "$1" == "rcdb" ]]; then
       if which hotdog &> /dev/null; then
+        HOTDOGGED=true
         hotdog pane
       fi
     fi
@@ -174,6 +175,9 @@ ssh() {
     printf '\033]2;%s\033\\' "$host"
     command ssh "$@"
     printf '\033]2;%s\033\\' "$(hostname)"
+    if [[ ! -z "$HOTDOGGED" ]]; then
+      hotdog reset
+    fi
   else
     command ssh "$@"
   fi
