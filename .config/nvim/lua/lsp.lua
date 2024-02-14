@@ -1,13 +1,3 @@
-local border = "rounded"
-
--- override globally
-local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
-function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
-  opts = opts or {}
-  opts.border = border
-  return orig_util_open_floating_preview(contents, syntax, opts, ...)
-end
-
 -- Mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
 local opts = { noremap = true, silent = true }
@@ -77,6 +67,11 @@ require("lspconfig")["rust_analyzer"].setup({
 })
 
 require("lspconfig")["cssls"].setup({
+  on_attach = on_attach,
+  capabilities = capabilities,
+})
+
+require("lspconfig")["clangd"].setup({
   on_attach = on_attach,
   capabilities = capabilities,
 })
