@@ -1,8 +1,0 @@
-lua require('general')
-lua require('plugins')
-lua require('completion')
-lua require('lsp')
-lua require('mappings')
-lua require('formatting')
-lua require('linting')
-lua require('theme')
