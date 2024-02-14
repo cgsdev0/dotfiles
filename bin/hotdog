@@ -20,7 +20,7 @@ daydog() {
 
 hotdog() {
   ssh sarah@192.168.0.206 "powershell.exe Set-Content -Path ${TERMINAL_CONF} -Value ( (Get-Content -Path ${TERMINAL_CONF} -Raw) -Replace '\\\"colorScheme\\\": \\\"tokyonight-storm\\\"','\\\"colorScheme\\\": \\\"Hotdog\\\"')"
-  vim_cmd '<Esc>:colorscheme default<CR>'
+  vim_cmd '<Esc>:colorscheme hotdog<CR>'
 }
 
 nightdog() {
