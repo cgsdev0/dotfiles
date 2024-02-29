@@ -129,27 +129,29 @@ catch_fish() {
     PRECHECK="$(fishdex check)"
     classification=$(shuf -n 1 $HOME/fishing-data/fishing-rods/${fishing_rod})
     class_pretty=$(echo "$classification" | tr '_' ' ' | sed 's/.*/\L&/; s/[a-z]*/\u&/g')
-    fish=$(shuf -n 1 $HOME/fishing-data/fish-by-rarity/${classification})
+    fish_raw=$(shuf -n 1 $HOME/fishing-data/fish-by-rarity2/${classification})
+    fish=$(echo "$fish_raw" | cut -d' ' -f2-)
+    fish_id=$(echo "$fish_raw" | cut -d' ' -f1)
     # TODO
     # echo "Fish" $(echo "$fish" | tr '[:upper:]' '[:lower:]') > /tmp/obs_tunnel
     most_count=$(find * -maxdepth 0 -type f \
-        | xargs cat \
+        | xargs cut -d' ' -f1 \
         | sort \
         | uniq -c \
         | sort -nr \
         | head -n 1 \
         | grep -oE '[0-9].*' \
         | cut -d' ' -f1)
-    count=$(find * -maxdepth 0 -type f | xargs cat | grep "$fish" | wc -l)
+    count=$(find * -maxdepth 0 -type f | xargs cut -d' ' -f1 | grep "^${fish_id}$" | wc -l)
     description="a"
     touch "$HOME/fishing-data/${CHAN}/$name"
-    personalcount=$(cat "$HOME/fishing-data/${CHAN}/$name" | grep "$fish" | wc -l)
+    personalcount=$(cut -d' ' -f1 "$HOME/fishing-data/${CHAN}/$name" | grep "$fish_id" | wc -l)
     if [[ $personalcount -eq 0 ]]; then
         description="their first"
     fi
 
     rarity=$(bc <<< "scale=2; 100 - ( $count / $most_count * 100 )")
-    echo "$fish" >> "$HOME/fishing-data/${CHAN}/$name"
+    echo "$fish_raw" >> "$HOME/fishing-data/${CHAN}/$name"
     if [[ "$name" != "$CHAN" ]]; then
       if [[ "$IS_SUBSCRIBER" == "1" ]]; then
         echo $(( now + 90 )) > "$HOME/fishing-cooldowns/.$name.cooldown"
@@ -163,7 +165,7 @@ catch_fish() {
     else
         echo "@$name caught $description $fish ($class_pretty)! ($rarity% rarity) ($fishing_rod rod used)"
     fi
-    FISH_JSON='{"fish":"'$fish'","classification":"'$classification'","caught_by":"'$name'"}'
+    FISH_JSON='{"fish":"'$fish'","classification":"'$classification'","caught_by":"'$name'","id":'$fish_id'}'
     tbus-send "fish-catch" "$FISH_JSON"
     if [[ "$(fishdex check)" != "$PRECHECK" ]]; then
       send-twitch-msg "@$name HAS COMPLETED THEIR FISHDEX!!!!!!!!"
@@ -172,31 +174,31 @@ catch_fish() {
 
 uncaught_fish() {
     cd "$HOME/fishing-data/${CHAN:-badcop_}"
-    diff <(find * -maxdepth 0 -type f | xargs cat | sort -u) <(cat $HOME/fishing-data/fish-by-rarity/* | sort -u) | grep '>'
+    diff <(find * -maxdepth 0 -type f | xargs cut -d' ' -f1 | sort -nu) <(cut -d' ' -f1 $HOME/fishing-data/fish-by-rarity2/* | sort -nu) | grep '>'
 }
 
 fishdex_all() {
     cd "$HOME/fishing-data/$CHAN"
-    total=$(cat ~/fishing-data/fish-by-rarity/* | sort -u | wc -l)
-    count=$(find * -maxdepth 0 -type f | xargs cat | sort -u | wc -l)
+    total=$(cut -d' ' -f1 ~/fishing-data/fish-by-rarity2/* | sort -nu | wc -l)
+    count=$(find * -maxdepth 0 -type f | xargs cut -d' ' -f1 | sort -nu | wc -l)
     echo "$count out of $total possible fish have been caught."
 }
 
 fishdex_check() {
     cd "$HOME/fishing-data/$CHAN"
-    total=$(cat ~/fishing-data/fish-by-rarity/* | sort -u | wc -l)
+    total=$(cut -d' ' -f1 ~/fishing-data/fish-by-rarity2/* | sort -nu | wc -l)
     if [[ ! -f "$HOME/fishing-data/${CHAN}/$1" ]]; then
       echo "No fishdex found!"
     fi
-    count=$(cat "$HOME/fishing-data/${CHAN}/$1" | sort -u | wc -l)
+    count=$(cut -d' ' -f1 "$HOME/fishing-data/${CHAN}/$1" | sort -nu | wc -l)
     echo "@$1 has caught $count out of $total possible fish!"
 }
 
 fishdex() {
     cd "$HOME/fishing-data/$CHAN"
-    total=$(cat ~/fishing-data/fish-by-rarity/* | sort -u | wc -l)
+    total=$(cut -d' ' -f1 ~/fishing-data/fish-by-rarity2/* | sort -nu | wc -l)
     touch "$HOME/fishing-data/${CHAN}/$name"
-    count=$(cat "$HOME/fishing-data/${CHAN}/$name" | sort -u | wc -l)
+    count=$(cut -d' ' -f1 "$HOME/fishing-data/${CHAN}/$name" | sort -nu | wc -l)
     if [[ -z "$1" ]]; then
       echo "@$name has caught $count out of $total possible fish!"
     else
