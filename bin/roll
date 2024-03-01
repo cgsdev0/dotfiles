@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+function _roll_n() {
+  local i
+  local N=$1
+  local DSIZE=$2
+  for ((i=0; i<N; i++)); do
+    local ROLLED=$((RANDOM % DSIZE + 1))
+    if [[ "$SIGN" == "-" ]]; then
+      ((ACC-=ROLLED))
+    else
+      ((ACC+=ROLLED))
+    fi
+  done
+}
+
+function roll() {
+  local INPUT="$*"
+  INPUT="${INPUT// /}"
+  local -a arr
+  local ACC=0
+  INPUT="${INPUT//+/$'\n'+}"
+  INPUT="${INPUT//-/$'\n'-}"
+  IFS=$'\n' read -d "" -ra arr \
+    <<< "$INPUT"
+  for element in "${arr[@]}"; do
+    if [[ "$element" =~ ([+-]?)([0-9]+)d([0-9]+) ]]; then
+      local SIGN="${BASH_REMATCH[1]}"
+      local AMT="${BASH_REMATCH[2]}"
+      local DSIZE="${BASH_REMATCH[3]}"
+      _roll_n $AMT $DSIZE
+    elif [[ "$element" =~ ^[+-]?[0-9]+$ ]]; then
+      ((ACC+=element))
+    else
+      echo "invalid expression" 1>&2
+      exit 1
+    fi
+  done
+  echo $ACC
+}
+
+ITERATIONS=1
+if [[ "$1" =~ -([0-9]+) ]]; then
+  ITERATIONS="${BASH_REMATCH[1]}"
+  shift
+fi
+
+for ((j=0; j<ITERATIONS; j++)); do
+  roll "$@"
+done

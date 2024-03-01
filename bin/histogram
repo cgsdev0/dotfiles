@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+awk '
+function max(arr, big)
+{
+    big = 0;
+    for (i in category)
+    {
+        if (category[i] > big) { big=category[i];}
+    }
+    return big
+}
+
+{
+    category[$1]++
+}
+
+END {
+    # for scaling
+    maxm = max(category);
+    for (i in category) {
+        scaled = 30 * category[i] / maxm ;
+        printf "%-4.4s[%3d]:", i, category[i]
+        for (i=0; i<scaled; i++) {
+            printf "#";
+          }
+        printf "\n";
+    }
+}
+' | sort -n
