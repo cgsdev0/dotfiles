@@ -2,50 +2,86 @@
 
 TERMINAL_CONF="C:/Users/sarah/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json"
 
+remote_powershell() {
+  ssh sarah@192.168.0.206 "powershell.exe $@"
+}
+
 vim_cmd() {
   find /run/user/1000/ -iname 'nvim*' 2> /dev/null \
   | xargs -I {} nvim --server {} --remote-send "$1" &
+}
+
+replace_terminal_theme() {
+  remote_powershell "Set-Content -Path ${TERMINAL_CONF} -Value ( (Get-Content -Path ${TERMINAL_CONF} -Raw) -Replace '\\\"colorScheme\\\": \\\"$1\\\"','\\\"colorScheme\\\": \\\"$2\\\"')";
+}
+
+vim_theme() {
+  vim_cmd "<Esc>:colorscheme $1<CR>"
 }
 
 save_theme() {
   echo "$1" > ~/.theme
 }
 
+load_theme() {
+  THEME="$(cat ~/.theme)"
+}
+
+windows_theme() {
+  remote_powershell 'Set-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize -Name AppsUseLightTheme -Value '$1' -Type Dword -Force; Set-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize -Name SystemUsesLightTheme -Value '$1' -Type Dword -Force'
+}
+
 daydog() {
   THEME=tokyonight-day
-  ssh sarah@192.168.0.206 "powershell.exe Set-Content -Path ${TERMINAL_CONF} -Value ( (Get-Content -Path ${TERMINAL_CONF} -Raw) -Replace '\\\"colorScheme\\\": \\\"tokyonight-storm\\\"','\\\"colorScheme\\\": \\\"tokyonight-day\\\"')"
-  vim_cmd '<Esc>:colorscheme tokyonight-day<CR>'
-  save_theme "$THEME"
+  replace_terminal_theme Hotdog $THEME
+  replace_terminal_theme tokyonight-storm $THEME
+  windows_theme 1
+  vim_theme $THEME
+  save_theme $THEME
 }
 
 hotdog() {
-  ssh sarah@192.168.0.206 "powershell.exe Set-Content -Path ${TERMINAL_CONF} -Value ( (Get-Content -Path ${TERMINAL_CONF} -Raw) -Replace '\\\"colorScheme\\\": \\\"tokyonight-storm\\\"','\\\"colorScheme\\\": \\\"Hotdog\\\"')"
-  vim_cmd '<Esc>:colorscheme hotdog<CR>'
+  replace_terminal_theme tokyonight-storm Hotdog
+  replace_terminal_theme tokyonight-day Hotdog
+  vim_theme hotdog
 }
 
 nightdog() {
   THEME=tokyonight-storm
-  ssh sarah@192.168.0.206 "powershell.exe Set-Content -Path ${TERMINAL_CONF} -Value ( (Get-Content -Path ${TERMINAL_CONF} -Raw) -Replace '\\\"colorScheme\\\": \\\"tokyonight-day\\\"','\\\"colorScheme\\\": \\\"tokyonight-storm\\\"')";
-  vim_cmd '<Esc>:colorscheme tokyonight-storm<CR>'
-  save_theme "$THEME"
+  replace_terminal_theme Hotdog $THEME
+  replace_terminal_theme tokyonight-day $THEME
+  windows_theme 0
+  vim_theme $THEME
+  save_theme $THEME
 }
 
 not_hotdog() {
-  THEME="$(cat ~/.theme)"
-  ssh sarah@192.168.0.206 "powershell.exe Set-Content -Path ${TERMINAL_CONF} -Value ( (Get-Content -Path ${TERMINAL_CONF} -Raw) -Replace '\\\"colorScheme\\\": \\\"Hotdog\\\"','\\\"colorScheme\\\": \\\"$THEME\\\"')";
-  vim_cmd '<Esc>:colorscheme '$THEME'<CR>'
+  load_theme
+  replace_terminal_theme Hotdog $THEME
+  vim_theme $THEME
 }
 
-if [[ "$1" == "pane" ]]; then
-  cat ~/themes/override/hotdog
-elif [[ "$1" == "reset" ]]; then
-  cat ~/themes/override/reset
-elif [[ "$1" == "not" ]]; then
-  not_hotdog &> /dev/null
-elif [[ "$1" == "night" ]]; then
-  nightdog &> /dev/null
-elif [[ "$1" == "day" ]]; then
-  daydog &> /dev/null
-else
-  hotdog &> /dev/null
-fi
+case "$1" in
+  "pane")
+    cat ~/themes/override/hotdog
+    ;;
+  "reset")
+    cat ~/themes/override/reset
+    ;;
+  "not")
+    not_hotdog &> /dev/null
+    ;;
+  "night")
+    ;&
+  "dark")
+    nightdog &> /dev/null
+    ;;
+  "light")
+    ;&
+  "day")
+    daydog &> /dev/null
+    ;;
+  *)
+    hotdog &> /dev/null
+    ;;
+esac
