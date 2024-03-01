@@ -28,8 +28,16 @@ reqreader() {
       echo "'$MESSAGE_TYPE'" 1>&2
       case $MESSAGE_TYPE in
         "fish-champion")
-          mkdir -p "$HOME/fishing-data/$CHAN/hall-of-fame"
-          echo "$line" | jq -cr '.data' >> "$HOME/fishing-data/$CHAN/hall-of-fame/json"
+          wins="$(echo "$line" | jq -cr '.data.stats.wins')"
+          caughtBy="$(echo "$line" | jq -cr '.data.caughtBy')"
+          fishfloat="$(echo "$line" | jq -cr '.data.float')"
+          echo "$wins $caughtBy $fishfloat" 1>&2
+          if [[ "$wins" -ge 10 ]]; then
+            mkdir -p "$HOME/fishing-data/$CHAN/hall-of-fame"
+            echo "$line" | jq -cr '.data' >> "$HOME/fishing-data/$CHAN/hall-of-fame/json"
+          fi
+          # update our fish in the database
+          sed -i '/^[^,]\+,[^,]\+,'$fishfloat',[^,]\+,[^,]\+,[^,]\+,[^,]\+$/s/\(.*\)/\1,'$wins'/' "$HOME/fishing-data/$CHAN/$caughtBy"
         ;;
         "wheel-result")
           WINNER=$(echo "$line" | jq -r '.data.winner')

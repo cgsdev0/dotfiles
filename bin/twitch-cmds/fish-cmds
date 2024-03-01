@@ -224,7 +224,7 @@ catch_fish() {
     else
         echo "@$name caught $description $fish ($class_pretty)! ($rarity% rarity) ($fishing_rod rod used)"
     fi
-    FISH_JSON='{"fish":"'$fish'","classification":"'$classification'","caught_by":"'$name'","id":'$fish_id',"stats":'$stats_json'}'
+    FISH_JSON='{"fish":"'$fish'","classification":"'$classification'","caught_by":"'$name'","id":'$fish_id',"stats":'$stats_json',"float":"'$fish_float'"}'
     tbus-send "fish-catch" "$FISH_JSON"
     if [[ "$(fishdex check)" != "$PRECHECK" ]]; then
       send-twitch-msg "@$name HAS COMPLETED THEIR FISHDEX!!!!!!!!"
