@@ -112,6 +112,61 @@ give_rod() {
     fi
 }
 
+declare -A stats_speed=(
+       ["common"]="1d20"
+["fairly_common"]="1d20"
+     ["uncommon"]="1d20"
+       ["scarce"]="1d20 + 1"
+         ["rare"]="1d20 + 1"
+         ["epic"]="1d20 + 2"
+    ["legendary"]="1d20 + 3"
+         ["null"]="0"
+)
+
+declare -A stats_hp=(
+       ["common"]="2d8 + 10"
+["fairly_common"]="2d8 + 10"
+     ["uncommon"]="2d8 + 10"
+       ["scarce"]="2d10 + 1d6 + 10"
+         ["rare"]="2d10 + 1d6 + 10"
+         ["epic"]="2d10 + 1d6 + 10"
+    ["legendary"]="3d10 + 15"
+         ["null"]="100"
+)
+
+declare -A stats_base_dmg=(
+       ["common"]="1d6"
+["fairly_common"]="1d6"
+     ["uncommon"]="1d6"
+       ["scarce"]="1d6 + 1"
+         ["rare"]="1d6 + 1"
+         ["epic"]="1d8 + 2"
+    ["legendary"]="1d8 + 3"
+         ["null"]="0"
+)
+
+declare -A stats_var_dmg=(
+       ["common"]="1d4"
+["fairly_common"]="1d4"
+     ["uncommon"]="1d4"
+       ["scarce"]="1d4"
+         ["rare"]="1d4"
+         ["epic"]="1d6"
+    ["legendary"]="6"
+         ["null"]="0"
+)
+
+roll_stats() {
+    local classification="$1"
+    local a=$(roll "${stats_hp[$classification]}")
+    local b=$(roll "${stats_base_dmg[$classification]}")
+    local c=$(roll "${stats_var_dmg[$classification]}")
+    local d=$(roll "${stats_speed[$classification]}")
+    echo '{"hp":'$a',"baseDmg":'$b',"varDmg":'$c',"speed":'$d'}' 1>&2
+    stats_raw="$a,$b,$c,$d"
+    stats_json='{"hp":'$a',"baseDmg":'$b',"varDmg":'$c',"speed":'$d'}'
+}
+
 catch_fish() {
     cd "$HOME/fishing-data/$CHAN"
     now=$(date +%s)
@@ -130,28 +185,32 @@ catch_fish() {
     classification=$(shuf -n 1 $HOME/fishing-data/fishing-rods/${fishing_rod})
     class_pretty=$(echo "$classification" | tr '_' ' ' | sed 's/.*/\L&/; s/[a-z]*/\u&/g')
     fish_raw=$(shuf -n 1 $HOME/fishing-data/fish-by-rarity2/${classification})
-    fish=$(echo "$fish_raw" | cut -d' ' -f2-)
-    fish_id=$(echo "$fish_raw" | cut -d' ' -f1)
-    # TODO
-    # echo "Fish" $(echo "$fish" | tr '[:upper:]' '[:lower:]') > /tmp/obs_tunnel
+    fish_id="${fish_raw%% *}"
+    fish="${fish_raw#* }"
+
+    # generate stats for our fish
+    roll_stats "$classification"
+    fish_float="${$(head -c 8 < /dev/urandom | od -tu8 -An)// /}"
+
     most_count=$(find * -maxdepth 0 -type f \
-        | xargs cut -d' ' -f1 \
+        | xargs cut -d',' -f1 \
         | sort \
         | uniq -c \
         | sort -nr \
         | head -n 1 \
         | grep -oE '[0-9].*' \
         | cut -d' ' -f1)
-    count=$(find * -maxdepth 0 -type f | xargs cut -d' ' -f1 | grep "^${fish_id}$" | wc -l)
+    count=$(find * -maxdepth 0 -type f | xargs cut -d',' -f1 | grep "^${fish_id}$" | wc -l)
     description="a"
     touch "$HOME/fishing-data/${CHAN}/$name"
-    personalcount=$(cut -d' ' -f1 "$HOME/fishing-data/${CHAN}/$name" | grep "$fish_id" | wc -l)
+    personalcount=$(cut -d',' -f1 "$HOME/fishing-data/${CHAN}/$name" | grep "$fish_id" | wc -l)
     if [[ $personalcount -eq 0 ]]; then
         description="their first"
     fi
 
     rarity=$(bc <<< "scale=2; 100 - ( $count / $most_count * 100 )")
-    echo "$fish_raw" >> "$HOME/fishing-data/${CHAN}/$name"
+
+    echo "$fish_id,$fish,$fish_float,$stats_raw" >> "$HOME/fishing-data/${CHAN}/$name"
     if [[ "$name" != "$CHAN" ]]; then
       if [[ "$IS_SUBSCRIBER" == "1" ]]; then
         echo $(( now + 90 )) > "$HOME/fishing-cooldowns/.$name.cooldown"
@@ -165,7 +224,7 @@ catch_fish() {
     else
         echo "@$name caught $description $fish ($class_pretty)! ($rarity% rarity) ($fishing_rod rod used)"
     fi
-    FISH_JSON='{"fish":"'$fish'","classification":"'$classification'","caught_by":"'$name'","id":'$fish_id'}'
+    FISH_JSON='{"fish":"'$fish'","classification":"'$classification'","caught_by":"'$name'","id":'$fish_id',"stats":'$stats_json'}'
     tbus-send "fish-catch" "$FISH_JSON"
     if [[ "$(fishdex check)" != "$PRECHECK" ]]; then
       send-twitch-msg "@$name HAS COMPLETED THEIR FISHDEX!!!!!!!!"
@@ -174,13 +233,13 @@ catch_fish() {
 
 uncaught_fish() {
     cd "$HOME/fishing-data/${CHAN:-badcop_}"
-    diff <(find * -maxdepth 0 -type f | xargs cut -d' ' -f1 | sort -nu) <(cut -d' ' -f1 $HOME/fishing-data/fish-by-rarity2/* | sort -nu) | grep '>'
+    diff <(find * -maxdepth 0 -type f | xargs cut -d',' -f1 | sort -nu) <(cut -d' ' -f1 $HOME/fishing-data/fish-by-rarity2/* | sort -nu) | grep '>'
 }
 
 fishdex_all() {
     cd "$HOME/fishing-data/$CHAN"
     total=$(cut -d' ' -f1 ~/fishing-data/fish-by-rarity2/* | sort -nu | wc -l)
-    count=$(find * -maxdepth 0 -type f | xargs cut -d' ' -f1 | sort -nu | wc -l)
+    count=$(find * -maxdepth 0 -type f | xargs cut -d',' -f1 | sort -nu | wc -l)
     echo "$count out of $total possible fish have been caught."
 }
 
@@ -190,7 +249,7 @@ fishdex_check() {
     if [[ ! -f "$HOME/fishing-data/${CHAN}/$1" ]]; then
       echo "No fishdex found!"
     fi
-    count=$(cut -d' ' -f1 "$HOME/fishing-data/${CHAN}/$1" | sort -nu | wc -l)
+    count=$(cut -d',' -f1 "$HOME/fishing-data/${CHAN}/$1" | sort -nu | wc -l)
     echo "@$1 has caught $count out of $total possible fish!"
 }
 
@@ -198,7 +257,7 @@ fishdex() {
     cd "$HOME/fishing-data/$CHAN"
     total=$(cut -d' ' -f1 ~/fishing-data/fish-by-rarity2/* | sort -nu | wc -l)
     touch "$HOME/fishing-data/${CHAN}/$name"
-    count=$(cut -d' ' -f1 "$HOME/fishing-data/${CHAN}/$name" | sort -nu | wc -l)
+    count=$(cut -d',' -f1 "$HOME/fishing-data/${CHAN}/$name" | sort -nu | wc -l)
     if [[ -z "$1" ]]; then
       echo "@$name has caught $count out of $total possible fish!"
     else
