@@ -34,6 +34,9 @@ return {
       local cmp = require("cmp")
 
       cmp.setup({
+        completion = {
+          autocomplete = false,
+        },
         formatting = {
           fields = { "abbr", "menu", "kind" },
           format = function(entry, item)

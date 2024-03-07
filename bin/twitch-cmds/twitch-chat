@@ -32,6 +32,15 @@ mkfifo /tmp/twitch_tunnel;
 # Example chat msg:
 # @badge-info=;badges=;client-nonce=31ab40a7bef7162bfc8eade860eb185a;color=#DAA520;display-name=BuddysPizza;emotes=;first-msg=0;flags=;id=e86038a5-4d49-4868-aa96-b563da8fc689;mod=0;room-id=56931496;subscriber=0;tmi-sent-ts=1643181677955;turbo=0;user-id=42089909;user-type= :buddyspizza!buddyspizza@buddyspizza.tmi.twitch.tv PRIVMSG #badcop_ :!help
 
+sync_fish() {
+    pushd ~/fishing-data &> /dev/null
+    git add -A &> /dev/null
+    git wopsy &> /dev/null
+    git push -f -u prod db &> /dev/null
+    ssh root@jeopardy.bashsta.cc 'bash -c "cd fishing-data; git reset --hard"'
+    popd &> /dev/null
+}
+
 colorize() {
     printf "\x1b[38;2;$(( 16#${1:0:2} ));$(( 16#${1:2:2} ));$(( 16#${1:4:2} ))m"
 }
@@ -176,6 +185,7 @@ parsecmd() {
             ;&
         "!fish")
             reply "$(catch_fish)"
+            sync_fish &
             ;;
         "!rod")
             rod=$(get_rod)
@@ -291,6 +301,9 @@ parsecmd() {
             ;;
         *"haha"*)
             reply "lol"
+            ;;
+        "!bible")
+            reply "https://github.com/dylanaraps/pure-bash-bible"
             ;;
         "!itch")
             ;&

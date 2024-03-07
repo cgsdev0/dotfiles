@@ -1,5 +1,6 @@
 #!/bin/zsh
 
+
 fish_leaderboard() {
     cd "$HOME/fishing-data/$CHAN"
     find * -maxdepth 0 -type f \
