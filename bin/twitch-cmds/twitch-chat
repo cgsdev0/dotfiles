@@ -98,6 +98,9 @@ parsecmd() {
         "!ping")
             reply "pong!"
             ;;
+        "!boot")
+            reply "check out https://boot.dev i work there it is a cool website"
+            ;;
         "!job")
             reply "i work for https://boot.dev as an engineer and instructor"
             ;;

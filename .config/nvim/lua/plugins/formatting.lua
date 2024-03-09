@@ -38,7 +38,7 @@ return {
           require("formatter.filetypes.css").prettier,
         },
         json = {
-          require("formatter.filetypes.json").prettier,
+          require("formatter.filetypes.json").jq,
         },
         go = {
           require("formatter.filetypes.go").gofmt,
