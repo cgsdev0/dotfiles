@@ -52,10 +52,6 @@ return {
       end, { desc = "Open harpoon window" })
     end,
   },
-  {
-    "nvim-telescope/telescope.nvim",
-    dependencies = { { "nvim-lua/plenary.nvim" } },
-  },
   "christoomey/vim-tmux-navigator",
   {
     "stevearc/oil.nvim",

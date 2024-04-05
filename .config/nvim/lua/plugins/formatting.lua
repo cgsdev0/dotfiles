@@ -37,6 +37,9 @@ return {
         css = {
           require("formatter.filetypes.css").prettier,
         },
+        vue = {
+          require("formatter.filetypes.vue").prettier,
+        },
         json = {
           require("formatter.filetypes.json").jq,
         },

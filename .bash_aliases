@@ -81,6 +81,10 @@ alias ichat='clear; echo -n "chat > "; while read -r line; do send-twitch-msg "$
 
 unalias gb
 unalias gc
+unalias gd
 # boot dev
+alias bb="cd ~/bootdev/bin"
 alias gb="cd ~/bootdev/go-api-gate"
 alias gc="cd ~/bootdev/courses"
+alias gd="cd ~/bootdev/go-api-gate/backend/internal/database/sql"
+alias qs='cd $(find-exercise)'

@@ -183,14 +183,18 @@ ssh() {
   fi
 }
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \
-  . "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \
-  . "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/home/sarah/tools/google-cloud-sdk/path.zsh.inc' ]; then . '/home/sarah/tools/google-cloud-sdk/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/home/sarah/tools/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/sarah/tools/google-cloud-sdk/completion.zsh.inc'; fi
+if which run &> /dev/null && which fzf &> /dev/null; then
+  run() {
+    if [[ $# -eq 0 ]]; then
+      local TASK="$(command run -list \
+        | grep '^  [^ ]' \
+        | tr -d ' ' \
+        | fzf -0 --ansi)"
+      command run "$TASK"
+    else
+      command run "$@"
+    fi
+  }
+fi
+# # The next line enables shell command completion for gcloud.
+# if [ -f '/home/sarah/tools/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/sarah/tools/google-cloud-sdk/completion.zsh.inc'; fiA

@@ -10,12 +10,22 @@ vim.keymap.set("n", "<C-s>", ":w<CR>", bufopts)
 vim.keymap.set("n", "<C-\\>", ":vsplit<CR>", bufopts)
 vim.keymap.set("n", "<C-N>", ":NvimTreeFindFile!<CR>", bufopts)
 
-vim.keymap.set("n", "<C-p>", ":Telescope find_files<CR>", bufopts)
+local builtin = require("telescope.builtin")
+local function control_p_finder()
+  builtin.find_files({ layout_strategy = "center" })
+end
+vim.keymap.set("n", "<C-p>", control_p_finder, bufopts)
 vim.keymap.set("n", "<C-g>", ":Telescope live_grep<CR>", bufopts)
 
 -- edit vim config
-vim.keymap.set("n", "<leader>,", ":e ~/.config/nvim/init.lua<CR>", bufopts)
-vim.keymap.set("n", "<leader>r", ":luafile %<CR>", bufopts)
+local function find_config_file()
+  require("telescope.builtin").find_files({ cwd = "~/dotfiles/.config/nvim", layout_strategy = "center" })
+end
+local function grep_config_file()
+  require("telescope.builtin").live_grep({ cwd = "~/dotfiles/.config/nvim" })
+end
+vim.keymap.set("n", "<leader>,", find_config_file, bufopts)
+vim.keymap.set("n", "<leader>.", grep_config_file, bufopts)
 vim.keymap.set("n", "<leader>T", ":TSPlaygroundToggle<CR>", bufopts)
 
 -- tmux navigation

@@ -28,7 +28,7 @@ local on_attach = function(client, bufnr)
   vim.keymap.set("n", "<space>D", vim.lsp.buf.type_definition, bufopts)
   vim.keymap.set("n", "<space>rn", vim.lsp.buf.rename, bufopts)
   vim.keymap.set("n", "<space>ca", vim.lsp.buf.code_action, bufopts)
-  vim.keymap.set("n", "gr", vim.lsp.buf.references, bufopts)
+  vim.keymap.set("n", "gr", ":Telescope lsp_references<CR>", bufopts)
   vim.keymap.set("n", "<space>f", function()
     vim.lsp.buf.format({ async = true })
   end, bufopts)
@@ -45,7 +45,25 @@ local function organize_imports()
   vim.lsp.buf.execute_command(params)
 end
 
+local mason_registry = require("mason-registry")
+local vue_language_server_path = mason_registry.get_package("vue-language-server"):get_install_path()
+  .. "/node_modules/@vue/language-server"
+
 require("lspconfig")["tsserver"].setup({
+  init_options = {
+    plugins = {
+      {
+        name = "@vue/typescript-plugin",
+        location = vue_language_server_path,
+        languages = { "vue" },
+      },
+    },
+  },
+  filetypes = {
+    "javascript",
+    "typescript",
+    "vue",
+  },
   on_attach = on_attach,
   capabilities = capabilities,
   commands = {
@@ -55,6 +73,8 @@ require("lspconfig")["tsserver"].setup({
     },
   },
 })
+
+require("lspconfig").volar.setup({})
 
 require("lspconfig")["gopls"].setup({
   on_attach = on_attach,
@@ -67,6 +87,11 @@ require("lspconfig")["rust_analyzer"].setup({
 })
 
 require("lspconfig")["cssls"].setup({
+  on_attach = on_attach,
+  capabilities = capabilities,
+})
+
+require("lspconfig")["biome"].setup({
   on_attach = on_attach,
   capabilities = capabilities,
 })

@@ -32,6 +32,7 @@ done
 deps+=("$(which $cmd)")
 
 while true; do
+    sleep 0.1
     $cmd "$@" &
     PID=$!
 
