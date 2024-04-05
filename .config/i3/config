@@ -152,6 +152,11 @@ mode "resize" {
         bindsym k resize shrink height 5 px
         bindsym l resize grow width 5 px
 
+        bindsym Shift+h resize shrink width 15 px
+        bindsym Shift+j resize grow height 15 px
+        bindsym Shift+k resize shrink height 15 px
+        bindsym Shift+l resize grow width 15 px
+
         # same bindings, but for the arrow keys
         bindsym Left resize shrink width 10 px or 10 ppt
         bindsym Down resize grow height 10 px or 10 ppt
@@ -179,8 +184,8 @@ set $urgentcolor  #f0f0f0
 
 # Window Settings       border          background      text            indicator       child-border
 client.focused          $active         $bgcolor        $textcolor      $active         $active
-client.unfocused        $inactivecolor  $bgcolor        $textcolor      $inactivecolor  $inactivecolor
-client.focused_inactive $inactiveborder $bgcolor        $textcolor      $inactivecolor  $inactivecolor
+client.unfocused        $inactiveborder $bgcolor        $textcolor      $inactivecolor  $inactiveborder
+client.focused_inactive $inactiveborder $bgcolor        $textcolor      $inactivecolor  $inactiveborder
 client.urgent           $urgentcolor    $bgcolor        $textcolor      $urgentcolor    $urgentcolor
 
 
