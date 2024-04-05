@@ -23,5 +23,5 @@ elif [ "$1" == "bar" ]; then
     else
         echo -n 
     fi
-    echo "  $percent%"
+    echo " $percent%"
 fi

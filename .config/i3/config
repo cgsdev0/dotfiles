@@ -11,13 +11,18 @@ set $inactivebgcolor    #2f343f
 set $textcolor          #f3f4f5
 set $inactivetextcolor  #676E7D
 set $urgentbgcolor      #E53935
-set $active             #aaaaaa
+set $active             #ffffff
+set $inactiveborder     #000000
 
 include /etc/sway/config-vars.d/*
 
+input "type:keyboard" {
+  xkb_options caps:escape
+}
+
 
 # Default Programs
-set $term /usr/local/bin/alacritty
+set $term /home/sarah/.cargo/bin/alacritty
 set $webbrowse google-chrome
 
 # Use Mouse+$mod to drag floating windows to their wanted position
@@ -175,7 +180,7 @@ set $urgentcolor  #f0f0f0
 # Window Settings       border          background      text            indicator       child-border
 client.focused          $active         $bgcolor        $textcolor      $active         $active
 client.unfocused        $inactivecolor  $bgcolor        $textcolor      $inactivecolor  $inactivecolor
-client.focused_inactive $inactivecolor  $bgcolor        $textcolor      $inactivecolor  $inactivecolor
+client.focused_inactive $inactiveborder $bgcolor        $textcolor      $inactivecolor  $inactivecolor
 client.urgent           $urgentcolor    $bgcolor        $textcolor      $urgentcolor    $urgentcolor
 
 
@@ -190,12 +195,29 @@ for_window [app_id="^scratchterm$"] floating enable
 for_window [app_id="^scratchterm$"] move scratchpad
 for_window [app_id="^Gnome-calculator$"] floating enable
 for_window [app_id="^Gnome-calculator$"] move scratchpad
-# hide_edge_borders both
-gaps outer 15
-gaps inner 10
+smart_borders on
+gaps outer 0
+gaps inner 0
 # gaps right 440
 
 include /etc/sway/config.d/*
 
-exec waybar
-exec wayvnc 0.0.0.0
+exec mako
+
+bar {
+  position top
+  status_command while ~/bin/status; do sleep 1; done
+  colors {
+    statusline #ffffff
+    background #323232
+  }
+  font pango:Hack Nerd Font Mono 12
+}
+bindsym XF86MonBrightnessUp exec  /usr/bin/brightnessctl -d intel_backlight set +1000
+
+bindsym XF86MonBrightnessDown exec  /usr/bin/brightnessctl -d intel_backlight set 1000-
+bindsym XF86Search exec /home/sarah/bin/toggle-dark-mode
+
+
+exec paperwall
+output * bg /home/sarah/wallpaper.jpg fill
