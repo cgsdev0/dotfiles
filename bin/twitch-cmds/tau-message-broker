@@ -9,7 +9,7 @@ rm -f /tmp/tau_tunnel;
 mkfifo /tmp/tau_tunnel;
 
 # TODO: move this somewhere else
-LDJAM_INDEX=54
+LDJAM_INDEX=55
 LDJAM_ENABLED=true
 ITCHJAM_ENABLED=false
 

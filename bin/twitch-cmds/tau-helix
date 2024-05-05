@@ -1,0 +1,13 @@
+#!/bin/bash
+
+cd "${0%/*}"
+
+CHAN="badcop_"
+
+TAU_TOKEN="$(cat ~/.tau_token)"
+
+curl -SsL "https://tau.cgs.dev/api/twitch/helix/$2" \
+    -X "$1" \
+    -H "Authorization: Token $TAU_TOKEN" \
+    -H 'Content-Type: application/json' \
+    -d "$3" 1>&2

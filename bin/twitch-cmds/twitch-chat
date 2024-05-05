@@ -6,8 +6,8 @@ cd "${0%/*}"
 # twitch docs reference: https://dev.twitch.tv/docs/irc
 
 CHAN=$1
-LDJAM_INDEX=54
-LDJAM_ENABLED=false
+LDJAM_INDEX=55
+LDJAM_ENABLED=true
 ITCHJAM_ENABLED=false
 
 if [[ ! -z "$BADCOP" ]]; then
@@ -20,6 +20,7 @@ source ../utils/url-parsing;
 source ./ld-cmds;
 source ./jam-cmds;
 
+MYID=56931496
 LOG_FILE="$HOME/twitch-logs/$(date "+%Y-%m-%d_%H-%M-%S").log"
 touch "$LOG_FILE"
 
@@ -80,8 +81,16 @@ parsecmd() {
     msg_loud=$(echo -n "$1" | grep -aoP "PRIVMSG.*$" | cut -d':' -f2-)
     headers=$(echo -n "$1" | grep -aoP "^.*PRIVMSG")
     name=$(echo -n "$headers" | grep -aoP ";display-name=.*?;" | cut -d'=' -f2 | tr -d ';')
+    user_id=$(echo -n "$headers" | grep -aoP ";user-id=.*?;" | cut -d'=' -f2 | tr -d ';')
     mod=$(echo -n "$headers" | grep -aoP ";mod=.*?;" | cut -d'=' -f2 | tr -d ';')
     IS_SUBSCRIBER=$(echo -n "$headers" | grep -aoP ";subscriber=.*?;" | cut -d'=' -f2 | tr -d ';')
+
+    # fuck off cunts
+    if [[ "$name" =~ *"_TwitchScam"* ]]; then
+        tau-helix POST "moderation/bans?broadcaster_id=$MYID&moderator_id=$MYID" \
+            '{"data": {"user_id":"'"$user_id"'"}}'
+    fi
+
     case $msg in
         "!crab")
             ;&
@@ -103,6 +112,13 @@ parsecmd() {
             ;;
         "!job")
             reply "i work for https://boot.dev as an engineer and instructor"
+            ;;
+        "!engine")
+            ;&
+        "!geng")
+            ;&
+        "!evenio")
+            reply "we are using kuviman's engine https://github.com/geng-engine/geng with evenio https://docs.rs/evenio/latest/evenio/index.html"
             ;;
         "!plant")
             reply "plant. https://badcop.itch.io/plant"
@@ -147,6 +163,11 @@ parsecmd() {
             ;&
         "!bashcop")
             reply "https://youtube.com/@bashcop"
+            ;;
+        "!summoning")
+            ;&
+        "!salmoning")
+            reply "https://clips.twitch.tv/FriendlyGenerousWolfPastaThat-xTl0b_eJ1D94qriv"
             ;;
         "!winrar")
             ;&
@@ -220,6 +241,9 @@ parsecmd() {
         "!theme")
             reply "the theme is \"Don't Go Outside\""
             ;;
+        "!twitter")
+            reply "https://twitter.com/badcop_"
+            ;;
         "!today")
             reply "$(tail -n1 $HOME/.today)"
             ;;
@@ -269,7 +293,7 @@ parsecmd() {
             ;&
         "!play")
             if [[ "$CHAN" == "badcop_" ]]; then
-                reply "Here is my LD compo entry: https://ldjam.com/events/ludum-dare/54/bit-golf"
+                reply "Here is my LD jam entry: https://ldjam.com/events/ludum-dare/55/salmoning-1"
             fi
             ;;
         "!dice")
@@ -318,7 +342,8 @@ parsecmd() {
             ;;
         # support ludum dare submission links
         *"https://ldjam.com/events/ludum-dare/${LDJAM_INDEX}/"*)
-            [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_submit_cmd)"
+            # [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_submit_cmd)"
+            echo "@$name submissions are closed, sorry!"
             ;;
         "!submit"*)
             [[ "$LDJAM_ENABLED" == "true" ]] && reply "Just paste the link in the chat :)"
