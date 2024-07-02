@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# git surrender [-y] [path]
+#
+# when all hope is lost,
+# you can always start over.
 
 function err {
   printf '%s\n' "$*" 1>&2
@@ -7,6 +11,12 @@ function err {
 
 if !which fzf &> /dev/null; then
   err "please install fzf"
+fi
+
+CONFIRMED=
+if [[ "$1" == "-y" ]]; then
+  CONFIRMED=true
+  shift
 fi
 
 if [[ ! -z "$1" ]]; then
@@ -18,12 +28,14 @@ while [[ ! -d ".git" ]]; do
   cd ..
 done
 
-read -p "is all hope truly lost? (y/n) " -n1 CHAR
-echo
+if [[ -z "$CONFIRMED" ]]; then
+  read -p "is all hope truly lost? (y/n) " -n1 CHAR
+  echo
 
-if [[ "$CHAR" != "y" ]] && [[ "$CHAR" != "Y" ]]; then
-  echo "i always believed in you"
-  exit 0
+  if [[ "$CHAR" != "y" ]] && [[ "$CHAR" != "Y" ]]; then
+    echo "i always believed in you"
+    exit 0
+  fi
 fi
 
 DIR="${PWD##*/}"
