@@ -86,7 +86,7 @@ parsecmd() {
     IS_SUBSCRIBER=$(echo -n "$headers" | grep -aoP ";subscriber=.*?;" | cut -d'=' -f2 | tr -d ';')
 
     # fuck off cunts
-    if [[ "$name" =~ *"_TwitchScam"* ]]; then
+    if [[ "$name" =~ .*_twitchscam.* ]]; then
         tau-helix POST "moderation/bans?broadcaster_id=$MYID&moderator_id=$MYID" \
             '{"data": {"user_id":"'"$user_id"'"}}'
     fi
@@ -108,10 +108,10 @@ parsecmd() {
             reply "pong!"
             ;;
         "!boot")
-            reply "check out https://boot.dev i work there it is a cool website"
+            reply "check out https://boot.gay/badcop i work there it is a cool website"
             ;;
         "!job")
-            reply "i work for https://boot.dev as an engineer and instructor"
+            reply "i work for https://boot.gay/badcop as an engineer and instructor"
             ;;
         "!engine")
             ;&
@@ -156,6 +156,11 @@ parsecmd() {
             else
               reply "yum, thanks :)"
             fi
+            ;;
+        "!rtfm")
+            ;&
+        "!man")
+            reply "refer to the manual: https://www.youtube.com/watch?v=7taNCDMpPvc"
             ;;
         "!yt")
             ;&
@@ -285,7 +290,8 @@ parsecmd() {
             fi
             ;;
         "!song")
-            reply "$(baton status | head -n2 | cut -d':' -f2- | paste -sd' ')"
+            URL="$(baton share | grep "Share URL" | cut -d' ' -f3-)"
+            reply "$(baton status | head -n2 | cut -d':' -f2- | paste -sd' ') $URL"
             ;;
         "!ld")
             ;&
@@ -609,6 +615,20 @@ parsecmd() {
            ;;
     esac
 }
+parsejoin() {
+    local line
+    while IFS= read -r line; do
+        local who
+        local what
+        read who what <<< "$line"
+        if [[ "$who" == "wagslane" ]] && [[ "$what" == "JOIN" ]]; then
+            reply "hey heads up your boss is here btw"
+        fi
+    done <<< "$(echo "$1" | \
+        sed 's/ /\n/g;s/![^\n]*//g;s/\://g' \
+        | grep -vE '#|^$' \
+        | paste -sd' \n')"
+}
 parsechat() {
     color=$(echo -n "$1" | grep -aoP "color=.*?;" | cut -d'=' -f2- | tr -d '#;\n')
     name=$(echo -n "$1" | grep -aoP "display-name=.*?;" | cut -d'=' -f2- | tr -d ';\n')
@@ -644,13 +664,16 @@ reqreader() {
     [[ $line == "PING"* ]] && echo "PONG :tmi.twitch.tv";
     [[ "$line" == "SYSTEM_EV "* ]] && reply "$(echo $line | sed 's/^SYSTEM_EV //')"
     [[ -z "$DISABLE_COMMANDS" ]] && [[ "$line" == *" PRIVMSG "* ]] && (parsechat "$line" 1>&2; parsecmd "$line")
+    [[ ! "$line" =~ "PRIVMSG" ]] \
+        && [[ "$line" == *" JOIN "* || "$line" == *" PART "* ]] \
+        && parsejoin "$line"
   done;
   exit 0;
 }
 
 set -o pipefail;
 while true; do
-  (echo "CAP REQ :twitch.tv/tags twitch.tv/commands\r\nPASS oauth:${TWITCH_ACCESS_TOKEN}\r\nNICK ${TWITCH_NICK}\r\nJOIN #${CHAN}\r"; \
+  (echo "CAP REQ :twitch.tv/membership twitch.tv/tags twitch.tv/commands\r\nPASS oauth:${TWITCH_ACCESS_TOKEN}\r\nNICK ${TWITCH_NICK}\r\nJOIN #${CHAN}\r"; \
       </tmp/twitch_tunnel | reqreader) \
       | websocat -E wss://irc-ws.chat.twitch.tv:443 --ping-timeout 15 --ping-interval 10 \
       | >/tmp/twitch_tunnel;

@@ -1,5 +1,35 @@
 return {
   "tckmn/hotdog.vim",
+  { "echasnovski/mini.tabline", version = "*", opts = {
+
+    show_icons = false,
+    tabpage_section = "right",
+  } },
+  -- {
+  --   "akinsho/bufferline.nvim",
+  --   version = "*",
+  --   config = function()
+  --     local bufferline = require("bufferline")
+  --     bufferline.setup({
+  --       options = {
+  --         offsets = {
+  --           {
+  --             separator = false,
+  --           },
+  --         },
+  --         separator_style = "thin",
+  --         show_buffer_icons = false,
+  --         show_close_icon = false,
+  --         show_buffer_close_icons = false,
+  --         tab_size = 1,
+  --         style_preset = {
+  --           bufferline.style_preset.no_italic,
+  --           bufferline.style_preset.no_bold,
+  --         },
+  --       },
+  --     })
+  --   end,
+  -- },
   {
     "folke/tokyonight.nvim",
     lazy = false, -- make sure we load this during startup if it is your main colorscheme
@@ -51,28 +81,9 @@ return {
     dependencies = { "nvim-tree/nvim-web-devicons" },
     opts = {
       options = {
+        section_separators = "",
+        component_separators = "",
         theme = "tokyonight",
-      },
-    },
-  },
-  {
-    "kdheepak/tabline.nvim",
-    opts = {
-      -- Defaults configuration options
-      enable = true,
-      options = {
-        -- If lualine is installed tabline will use separators configured in lualine by default.
-        -- These options can be used to override those settings.
-        section_separators = { "", "" },
-        component_separators = { "", "" },
-        max_bufferline_percent = 66, -- set to nil by default, and it uses vim.o.columns * 2/3
-        show_tabs_always = false, -- this shows tabs only when there are more than one tab or if the first tab is named
-        show_devicons = true, -- this shows devicons in buffer section
-        show_bufnr = false, -- this appends [bufnr] to buffer section,
-        show_filename_only = false, -- shows base filename only instead of relative path in filename
-        modified_icon = "+ ", -- change the default modified icon
-        modified_italic = false, -- set to true by default; this determines whether the filename turns italic if modified
-        show_tabs_only = false, -- this shows only tabs instead of tabs + buffers
       },
     },
   },

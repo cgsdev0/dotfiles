@@ -150,7 +150,7 @@ if [ -e /home/sarah/.nix-profile/etc/profile.d/nix.sh ]; then . /home/sarah/.nix
 
 # emacs is a way of life, so it's best to always be inside emacs
 # (also unrelated, this makes pure prompt not fuck with the title)
-export INSIDE_EMACS=true
+# export INSIDE_EMACS=true
 printf '\033]2;%s\033\\' "$(hostname)"
 
 if [[ -d "$HOME/.fly" ]]; then
