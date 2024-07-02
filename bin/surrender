@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+function err {
+  printf '%s\n' "$*" 1>&2
+  exit 1
+}
+
+if !which fzf &> /dev/null; then
+  err "please install fzf"
+fi
+
+if [[ ! -z "$1" ]]; then
+  cd "$1"
+fi
+
+while [[ ! -d ".git" ]]; do
+  [[ "$PWD" == "/" ]] && err "no git repository found"
+  cd ..
+done
+
+DIR="${PWD##*/}"
+
+REMOTE="$(git remote get-url "$(git remote | fzf -1)")"
+cd ..
+rm -rf "$DIR"
+git clone "$REMOTE"
