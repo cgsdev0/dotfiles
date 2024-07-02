@@ -18,6 +18,14 @@ while [[ ! -d ".git" ]]; do
   cd ..
 done
 
+read -p "is all hope truly lost? (y/n) " -n1 CHAR
+echo
+
+if [[ "$CHAR" != "y" ]] && [[ "$CHAR" != "Y" ]]; then
+  echo "i always believed in you"
+  exit 0
+fi
+
 DIR="${PWD##*/}"
 
 REMOTE="$(git remote get-url "$(git remote | fzf -1)")"

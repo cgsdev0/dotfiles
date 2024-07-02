@@ -26,6 +26,7 @@
     showvim = "!git diff HEAD^..HEAD --name-only | xargs vim"
     recent = "!git checkout $(git for-each-ref --count=100 --sort=-committerdate refs/heads/ --format='%(refname:short)' | fzf)"
     rehash = "commit --amend --no-edit --reset-author"
+    surrender = "!surrender"
 
 [push]
     default = current
