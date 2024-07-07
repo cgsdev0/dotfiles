@@ -30,17 +30,9 @@ mkdir -p "$COW_DATA"
 rm -f /tmp/twitch_tunnel;
 mkfifo /tmp/twitch_tunnel;
 
+
 # Example chat msg:
 # @badge-info=;badges=;client-nonce=31ab40a7bef7162bfc8eade860eb185a;color=#DAA520;display-name=BuddysPizza;emotes=;first-msg=0;flags=;id=e86038a5-4d49-4868-aa96-b563da8fc689;mod=0;room-id=56931496;subscriber=0;tmi-sent-ts=1643181677955;turbo=0;user-id=42089909;user-type= :buddyspizza!buddyspizza@buddyspizza.tmi.twitch.tv PRIVMSG #badcop_ :!help
-
-sync_fish() {
-    pushd ~/fishing-data &> /dev/null
-    git add -A &> /dev/null
-    git wopsy &> /dev/null
-    git push -f -u prod db &> /dev/null
-    ssh root@jeopardy.bashsta.cc 'bash -c "cd fishing-data; git reset --hard"'
-    popd &> /dev/null
-}
 
 colorize() {
     printf "\x1b[38;2;$(( 16#${1:0:2} ));$(( 16#${1:2:2} ));$(( 16#${1:4:2} ))m"
@@ -182,9 +174,9 @@ parsecmd() {
         "!hi")
             reply "/me waves"
             ;;
-        "!fish leaderboard")
-            reply "$(fish_leaderboard)"
-            ;;
+        # "!fish leaderboard")
+        #     reply "$(fish_leaderboard)"
+        #     ;;
         "!discord")
             reply "join our discord! https://discord.badcop.games/"
             ;;
@@ -206,29 +198,25 @@ parsecmd() {
         "!fist")
             reply "You punch the fish for $RANDOM damage!"
             ;;
-        "sabaping"*)
-            ;&
-        *"badcop3fish"*)
-            ;&
         "!fish "*)
             ;&
         "!fish")
-            reply "$(catch_fish)"
-            sync_fish &
+            reply "cop.fish/pond"
+            # sync_fish &
             ;;
-        "!rod")
-            rod=$(get_rod)
-            rod_name=$(echo "$rod" | cut -d' ' -f1)
-            rod_uses=$(echo "$rod" | cut -d' ' -f2)
-            reply "@$name has a $rod_name rod ($rod_uses uses left)"
-            ;;
+        # "!rod")
+        #     rod=$(get_rod)
+        #     rod_name=$(echo "$rod" | cut -d' ' -f1)
+        #     rod_uses=$(echo "$rod" | cut -d' ' -f2)
+        #     reply "@$name has a $rod_name rod ($rod_uses uses left)"
+        #     ;;
         "!tomorrow")
             reply "rust stream?"
             ;;
         "!help")
             ;&
         "!commands")
-            reply "!fish, !fishdex, !roll, !count, !play, !discord, !today, !jump"
+            reply "!fish, !roll, !count, !play, !discord, !today, !jump"
             ;;
         "!q "*)
             printf "%s %s: " "$(date "+%Y-%m-%d %H:%M")" "$name" >> "$HOME/.queue"
@@ -255,16 +243,16 @@ parsecmd() {
         "!jump")
             reply "/me jumps"
             ;;
-        "!fishdex all")
-            reply "$(fishdex_all)"
-            ;;
-        "!fishdex")
-            reply "$(fishdex)"
-            ;;
-        "!fishdex "*)
-            USER="$(basename "$(echo "$msg_loud" | cut -d' ' -f2)")"
-            reply "$(fishdex_check "$USER")"
-            ;;
+        # "!fishdex all")
+        #     reply "$(fishdex_all)"
+        #     ;;
+        # "!fishdex")
+        #     reply "$(fishdex)"
+        #     ;;
+        # "!fishdex "*)
+        #     USER="$(basename "$(echo "$msg_loud" | cut -d' ' -f2)")"
+        #     reply "$(fishdex_check "$USER")"
+        #     ;;
         "!count")
             count=$(cat ~/.twitch_counter)
             count=$(( count + 1 ))
@@ -281,14 +269,14 @@ parsecmd() {
                 reply "$((1 + $RANDOM % $val))"
             fi
             ;;
-        "!sync")
-            if [[ "$name" == "badcop_" ]]; then
-                cd ~/fishing-data
-                git add -A &> /dev/null
-                git commit -am "sync" &> /dev/null
-                git push &> /dev/null
-            fi
-            ;;
+        # "!sync")
+        #     if [[ "$name" == "badcop_" ]]; then
+        #         cd ~/fishing-data
+        #         git add -A &> /dev/null
+        #         git commit -am "sync" &> /dev/null
+        #         git push &> /dev/null
+        #     fi
+        #     ;;
         "!song")
             URL="$(baton share | grep "Share URL" | cut -d' ' -f3-)"
             reply "$(baton status | head -n2 | cut -d':' -f2- | paste -sd' ') $URL"
