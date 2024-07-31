@@ -2,7 +2,7 @@
 
 list_files() {
     cd "${0%/*}"
-    git ls-files | grep -v '^_'
+    git ls-files | grep -v '^_' | grep -v "README.md"
 }
 
 list_dirs() {
