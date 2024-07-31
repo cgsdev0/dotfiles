@@ -1,0 +1,45 @@
+#!/bin/bash
+
+roll() {
+  DIE=$((RANDOM % 6 + 1))
+}
+
+stat() {
+  roll
+  A=$DIE
+  roll
+  B=$DIE
+  roll
+  C=$DIE
+  echo $((A+B+C))
+}
+
+character() {
+  local -a STATS
+  STATS=($(stat) $(stat) $(stat) $(stat) $(stat) $(stat))
+  local max=${STATS[0]}
+  local min=${STATS[0]}
+  local i
+  local sum=0
+
+  for i in "${STATS[@]}"; do
+    (( i > max )) && max=$i
+    (( i < min )) && min=$i
+    ((sum+=i))
+  done
+
+  if [[ $sum -lt 60 ]] || [[ $min -lt 6 ]]; then
+    printf "\e[48;5;%dm" 124
+  elif [[ $max -gt 15 ]]; then
+    printf "\e[48;5;%dm" 28
+  else
+    printf "\e[48;5;%dm" 136
+  fi
+  printf " %2s   %2s   %2s   %2s   %2s   %2s" ${STATS[0]} ${STATS[1]} ${STATS[2]} ${STATS[3]} ${STATS[4]} ${STATS[5]}
+  printf '\e[0m\n'
+}
+
+echo "STR  INT  WIS  DEX  CON  CHA"
+for ((i=0; i<12; i++)); do
+  character
+done

@@ -187,6 +187,10 @@ parsecmd() {
             # reply "massdrop alt high profile w/ novelkey olivia silk switches"
             reply "NK65 olivia edition https://novelkeys.com/collections/keyboards/products/nk65-olivia-edition"
             ;;
+        "!camera")
+            # reply "massdrop alt high profile w/ novelkey olivia silk switches"
+            reply "my main camera is a sony a6400 with a sigma 30mm lens"
+            ;;
         "!font")
             reply "I use the hack font: https://sourcefoundry.org/hack/"
             ;;
@@ -626,14 +630,14 @@ parsechat() {
     fi
     if [[ "$1" == *"custom-reward-id=15569ace-d070-4037-986d-967f44196d74;"* ]]; then
         colorize $color
-        colorize $color > ~/current_cow
-        echo "$name has a message for you!" >> ~/current_cow
+        colorize $color > ~/.current_cow
+        echo "$name has a message for you!" >> ~/.current_cow
         cow=$(get_cow "$name")
-        echo "$msg" | cowsay -f "$cow" >> ~/current_cow
+        echo "$msg" | cowsay -f "$cow" >> ~/.current_cow
         if [[ "$name" == "kuviman" ]]; then
-          tmux display-popup -h 80% -w 80% "glitchcat ~/current_cow --duration infinite --glitchness 30 --amount 30" &
+          tmux display-popup -h 80% -w 80% "glitchcat ~/.current_cow --duration infinite --glitchness 30 --amount 30" &
         else
-          tmux display-popup -h 80% -w 80% "cat ~/current_cow" &
+          tmux display-popup -h 80% -w 80% "cat ~/.current_cow" &
         fi
     elif [[ "$msg" == $'\x01'"ACTION "* ]]; then
         colorize $color

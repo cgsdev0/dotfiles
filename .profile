@@ -11,7 +11,7 @@
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/bin" ] ; then
     pushd "$HOME/bin" &> /dev/null
-    folders=$(find ~+ -type d | tr '\n' ':')
+    folders=$(find ~+ -type d ! -iname '.*' | tr '\n' ':')
     popd &> /dev/null
     PATH="$folders$PATH"
 fi
