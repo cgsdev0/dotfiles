@@ -101,24 +101,24 @@ require("lspconfig")["clangd"].setup({
   capabilities = capabilities,
 })
 
-local lspconfig = require("lspconfig")
-local configs = require("lspconfig/configs")
+-- local lspconfig = require("lspconfig")
+-- local configs = require("lspconfig/configs")
 
-if not configs.htmx then
-  configs.htmx = {
-    default_config = {
-      cmd = { "htmx-lsp", "--level", "DEBUG" },
-      root_dir = lspconfig.util.root_pattern(".git", "go.mod"),
-      filetypes = { "sh" },
-      autostart = true,
-    },
-  }
-end
+-- if not configs.htmx then
+--   configs.htmx = {
+--     default_config = {
+--       cmd = { "htmx-lsp", "--level", "DEBUG" },
+--       root_dir = lspconfig.util.root_pattern(".git", "go.mod"),
+--       filetypes = { "sh" },
+--       autostart = true,
+--     },
+--   }
+-- end
 
-configs.htmx.setup({
-  capabilities = capabilities,
-  on_attach = on_attach,
-})
+-- configs.htmx.setup({
+--   capabilities = capabilities,
+--   on_attach = on_attach,
+-- })
 
 require("lspconfig")["lua_ls"].setup({
   on_attach = on_attach,

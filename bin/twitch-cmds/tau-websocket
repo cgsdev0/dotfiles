@@ -4,6 +4,9 @@ cd "${0%/*}"
 
 CHAN="badcop_"
 
+rm -f /tmp/tau_tunnel2;
+mkfifo /tmp/tau_tunnel2;
+
 reqreader() {
   while IFS= read -r line; do
       # echo "$line" | jq
@@ -51,7 +54,7 @@ reqreader() {
                 else
                     send-twitch-msg "$who just subscribed! :D"
                 fi
-                rainbow-lights
+                # rainbow-lights
                 ;;
             "channel-follow")
                 # who=$(echo "$line" | jq -r '.event_data.user_name');
@@ -62,7 +65,7 @@ reqreader() {
                 who=$(echo "$line" | jq -r '.event_data.from_broadcaster_user_name');
                 viewers=$(echo "$line" | jq -r '.event_data.viewers');
                 send-twitch-msg "@$who just raided with $viewers viewers! :O"
-                flash-lights
+                # flash-lights
                 ;;
               *)
                 echo "unhandled $eventType event happened";
@@ -76,14 +79,13 @@ reqreader() {
 
 authenticate() {
     echo '{"token":"'$(cat ~/.tau_token)'"}'
-    sleep infinity
 }
 
 set -o pipefail;
 while true; do
-  (authenticate) \
-      | websocat -E wss://tau.cgs.dev/ws/twitch-events/ --ping-interval 10 --ping-timeout 15 \
-      | reqreader
+  {authenticate; reqreader </tmp/tau_tunnel2; } \
+      | websocat -E 'wss://tau.cgs.dev/ws/twitch-events/' --ping-interval 10 --ping-timeout 15 \
+      > /tmp/tau_tunnel2;
   FAILED=$?
   echo "$FAILED"
   if [[ "$FAILED" -ge 130 ]]; then

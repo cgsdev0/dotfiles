@@ -31,6 +31,12 @@ done
 
 deps+=("$(which $cmd)")
 
+cleanup() {
+    pkill -TERM -P $PID &> /dev/null
+    kill -SIGTERM $PID &> /dev/null
+}
+
+trap "cleanup" EXIT
 while true; do
     sleep 0.1
     $cmd "$@" &

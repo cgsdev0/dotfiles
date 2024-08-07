@@ -21,7 +21,7 @@ source ./ld-cmds;
 source ./jam-cmds;
 
 MYID=56931496
-LOG_FILE="$HOME/twitch-logs/$(date "+%Y-%m-%d_%H-%M-%S").log"
+LOG_FILE="$HOME/data/twitch-logs/$(date "+%Y-%m-%d_%H-%M-%S").log"
 touch "$LOG_FILE"
 
 COW_DATA="$HOME/cows/$CHAN/"
@@ -127,6 +127,11 @@ parsecmd() {
         "!stack")
             reply "we are building bash stack, a web framework in bash: http://bashsta.cc"
             ;;
+        "!emotes")
+            ;&
+        "!artist")
+            reply "https://x.com/RiriiMeow"
+            ;;
         "!cows")
             reply "$(find /usr/share/cowsay/cows -type f | grep -o '[^/]*.cow$' | cut -d'.' -f1 | tr '\n' ' ')"
             ;;
@@ -168,7 +173,7 @@ parsecmd() {
             ;;
         "!winrar")
             ;&
-        "!tmux")
+        *"tmux"*)
             tmux display-popup -h 12 -w 50 winrar-tmux-popup &
             ;;
         "!hi")
@@ -314,6 +319,9 @@ parsecmd() {
             ;&
         "!gender")
             reply "i prefer to go by she/her or they/them pronouns"
+            ;;
+        "!consulting")
+            reply "https://bash.consulting/"
             ;;
         "!lurk"*)
             reply "sounds good, $name :)"

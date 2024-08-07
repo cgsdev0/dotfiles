@@ -198,3 +198,5 @@ if which run &> /dev/null && which fzf &> /dev/null; then
 fi
 # # The next line enables shell command completion for gcloud.
 # if [ -f '/home/sarah/tools/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/sarah/tools/google-cloud-sdk/completion.zsh.inc'; fiA
+#
+source ~/.zsh/autocomplete/*

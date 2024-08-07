@@ -1,9 +1,9 @@
 #!/bin/zsh
 
-ld_state_file="$HOME/ludum-dare/$CHAN/.ld-jam-list"
-ld_data_file="$HOME/ludum-dare/$CHAN/.ld-jam-data"
-ld_raffle_file="$HOME/ludum-dare/$CHAN/.ld-jam-raffle"
-ld_tickets_file="$HOME/ludum-dare/$CHAN/.ld-jam-tickets"
+ld_state_file="$HOME/data/ludum-dare/$CHAN/ld-jam-list"
+ld_data_file="$HOME/data/ludum-dare/$CHAN/ld-jam-data"
+ld_raffle_file="$HOME/data/ludum-dare/$CHAN/ld-jam-raffle"
+ld_tickets_file="$HOME/data/ludum-dare/$CHAN/ld-jam-tickets"
 
 mkdir -p $(dirname "$ld_state_file")
 mkdir -p $(dirname "$ld_data_file")
