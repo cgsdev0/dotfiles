@@ -2,6 +2,7 @@
 
 stuff() {
   cd "$HOME/data/fishing"
+  git obliterate
   eval `ssh-agent -s`
   ssh-add "$HOME/.ssh/id_ovh_ns5009436"
   ssh root@jeopardy.bashsta.cc /root/backupfish

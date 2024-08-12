@@ -54,6 +54,5 @@ else
     WIDTH=$MAX_W
   fi
   EFFECT="${EFFECT:-; tput civis}"
-  echo "tmux display-popup -w $WIDTH -h $HEIGHT $* 'cat \"$TMP\" $EFFECT'"
   flock $LOCK /bin/sh -c "tmux display-popup -w $WIDTH -h $HEIGHT $* 'cat \"$TMP\" $EFFECT'"
 fi

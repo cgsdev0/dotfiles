@@ -10,4 +10,4 @@ Y="${POSITION#*x}"
 X="${POSITION%x*}"
 STUFF="$(tmux capture-pane -p -e -t "$PANE")"
 echo -e "$STUFF" \
-  | popup -e crumble -E -B -y$Y -x$X -w $WIDTH -h $HEIGHT
+  | popup -e $1 -E -B -y$Y -x$X -w $WIDTH -h $HEIGHT

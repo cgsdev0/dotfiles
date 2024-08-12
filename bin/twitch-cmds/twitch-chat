@@ -205,6 +205,9 @@ parsecmd() {
         "!theme")
             reply "tokyonight https://github.com/folke/tokyonight.nvim"
             ;;
+        "!mouse")
+            reply "Logitech G305 >>>>>>>>"
+            ;;
         "!keyboard")
             # reply "massdrop alt high profile w/ novelkey olivia silk switches"
             reply "NK65 olivia edition https://novelkeys.com/collections/keyboards/products/nk65-olivia-edition"
@@ -324,6 +327,9 @@ parsecmd() {
             else
                 reply "rollycubes is not running right now :("
             fi
+            ;;
+        "!github")
+            reply "https://github.com/cgsdev0"
             ;;
         # memes
         "!sha2")
