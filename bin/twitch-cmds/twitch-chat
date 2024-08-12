@@ -210,7 +210,7 @@ parsecmd() {
         "!fish "*)
             ;&
         "!fish")
-            reply "cop.fish/pond"
+            reply "cop.fish"
             # sync_fish &
             ;;
         # "!rod")

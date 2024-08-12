@@ -1,0 +1,13 @@
+#!/bin/bash
+
+stuff() {
+  cd "$HOME/data/fishing"
+  eval `ssh-agent -s`
+  ssh-add "$HOME/.ssh/id_ovh_ns5009436"
+  ssh root@jeopardy.bashsta.cc /root/backupfish
+  git pull prod main --rebase
+  git push origin main
+  kill $SSH_AGENT_PID
+}
+
+stuff &> /dev/null

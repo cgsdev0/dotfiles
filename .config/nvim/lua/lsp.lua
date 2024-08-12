@@ -50,31 +50,35 @@ local vue_language_server_path = mason_registry.get_package("vue-language-server
   .. "/node_modules/@vue/language-server"
 
 require("lspconfig")["tsserver"].setup({
-  init_options = {
-    plugins = {
-      {
-        name = "@vue/typescript-plugin",
-        location = vue_language_server_path,
-        languages = { "vue" },
-      },
-    },
-  },
-  filetypes = {
-    "javascript",
-    "typescript",
-    "vue",
-  },
   on_attach = on_attach,
   capabilities = capabilities,
-  commands = {
-    OrganizeImports = {
-      organize_imports,
-      description = "Organize Imports",
-    },
-  },
 })
+-- require("lspconfig")["tsserver"].setup({
+--   init_options = {
+--     plugins = {
+--       {
+--         name = "@vue/typescript-plugin",
+--         location = vue_language_server_path,
+--         languages = { "vue" },
+--       },
+--     },
+--   },
+--   filetypes = {
+--     "javascript",
+--     "typescript",
+--     "vue",
+--   },
+--   on_attach = on_attach,
+--   capabilities = capabilities,
+--   commands = {
+--     OrganizeImports = {
+--       organize_imports,
+--       description = "Organize Imports",
+--     },
+--   },
+-- })
 
-require("lspconfig").volar.setup({})
+-- require("lspconfig").volar.setup({})
 
 require("lspconfig")["gopls"].setup({
   on_attach = on_attach,
