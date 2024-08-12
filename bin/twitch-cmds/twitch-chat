@@ -34,6 +34,20 @@ mkfifo /tmp/twitch_tunnel;
 # Example chat msg:
 # @badge-info=;badges=;client-nonce=31ab40a7bef7162bfc8eade860eb185a;color=#DAA520;display-name=BuddysPizza;emotes=;first-msg=0;flags=;id=e86038a5-4d49-4868-aa96-b563da8fc689;mod=0;room-id=56931496;subscriber=0;tmi-sent-ts=1643181677955;turbo=0;user-id=42089909;user-type= :buddyspizza!buddyspizza@buddyspizza.tmi.twitch.tv PRIVMSG #badcop_ :!help
 
+declare -a EFFECTS
+while IFS= read -r line; do
+    EFFECTS+=($line)
+done < <(python3 -m terminaltexteffects |& head -n 7 | tail -n1 | tr -d ' {}' | tr ',' '\n')
+
+function has_effect() {
+    for i in "${EFFECTS[@]}"; do
+        if [[ "$i" == "$1" ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
 colorize() {
     printf "\x1b[38;2;$(( 16#${1:0:2} ));$(( 16#${1:2:2} ));$(( 16#${1:4:2} ))m"
 }
@@ -135,6 +149,9 @@ parsecmd() {
         "!cows")
             reply "$(find /usr/share/cowsay/cows -type f | grep -o '[^/]*.cow$' | cut -d'.' -f1 | tr '\n' ' ')"
             ;;
+        "!effects")
+            reply "${EFFECTS[@]}"
+            ;;
         "!setcow "*)
             cow=$(echo -n "$msg" | cut -d' ' -f2)
             if set_cow "$name" "$cow"; then
@@ -174,7 +191,7 @@ parsecmd() {
         "!winrar")
             ;&
         *"tmux"*)
-            tmux display-popup -h 12 -w 50 winrar-tmux-popup &
+            winrar-tmux-popup | popup -h 12 -w 50 &
             ;;
         "!hi")
             reply "/me waves"
@@ -641,12 +658,27 @@ parsechat() {
         colorize $color > ~/.current_cow
         echo "$name has a message for you!" >> ~/.current_cow
         cow=$(get_cow "$name")
-        echo "$msg" | cowsay -f "$cow" >> ~/.current_cow
+        EFFECT=
         if [[ "$name" == "kuviman" ]]; then
-          tmux display-popup -h 80% -w 80% "glitchcat ~/.current_cow --duration infinite --glitchness 30 --amount 30" &
-        else
-          tmux display-popup -h 80% -w 80% "cat ~/.current_cow" &
+            EFFECT=glitch
         fi
+        if [[ "${msg:0:1}" == "#" ]]; then
+            EFFECT="${msg%% *}"
+            EFFECT="${EFFECT#\#}"
+            EFFECT="${(L)EFFECT}"
+            if has_effect "$EFFECT"; then
+                msg="${msg#* }"
+            else
+                EFFECT=
+            fi
+        fi
+        echo "$msg" | LC_ALL=C cowsay -f "$cow" >> ~/.current_cow
+        if [[ -n "$EFFECT" ]]; then
+          cat ~/.current_cow | popup -e $EFFECT &
+        else
+          cat ~/.current_cow | popup &
+        fi
+        return 1
     elif [[ "$msg" == $'\x01'"ACTION "* ]]; then
         colorize $color
         echo "$name" $(echo "$msg" | cut -d' ' -f2-)
@@ -663,7 +695,7 @@ reqreader() {
     printf "time=%s;%s\n" $(date "+%Y-%m-%d_%H:%M:%S") "$line" >> "$LOG_FILE"
     [[ $line == "PING"* ]] && echo "PONG :tmi.twitch.tv";
     [[ "$line" == "SYSTEM_EV "* ]] && reply "$(echo $line | sed 's/^SYSTEM_EV //')"
-    [[ -z "$DISABLE_COMMANDS" ]] && [[ "$line" == *" PRIVMSG "* ]] && (parsechat "$line" 1>&2; parsecmd "$line")
+    [[ -z "$DISABLE_COMMANDS" ]] && [[ "$line" == *" PRIVMSG "* ]] && (parsechat "$line" 1>&2 && parsecmd "$line")
     [[ ! "$line" =~ "PRIVMSG" ]] \
         && [[ "$line" == *" JOIN "* || "$line" == *" PART "* ]] \
         && parsejoin "$line"

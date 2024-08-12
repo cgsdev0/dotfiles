@@ -23,10 +23,10 @@ reqreader() {
                 case $reward in
                     "Hotdog")
                         hotdog &
-                        (sleep 120; hotdog not) &
+                        (sleep 30; hotdog not) &
                         ;;
                     "CHOO CHOO")
-                        tmux display-popup -h 100% -w 100% -E sl &
+                        </dev/null popup -B -h 100% -w 100% -E sl &
                         ;;
                     "Enable gravity")
                         make-it-rain &
@@ -37,23 +37,23 @@ reqreader() {
                 esac
                 ;;
             "channel-subscription-gift")
-                is_anon=$(echo "$line" | jq -r '.event_data.is_anonymous');
-                who=$(echo "$line" | jq -r '.event_data.user_name');
-                if [[ "$is_anon" == "true" ]]; then
-                    who="An Anonymous Gifter"
-                fi
-                total=$(echo "$line" | jq -r '.event_data.total');
-                send-twitch-msg "$who is gifting $total subs to the channel!"
-                sleep 0.5
+            #     is_anon=$(echo "$line" | jq -r '.event_data.is_anonymous');
+            #     who=$(echo "$line" | jq -r '.event_data.user_name');
+            #     if [[ "$is_anon" == "true" ]]; then
+            #         who="An Anonymous Gifter"
+            #     fi
+            #     total=$(echo "$line" | jq -r '.event_data.total');
+            #     send-twitch-msg "$who is gifting $total subs to the channel!"
+            #     sleep 0.5
                 ;;
             "channel-subscribe")
-                who=$(echo "$line" | jq -r '.event_data.user_name');
-                is_gift=$(echo "$line" | jq -r '.event_data.is_gift');
-                if [[ "$is_gift" == "true" ]]; then
-                    send-twitch-msg "$who just received a gift sub! :D"
-                else
-                    send-twitch-msg "$who just subscribed! :D"
-                fi
+            #     who=$(echo "$line" | jq -r '.event_data.user_name');
+            #     is_gift=$(echo "$line" | jq -r '.event_data.is_gift');
+            #     if [[ "$is_gift" == "true" ]]; then
+            #         send-twitch-msg "$who just received a gift sub! :D"
+            #     else
+            #         send-twitch-msg "$who just subscribed! :D"
+            #     fi
                 # rainbow-lights
                 ;;
             "channel-follow")

@@ -3,7 +3,7 @@
 TERMINAL_CONF="C:/Users/sarah/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json"
 
 remote_powershell() {
-  ssh sarah@192.168.0.206 "powershell.exe $@"
+  ssh sarah@192.168.50.4 "powershell.exe $@"
 }
 
 vim_cmd() {
