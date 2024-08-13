@@ -9,5 +9,5 @@ Y="${POSITION#*x}"
 ((Y+=HEIGHT+1))
 X="${POSITION%x*}"
 STUFF="$(tmux capture-pane -p -e -t "$PANE")"
-echo -e "$STUFF" \
+echo -e "$STUFF" | tee captured.txt \
   | popup -e $1 -E -B -y$Y -x$X -w $WIDTH -h $HEIGHT

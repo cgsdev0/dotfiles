@@ -5,7 +5,11 @@ LOCK=/tmp/tmux-popups-lock
 
 
 function decolor() {
-  if [[ -n "$EFFECT" || "$1" == "force" ]]; then
+  if [[ "$1" == "force" ]]; then
+    sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g'
+  elif [[ "$EFFECT" == *"termsand"* ]]; then
+    cat
+  elif [[ -n "$EFFECT" ]]; then
     sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g'
   else
     cat
@@ -18,11 +22,14 @@ if [[ "$1" == "-e" ]]; then
   EFFECT="$1"
   shift
   case "$EFFECT" in
+    sand)
+      export EFFECT="| termsand"
+      ;;
     glitch)
-      EFFECT="| glitchcat --duration infinite --glitchness 30 --amount 30"
+      export EFFECT="| glitchcat --duration infinite --glitchness 30 --amount 30"
       ;;
     *)
-      EFFECT="| python3 -m terminaltexteffects $EFFECT"
+      export EFFECT="| python3 -m terminaltexteffects $EFFECT"
       ;;
   esac
 fi
@@ -54,5 +61,5 @@ else
     WIDTH=$MAX_W
   fi
   EFFECT="${EFFECT:-; tput civis}"
-  flock $LOCK /bin/sh -c "tmux display-popup -w $WIDTH -h $HEIGHT $* 'cat \"$TMP\" $EFFECT'"
+  flock $LOCK /bin/sh -c "cd $PWD; tmux display-popup -w $WIDTH -h $HEIGHT $* 'cd $PWD; cat \"$TMP\" $EFFECT'"
 fi
