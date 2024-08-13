@@ -22,8 +22,11 @@ if [[ "$1" == "-e" ]]; then
   EFFECT="$1"
   shift
   case "$EFFECT" in
+    lolsand)
+      export EFFECT="| lolcat --force | termsand -c 2153144201"
+      ;;
     sand)
-      export EFFECT="| termsand"
+      export EFFECT="| termsand -c 2153144201"
       ;;
     glitch)
       export EFFECT="| glitchcat --duration infinite --glitchness 30 --amount 30"
