@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+remote_powershell() {
+  ssh sarah@192.168.50.4 "powershell.exe $@"
+}
+
+effect() {
+  remote_powershell '(New-Object Media.SoundPlayer "C:\Users\sarah\Documents\sfx\'"$1"'.wav").PlaySync();'
+}
+
+effect "$1" &

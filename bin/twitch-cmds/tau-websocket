@@ -25,7 +25,11 @@ reqreader() {
                         hotdog &
                         (sleep 30; hotdog not) &
                         ;;
+                    "Sand")
+                        experiment sand
+                        ;;
                     "CHOO CHOO")
+                        sfx train
                         </dev/null popup -B -h 100% -w 100% -E sl &
                         ;;
                     "Enable gravity")

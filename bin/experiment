@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [[ "$1" == "sand" ]]; then
+  sfx lego
+fi
+
 PANE=$(tmux display -p "#{pane_id}")
 DIMENSIONS="$(tmux display -p "#{pane_width}x#{pane_height}")"
 POSITION="$(tmux display -p "#{pane_left}x#{pane_top}")"

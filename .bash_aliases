@@ -85,6 +85,6 @@ unalias gd
 # boot dev
 alias bb="cd ~/bootdev/bin"
 alias gb="cd ~/bootdev/go-api-gate"
-alias gc="cd ~/bootdev/courses"
+alias gc="cd ~/bootdev/go-api-gate/courses"
 alias gd="cd ~/bootdev/go-api-gate/backend/internal/database/sql"
 alias qs='cd $(find-exercise)'
