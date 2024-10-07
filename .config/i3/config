@@ -3,7 +3,7 @@
 set $mod Mod4
 
 # Default Font
-font pango:Ubuntu 10
+font pango:Ubuntu 18
 
 # Colour Setting
 set $bgcolor            #2f343f
@@ -83,6 +83,8 @@ bindsym $mod+f fullscreen toggle
 bindsym $mod+s layout stacking
 bindsym $mod+w layout tabbed
 bindsym $mod+e layout toggle split
+
+bindsym $mod+Tab workspace back_and_forth
 
 # toggle tiling / floating
 bindsym $mod+Shift+space floating toggle
@@ -208,6 +210,7 @@ gaps inner 0
 include /etc/sway/config.d/*
 
 exec mako
+exec /home/sarah/bin/wobd
 
 bar {
   position top
@@ -216,13 +219,18 @@ bar {
     statusline #ffffff
     background #323232
   }
-  font pango:Hack Nerd Font Mono 12
+  font pango:Hack Nerd Font Mono 18
 }
-bindsym XF86MonBrightnessUp exec  /usr/bin/brightnessctl -d intel_backlight set +1000
+bindsym XF86MonBrightnessUp exec  /home/sarah/bin/brightness up
+bindsym XF86MonBrightnessDown exec  /home/sarah/bin/brightness down
 
-bindsym XF86MonBrightnessDown exec  /usr/bin/brightnessctl -d intel_backlight set 1000-
+bindsym XF86AudioRaiseVolume exec  /home/sarah/bin/volume up
+bindsym XF86AudioLowerVolume exec  /home/sarah/bin/volume down
+bindsym XF86AudioMute exec  /home/sarah/bin/volume mute
+
 bindsym XF86Search exec /home/sarah/bin/toggle-dark-mode
 
+seat * hide_cursor when-typing enabled
 
-exec paperwall
+# exec paperwall
 output * bg /home/sarah/wallpaper.jpg fill

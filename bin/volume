@@ -15,14 +15,7 @@ function is_mute {
 
 send_notification() {
     volume=$1
-    scaled=$((volume/5))
-
-    inverted=$((20-$scaled))
-    bar=""
-    for((n=0;n<$scaled;n++)); do bar="$bar⬜"; done
-    for((n=0;n<$inverted;n++)); do bar="$bar⬛"; done
-    # Send the notification
-    dunstify -i audio-volume-high-symbolic.symbolic -t 3000 -r 2593 -u normal Volume " $bar" -a volctl
+    echo $volume > /tmp/wobpipe
 }
 
 case $1 in
@@ -30,17 +23,24 @@ case $1 in
 	# Set the volume on (if it was muted)
 	# amixer -D pulse set Master on > /dev/null
 	# Up the volume (+ 5%)
-        vol=$(amixer -D pulse sset Master 5%+ | grep -m 1 -oE [0-9]+% | tr -d "%")
+        vol=$(amixer set Master 5%+ | grep -m 1 -oE [0-9]+% | tr -d "%")
 	send_notification $vol
 	;;
     down)
 	# amixer -D pulse set Master on > /dev/null
-        vol=$(amixer -D pulse sset Master 5%- | grep -m 1 -oE [0-9]+% | tr -d "%")
+        vol=$(amixer set Master 5%- | grep -m 1 -oE [0-9]+% | tr -d "%")
 
 	send_notification $vol
 	;;
     mute)
     	# Toggle mute
-	amixer -D pulse set Master 1+ toggle > /dev/null
+	data="$(amixer set Master 1+ toggle)"
+	off="$(echo "$data" | grep -o off | head -n1)"
+        vol=$(echo "$data" | grep -m 1 -oE [0-9]+% | tr -d "%")
+	if [[ -z "$off" ]]; then
+	    send_notification $vol
+	else
+	    send_notification 0
+	fi
 	;;
 esac
