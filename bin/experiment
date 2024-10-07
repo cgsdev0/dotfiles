@@ -4,7 +4,9 @@ if [[ "$1" == "sand" ]]; then
   sfx lego
 fi
 
+unset TMUX_PANE
 PANE=$(tmux display -p "#{pane_id}")
+echo "$PANE $TMUX_PANE" >> ~/tmux_pane
 DIMENSIONS="$(tmux display -p "#{pane_width}x#{pane_height}")"
 POSITION="$(tmux display -p "#{pane_left}x#{pane_top}")"
 HEIGHT="${DIMENSIONS#*x}"
@@ -12,6 +14,6 @@ WIDTH="${DIMENSIONS%x*}"
 Y="${POSITION#*x}"
 ((Y+=HEIGHT+1))
 X="${POSITION%x*}"
-STUFF="$(tmux capture-pane -p -e -t "$PANE")"
+STUFF="$(tmux capture-pane -p -e)"
 echo -e "$STUFF" \
   | popup -e $1 -E -B -y$Y -x$X -w $WIDTH -h $HEIGHT

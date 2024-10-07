@@ -4,30 +4,19 @@
   dependencies = ["chat", "tau", "bus"]
 
 [[task]]
-  id = "refresh-tokens"
-  type = "short"
-  cmd = """
-    refresh-token
-    refresh-token-bot
-  """
-
-[[task]]
   id = "tau"
   type = "long"
-  dependencies = ["refresh-tokens"]
   cmd = "tau-websocket"
   watch = ["bin/twitch-cmds/tau-websocket"]
 
 [[task]]
   id = "chat"
   type = "long"
-  dependencies = ["refresh-tokens"]
   cmd = "twitch-chat badcop_"
   watch = ["bin/twitch-cmds/twitch-chat", "bin/twitch-cmds/fish-cmds", "bin/twitch-cmds/jam-cmds", "bin/twitch-cmds/ld-cmds"]
 
 [[task]]
   id = "bus"
   type = "long"
-  dependencies = ["refresh-tokens"]
   cmd = "tau-message-broker"
   watch = ["bin/twitch-cmds/tau-message-broker"]

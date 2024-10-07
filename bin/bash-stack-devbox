@@ -20,6 +20,18 @@ sudo apt-get install -y ucspi-tcp unzip ripgrep moreutils inotify-tools
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - &&\
 sudo apt-get install -y nodejs
 npm install --global -D tailwindcss
+git config --global user.email "git@sarah.engineer"
+git config --global user.name "badcop"
+cd /root
+git clone https://github.com/cgsdev0/dotfiles.git
+cd dotfiles
+sudo ./_install.sh
+cd ..
+sudo apt-get install software-properties-common
+sudo add-apt-repository ppa:neovim-ppa/stable
+sudo apt-get update
+sudo apt-get install neovim
+sudo apt-get install python-dev python-pip python3-dev python3-pip
 EOF
 }
 

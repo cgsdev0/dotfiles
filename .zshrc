@@ -200,3 +200,6 @@ fi
 # if [ -f '/home/sarah/tools/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/sarah/tools/google-cloud-sdk/completion.zsh.inc'; fiA
 #
 source ~/.zsh/autocomplete/*
+
+# Generated for envman. Do not edit.
+[ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"

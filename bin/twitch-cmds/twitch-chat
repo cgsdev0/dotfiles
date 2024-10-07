@@ -711,6 +711,11 @@ reqreader() {
 
 set -o pipefail;
 while true; do
+    if [[ ! -z "$BADCOP" ]]; then
+      source ~/.twitch_secrets;
+    else
+      source ~/.twitch_secrets_bot;
+    fi
   (echo "CAP REQ :twitch.tv/membership twitch.tv/tags twitch.tv/commands\r\nPASS oauth:${TWITCH_ACCESS_TOKEN}\r\nNICK ${TWITCH_NICK}\r\nJOIN #${CHAN}\r"; \
       </tmp/twitch_tunnel | reqreader) \
       | websocat -E wss://irc-ws.chat.twitch.tv:443 --ping-timeout 15 --ping-interval 10 \
@@ -719,6 +724,5 @@ while true; do
   if [[ "$FAILED" -ge 130 ]]; then
     exit 0
   fi
-  echo "IT CRASHED, RESTARTING"
-  refresh-token-bot
+  echo "$(date) IT CRASHED, RESTARTING"
 done
