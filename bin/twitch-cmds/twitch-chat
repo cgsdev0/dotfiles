@@ -114,10 +114,18 @@ parsecmd() {
             reply "pong!"
             ;;
         "!boot")
-            reply "check out https://boot.gay/badcop i work there it is a cool website"
+            reply "check out https://boot.gay/badcop i worked there it is a cool website"
             ;;
         "!job")
-            reply "i work for https://boot.gay/badcop as an engineer and instructor"
+            reply "i worked for https://boot.gay/badcop as an engineer and instructor"
+            ;;
+        "!tau")
+            reply "its a twitch api thing by FiniteSingularity https://github.com/Team-TAU/tau"
+            ;;
+        "!team")
+            ;&
+        "!claw")
+            reply "https://www.twitch.tv/team/theclaw"
             ;;
         "!engine")
             ;&
@@ -137,6 +145,9 @@ parsecmd() {
             ;;
         "!blue")
             reply "it is my favorite color"
+            ;;
+        "!termsand")
+            reply "it's a program i wrote called termsand: https://github.com/cgsdev0/termsand"
             ;;
         "!stack")
             reply "we are building bash stack, a web framework in bash: http://bashsta.cc"
