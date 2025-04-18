@@ -87,7 +87,7 @@ authenticate() {
 
 set -o pipefail;
 while true; do
-  {authenticate; reqreader </tmp/tau_tunnel2; } \
+  { reqreader </tmp/tau_tunnel2; } \
       | websocat -E 'wss://tau.cgs.dev/ws/twitch-events/' --ping-interval 10 --ping-timeout 15 \
       > /tmp/tau_tunnel2;
   FAILED=$?

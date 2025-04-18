@@ -127,13 +127,6 @@ parsecmd() {
         "!claw")
             reply "https://www.twitch.tv/team/theclaw"
             ;;
-        "!engine")
-            ;&
-        "!geng")
-            ;&
-        "!evenio")
-            reply "we are using kuviman's engine https://github.com/geng-engine/geng with evenio https://docs.rs/evenio/latest/evenio/index.html"
-            ;;
         "!plant")
             reply "plant. https://badcop.itch.io/plant"
             ;;
@@ -269,10 +262,10 @@ parsecmd() {
             fi
             ;;
         "!jam")
-            reply "we are doing the F.U.N. jam https://itch.io/jam/fdotudotndot-jam"
+            reply "we are doing the F.U.N. jam https://itch.io/jam/fdotfdotudotndot-jam-2"
             ;;
         "!theme")
-            reply "the theme is \"Don't Go Outside\""
+            reply "the theme is \"Take The Ride\""
             ;;
         "!twitter")
             reply "https://twitter.com/badcop_"

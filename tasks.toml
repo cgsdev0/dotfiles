@@ -1,7 +1,7 @@
 [[task]]
   id = "stream"
   type = "long"
-  dependencies = ["chat", "tau", "bus"]
+  dependencies = ["chat", "tau"]
 
 [[task]]
   id = "tau"
@@ -14,9 +14,3 @@
   type = "long"
   cmd = "twitch-chat badcop_"
   watch = ["bin/twitch-cmds/twitch-chat", "bin/twitch-cmds/fish-cmds", "bin/twitch-cmds/jam-cmds", "bin/twitch-cmds/ld-cmds"]
-
-[[task]]
-  id = "bus"
-  type = "long"
-  cmd = "tau-message-broker"
-  watch = ["bin/twitch-cmds/tau-message-broker"]

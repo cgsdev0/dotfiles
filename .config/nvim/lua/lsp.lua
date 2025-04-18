@@ -83,9 +83,18 @@ require("lspconfig")["clangd"].setup({
   capabilities = capabilities,
 })
 
-require("lspconfig").jdtls.setup({
+require("lspconfig")["jdtls"].setup({
   on_attach = on_attach,
   capabilities = capabilities,
+  settings = {
+    java = {
+      project = {
+        referencedLibraries = {
+          "/home/sarah/mc/CommandAPI-9.7.0-Mojang-Mapped.jar",
+        },
+      },
+    },
+  },
 })
 
 -- local lspconfig = require("lspconfig")
