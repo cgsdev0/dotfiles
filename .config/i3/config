@@ -13,12 +13,10 @@ set $inactivetextcolor  #676E7D
 set $urgentbgcolor      #E53935
 set $active             #aaaaaa
 
-include /etc/sway/config-vars.d/*
-
-
 # Default Programs
-set $term /usr/local/bin/alacritty
+set $term i3-sensible-terminal
 set $webbrowse google-chrome
+set $TERMINAL urxvt
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -34,7 +32,7 @@ bindsym $mod+Ctrl+Return exec --no-startup-id $term -e mac-connect
 bindsym $mod+Shift+q kill
 
 # start dmenu (a program launcher)
-bindsym $mod+d exec wofi --show run
+bindsym $mod+d exec rofi -show run -config ~/.config/i3/rofi.conf
 
 # There also is the (new) i3-dmenu-desktop which only displays applications
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
@@ -132,7 +130,7 @@ bindsym $mod+Shift+0 move container to workspace $ws10
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
-bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -161,16 +159,11 @@ mode "resize" {
 bindsym $mod+r mode "resize"
 
 # Load colors from Xresources (pywal)
-# set_from_resource $inactivecolor i3wm.color2 #f0f0f0
-# set_from_resource $bgcolor i3wm.color0 #f0f0f0
-# set_from_resource $textcolor i3wm.color7 #f0f0f0
-# set_from_resource $activecolor i3wm.color5 #f0f0f0
-# set_from_resource $urgentcolor i3wm.color4 #f0f0f0
-set $inactivecolor #f0f0f0
-set $bgcolor  #f0f0f0
-set $textcolor  #f0f0f0
-set $activecolor  #f0f0f0
-set $urgentcolor  #f0f0f0
+set_from_resource $inactivecolor i3wm.color2 #f0f0f0
+set_from_resource $bgcolor i3wm.color0 #f0f0f0
+set_from_resource $textcolor i3wm.color7 #f0f0f0
+set_from_resource $activecolor i3wm.color5 #f0f0f0
+set_from_resource $urgentcolor i3wm.color4 #f0f0f0
 
 # Window Settings       border          background      text            indicator       child-border
 client.focused          $active         $bgcolor        $textcolor      $active         $active
@@ -178,24 +171,89 @@ client.unfocused        $inactivecolor  $bgcolor        $textcolor      $inactiv
 client.focused_inactive $inactivecolor  $bgcolor        $textcolor      $inactivecolor  $inactivecolor
 client.urgent           $urgentcolor    $bgcolor        $textcolor      $urgentcolor    $urgentcolor
 
+# Start polybar
+exec_always --no-startup-id ~/.config/polybar/launch.sh
+
+exec_always --no-startup-id /usr/lib/x86_64-linux-gnu/libexec/kdeconnectd
+
+# Start scratch terminal
+exec --no-startup-id st -c scratchterm
+exec --no-startup-id gnome-calculator
+bindsym $mod+c [class="^Gnome-calculator$"] scratchpad show
+bindsym $mod+x [class="^scratchterm$"] scratchpad show
+bindsym $mod+Shift+x [class="^scratchterm$"] move scratchpad
+# Start i3bar to display a workspace bar (plus the system information i3status
+# finds out, if available)
+# bar {
+#      position top
+#      status_command i3blocks -c ~/.config/i3/i3blocks.conf
+#      tray_output primary
+
+#      colors {
+#         background $bgcolor
+# #       Class               Border               Background Text
+#         inactive_workspace  $inactive-bgcolor   $bgcolor  $textcolor
+#      }
+# }
+#
 
 # My Settings
 
-for_window [app_id="^.*"] border pixel 1
-for_window [app_id="Google-chrome"] border none
+for_window [class="^.*"] border pixel 1
+for_window [class="Google-chrome"] border none
 for_window [title="[.]*Emulator[.]*"] floating enable
-for_window [app_id="Peek"] floating enable
-for_window [app_id="Pavucontrol"] floating enable
-for_window [app_id="^scratchterm$"] floating enable
-for_window [app_id="^scratchterm$"] move scratchpad
-for_window [app_id="^Gnome-calculator$"] floating enable
-for_window [app_id="^Gnome-calculator$"] move scratchpad
-# hide_edge_borders both
+for_window [class="Peek"] floating enable
+for_window [class="Pavucontrol"] floating enable
+for_window [class="^scratchterm$"] floating enable
+for_window [class="^scratchterm$"] move scratchpad
+for_window [class="^Gnome-calculator$"] floating enable
+for_window [class="^Gnome-calculator$"] move scratchpad
+hide_edge_borders both
 gaps outer 15
 gaps inner 10
 # gaps right 440
 
-include /etc/sway/config.d/*
+# Keyboard configuration
+exec_always --no-startup-id autorandr --change; wal -Rts && feh --bg-scale ~/.config/wall.png
+exec_always --no-startup-id setxkbmap -option caps:escape
+exec_always --no-startup-id xset r rate 250 45
+exec_always --no-startup-id xinput --set-prop "Logitech USB Receiver Mouse" "Coordinate Transformation Matrix" 0.7 0 0 0 0.7 0 0 0 1
 
-exec waybar
-exec wayvnc 0.0.0.0
+# Transparency shortcuts
+bindsym $mod+Shift+plus exec --no-startup-id ~/bin/terminal_transparency up
+bindsym $mod+Shift+minus exec --no-startup-id ~/bin/terminal_transparency down
+
+# Start picom
+exec_always --no-startup-id picom --experimental-backends -c --config ~/.config/compton.conf -b &> /dev/null
+
+# Start dunst
+exec_always --no-startup-id killall dunst; dunst -lb "$bgcolor" -nb "$bgcolor" -cb "$bgcolor" -lf "$textcolor" -nf "$textcolor" -cf "$urgentcolor"
+
+# Bind printscreen
+bindsym Print exec --no-startup-id flameshot gui
+bindsym Shift+Print exec --no-startup-id peek
+bindsym Ctrl+Print exec --no-startup-id ~/bin/screenshot-mac
+
+# Mod+Tab = toggle workspace
+bindsym $mod+Tab workspace back_and_forth
+
+# Mod+Shift+C = toggle picom
+bindsym $mod+Shift+c exec --no-startup-id killall picom || picom --experimental-backends -c --config ~/.config/compton.conf -b &> /dev/null
+
+# Pulse Audio controls
+bindsym XF86AudioRaiseVolume exec --no-startup-id volume up #increase sound volume
+bindsym XF86AudioLowerVolume exec --no-startup-id volume down #decrease sound volume
+bindsym XF86AudioMute exec --no-startup-id volume mute # mute sound
+bindsym XF86AudioNext exec --no-startup-id baton next
+bindsym XF86AudioPrev exec --no-startup-id baton prev
+bindsym XF86AudioPlay exec --no-startup-id baton pause
+bindsym XF86Search exec --no-startup-id baton save
+
+# Sreen brightness controls
+bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 20 # increase screen brightness
+bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 20 # decrease screen brightness
+
+# Lock screen
+bindsym $mod+Delete exec --no-startup-id ~/.i3/lock -b=0x5
+bindsym XF86Sleep exec --no-startup-id ~/.i3/lock -b=0x5 && systemctl suspend
+bindsym $mod+Shift+Delete exec --no-startup-id ~/.i3/lock -b=0x5 && systemctl suspend
