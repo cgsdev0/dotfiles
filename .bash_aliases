@@ -54,7 +54,7 @@ alias sc4="wal --theme base16-gruvbox-medium -l && theme"
 
 # Configurations
 alias vimrc="vim ~/.config/nvim/init.vim"
-alias i3rc="vim ~/.config/i3/config && swaymsg reload"
+alias i3rc="vim ~/.config/i3/config && i3-msg reload"
 alias rangerrc="vim ~/.config/ranger/rc.conf"
 alias grc="git config --edit --global"
 alias ba="vim ~/.bash_aliases && . ~/.bash_aliases"
