@@ -1,0 +1,23 @@
+output DP-1
+off
+output DP-3
+off
+output HDMI-1
+off
+output USB-C-0
+off
+output HDMI-0
+off
+output DP-0
+crtc 2
+mode 3440x1440
+pos 0x0
+rate 59.97
+rotate left
+x-prop-non_desktop 0
+output DP-2
+crtc 0
+mode 1920x1080
+pos 1440x0
+rate 60.00
+x-prop-non_desktop 0
