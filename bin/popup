@@ -16,7 +16,13 @@ function decolor() {
   fi
 }
 
-# handle effects
+# poor man's getopts
+if [[ "$1" == "-c" ]]; then
+  shift
+  CLIENT="$1"
+  shift
+fi
+
 if [[ "$1" == "-e" ]]; then
   shift
   EFFECT="$1"
@@ -32,37 +38,40 @@ if [[ "$1" == "-e" ]]; then
       export EFFECT="| glitchcat --duration infinite --glitchness 30 --amount 30"
       ;;
     *)
-      export EFFECT="| python3 -m terminaltexteffects $EFFECT"
+      export EFFECT="| python3 -m terminaltexteffects --ignore-terminal-dimensions $EFFECT | head -c -1"
       ;;
   esac
 fi
 if [[ ! -p /dev/stdin ]]; then
-  flock $LOCK /bin/sh -c "tmux display-popup $*"
+  for CLIENT in $(tmux -L outer list-clients -F '#{client_name}'); do
+    flock ${LOCK}${CLIENT//\//.} /bin/sh -c "tmux -L outer display-popup -c $CLIENT $*" &
+  done
+  wait
 else
   TMP="$(mktemp)"
   trap "rm $TMP" EXIT
   HEIGHT=1
   WIDTH=10
   decolor > "$TMP"
-  while IFS= read -r line; do
-    if [[ ${#line} -gt $WIDTH ]]; then
-      WIDTH=${#line}
-    fi
-    ((HEIGHT++))
-  done < <(decolor force < "$TMP")
-  ((HEIGHT+=2))
-  ((WIDTH+=2))
+  # while IFS= read -r line; do
+  #   if [[ ${#line} -gt $WIDTH ]]; then
+  #     WIDTH=${#line}
+  #   fi
+  #   ((HEIGHT++))
+  # done < <(decolor force < "$TMP")
+  # ((HEIGHT+=2))
+  # ((WIDTH+=2))
 
-  MAX=$(tmux display -p '#{window_width}x#{window_height}')
-  MAX_H=${MAX#*x}
-  ((MAX_H+=1))
-  MAX_W=${MAX%x*}
-  if [[ $HEIGHT -gt $MAX_H ]]; then
-    HEIGHT=$MAX_H
-  fi
-  if [[ $WIDTH -gt $MAX_W ]]; then
-    WIDTH=$MAX_W
-  fi
-  EFFECT="${EFFECT:-; tput civis}"
-  flock $LOCK /bin/sh -c "cd $PWD; tmux display-popup -w $WIDTH -h $HEIGHT $* 'cd $PWD; cat \"$TMP\" $EFFECT'"
+  # MAX=$(tmux -L outer display -c $CLIENT -p '#{window_width}x#{window_height}')
+  # MAX_H=${MAX#*x}
+  # ((MAX_H+=1))
+  # MAX_W=${MAX%x*}
+  # if [[ $HEIGHT -gt $MAX_H ]]; then
+  #   HEIGHT=$MAX_H
+  # fi
+  # if [[ $WIDTH -gt $MAX_W ]]; then
+  #   WIDTH=$MAX_W
+  # fi
+  # EFFECT="${EFFECT:-; tput civis}"
+  flock $LOCK${CLIENT//\//.} /bin/sh -c "cd $PWD; tmux -L outer display-popup -c $CLIENT  $* 'tput cvvis; cd $PWD; cat \"$TMP\" $EFFECT'"
 fi

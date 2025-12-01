@@ -21,6 +21,10 @@ if [ -d "/snap/bin" ] ; then
     PATH="/snap/bin:$PATH"
 fi
 
+if [ -d "/usr/games" ] ; then
+    PATH="/usr/games:$PATH"
+fi
+
 # set PATH so it includes sbin if it exists
 if [ -d "/usr/local/sbin" ] ; then
     PATH="/usr/local/sbin:$PATH"

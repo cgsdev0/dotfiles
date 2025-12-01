@@ -17,6 +17,11 @@ export HISTSIZE=1000000000
 export SAVEHIST=$HISTSIZE
 setopt EXTENDED_HISTORY
 
+# yikes
+if [[ "$TMUX" =~ "/tmp/tmux-1000/outer"* ]]; then
+  unset TMUX
+fi
+
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME

@@ -39,7 +39,6 @@ return {
       local function read_file(path)
         local file = io.open(path, "rb") -- r read mode and b binary mode
         if not file then
-          print("file not found fml")
           return nil
         end
         local content = file:read("*all") -- *a or *all reads the whole file

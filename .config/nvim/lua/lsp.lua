@@ -49,11 +49,11 @@ local capabilities = require("cmp_nvim_lsp").default_capabilities()
 -- local vue_language_server_path = mason_registry.get_package("vue-language-server"):get_install_path()
 --   .. "/node_modules/@vue/language-server"
 
--- require("lspconfig")["tsserver"].setup({
+-- vim.lsp.config("tsserver", {
 --   on_attach = on_attach,
 --   capabilities = capabilities,
 -- })
-require("lspconfig")["tsserver"].setup({
+vim.lsp.config("tsserver", {
   filetypes = {
     "javascript",
     "typescript",
@@ -63,27 +63,27 @@ require("lspconfig")["tsserver"].setup({
   capabilities = capabilities,
 })
 
-require("lspconfig")["gopls"].setup({
+vim.lsp.config("gopls", {
   on_attach = on_attach,
   capabilities = capabilities,
 })
 
-require("lspconfig")["rust_analyzer"].setup({
+vim.lsp.config("rust_analyzer", {
   on_attach = on_attach,
   capabilities = capabilities,
 })
 
-require("lspconfig")["cssls"].setup({
+vim.lsp.config("cssls", {
   on_attach = on_attach,
   capabilities = capabilities,
 })
 
-require("lspconfig")["clangd"].setup({
+vim.lsp.config("clangd", {
   on_attach = on_attach,
   capabilities = capabilities,
 })
 
-require("lspconfig")["jdtls"].setup({
+vim.lsp.config("jdtls", {
   on_attach = on_attach,
   capabilities = capabilities,
   settings = {
@@ -116,7 +116,7 @@ require("lspconfig")["jdtls"].setup({
 --   on_attach = on_attach,
 -- })
 
-require("lspconfig")["lua_ls"].setup({
+vim.lsp.config("lua_ls", {
   on_attach = on_attach,
   capabilities = capabilities,
   settings = {
