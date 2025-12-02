@@ -219,7 +219,7 @@ client.urgent           $urgentcolor    $bgcolor        $textcolor      $urgentc
 
 # My Settings
 
-for_window [app_id="flameshot"] border pixel 0, floating enable, fullscreen disable, move absolute position 0 0
+for_window [app_id="flameshot"] border pixel 0, floating enable, fullscreen disable, move absolute position 190px 0
 for_window [class="^.*"] border pixel 1
 for_window [class="Google-chrome"] border none
 for_window [title="[.]*Emulator[.]*"] floating enable
@@ -248,7 +248,9 @@ bindsym $mod+Shift+minus exec --no-startup-id ~/bin/terminal_transparency down
 exec_always --no-startup-id killall dunst; dunst -lb "$bgcolor" -nb "$bgcolor" -cb "$bgcolor" -lf "$textcolor" -nf "$textcolor" -cf "$urgentcolor"
 
 # Bind printscreen
-bindsym Print exec --no-startup-id flameshot gui
+bindsym $mod+Shift+S exec --no-startup-id grim -g "$(slurp)" - | wl-copy
+bindsym $mod+Shift+W exec --no-startup-id grim -g "$(~/bin/sway-get-window-rect)" - | wl-copy
+bindsym Print exec --no-startup-id ~/bin/flameshot-wrapper
 bindsym Shift+Print exec --no-startup-id peek
 bindsym Ctrl+Print exec --no-startup-id ~/bin/screenshot-mac
 

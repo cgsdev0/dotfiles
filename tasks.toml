@@ -2,6 +2,7 @@
   id = "stream"
   type = "long"
   dependencies = ["chat", "tau"]
+  hidden = true
 
 [[task]]
   id = "tau"

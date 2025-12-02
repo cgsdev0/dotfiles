@@ -4,15 +4,11 @@ cd "${0%/*}"
 
 CHAN="badcop_"
 
-rm -f /tmp/tau_tunnel2;
-mkfifo /tmp/tau_tunnel2;
-
-reqreader() {
+function reqreader() {
   while IFS= read -r line; do
       event_type="$(echo "$line" | jq -r '."event_type"')";
       event_key=$(echo "$line" | jq -r '."event"');
       if [[ "$event_key" != "keep_alive" ]]; then
-        echo "Incoming $event_type event..."
         case $event_type in
             "channel-channel_points_custom_reward_redemption-add")
 
@@ -29,7 +25,7 @@ reqreader() {
                         ;;
                     "Random Effect")
                         effect=$(shuf -n1 ~/.random-effects)
-                        echo "chose effect: $effect"
+                        echo "chosen effect: '$effect'"
                         experiment "$effect"
                         ;;
                     "CHOO CHOO")
@@ -75,13 +71,9 @@ reqreader() {
                 send-twitch-msg "@$who just raided with $viewers viewers! :O"
                 # flash-lights
                 ;;
-              *)
-                echo "unhandled";
-                ;;
         esac
       fi
-  done;
-  exit 0;
+  done
 }
 
 authenticate() {
@@ -90,7 +82,7 @@ authenticate() {
 
 set -o pipefail;
 while true; do
-      websocat -E 'wss://tau.cgs.dev/ws/twitch-events/' --ping-interval 10 --ping-timeout 15 | reqreader;
+      sleep infinity | websocat -E 'wss://tau.cgs.dev/ws/twitch-events/' --ping-interval 10 --ping-timeout 15 | reqreader
   FAILED=$?
   echo "$FAILED"
   if [[ "$FAILED" -ge 130 ]]; then
