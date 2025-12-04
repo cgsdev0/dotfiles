@@ -1,0 +1,283 @@
+# Please see http://i3wm.org/docs/userguide.html for a complete reference!
+
+include ~/.config/sway/outputs
+
+exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
+
+set $mod Mod4
+
+# Default Font
+font pango:Hack Nerd Font 12
+
+# Colour Setting
+set $bgcolor            #292e42
+set $inactivebgcolor    #000000
+set $textcolor          #f3f4f5
+set $inactivetextcolor  #676E7D
+set $inactivecolor      #444450
+set $urgentcolor        #E53935
+set $active             #aaaaaa
+
+bar {
+    font pango:Hack Nerd Font Mono 12
+    status_command i3status
+    position top
+    output DP-2
+    tray_output none
+    status_edge_padding 16
+}
+
+# Default Programs
+set $term ghostty
+set $webbrowse google-chrome
+
+seat * hide_cursor when-typing enable
+
+# Use Mouse+$mod to drag floating windows to their wanted position
+floating_modifier $mod
+
+mouse_warping none
+
+# start a terminal
+bindsym $mod+Return exec --no-startup-id $term
+bindsym $mod+Shift+Return exec --no-startup-id $term -e devbox-connect
+bindsym $mod+Ctrl+Return exec --no-startup-id $term -e mac-connect
+
+# kill focused window
+bindsym $mod+Shift+q kill
+
+# start dmenu (a program launcher)
+bindsym $mod+d exec rofi -show run -config ~/.config/sway/rofi.conf
+
+# There also is the (new) sway-dmenu-desktop which only displays applications
+# shipping a .desktop file. It is a wrapper around dmenu, so you need that
+# installed.
+# bindsym $mod+d exec --no-startup-id sway-dmenu-desktop
+
+# change focus
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+
+# alternatively, you can use the cursor keys:
+bindsym $mod+Left  focus left
+bindsym $mod+Down  focus down
+bindsym $mod+Up    focus up
+bindsym $mod+Right focus right
+
+# move focused window
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+# alternatively, you can use the cursor keys:
+bindsym $mod+Shift+Left  move left
+bindsym $mod+Shift+Down  move down
+bindsym $mod+Shift+Up    move up
+bindsym $mod+Shift+Right move right
+
+# split in horizontal orientation
+bindsym $mod+t split h
+
+# split in vertical orientation
+bindsym $mod+v split v
+
+# enter fullscreen mode for the focused container
+bindsym $mod+f fullscreen toggle
+
+# change container layout (stacked, tabbed, toggle split)
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# toggle tiling / floating
+bindsym $mod+Shift+space floating toggle
+
+# change focus between tiling / floating windows
+bindsym $mod+space focus mode_toggle
+
+# focus the parent container
+bindsym $mod+a focus parent
+
+# focus the child container
+#bindsym $mod+d focus child
+
+# Workspace Name Settings
+set $ws1 "1"
+set $ws2 "2"
+set $ws3 "3"
+set $ws4 "4"
+set $ws5 "5"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws10 "10"
+
+# switch to workspace
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+8 workspace $ws8
+bindsym $mod+9 workspace $ws9
+bindsym $mod+0 workspace $ws10
+
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3
+bindsym $mod+Shift+4 move container to workspace $ws4
+bindsym $mod+Shift+5 move container to workspace $ws5
+bindsym $mod+Shift+6 move container to workspace $ws6
+bindsym $mod+Shift+7 move container to workspace $ws7
+bindsym $mod+Shift+8 move container to workspace $ws8
+bindsym $mod+Shift+9 move container to workspace $ws9
+bindsym $mod+Shift+0 move container to workspace $ws10
+
+workspace $ws1 output DP-2
+workspace $ws2 output DP-2
+workspace $ws3 output DP-2
+workspace $ws4 output DP-2
+workspace $ws5 output DP-2
+workspace $ws6 output DP-2
+workspace $ws7 output DP-2
+workspace $ws8 output DP-2
+workspace $ws9 output DP-2
+workspace $ws0 output DP-2
+workspace left output DP-0
+
+# reload the configuration file
+# bindsym $mod+Shift+c reload
+# restart sway inplace (preserves your layout/session, can be used to upgrade sway)
+bindsym $mod+Shift+r reload
+# exit sway (logs you out of your X session)
+bindsym $mod+Shift+e exec "swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your X session.' -b 'Yes, exit sway' 'swaymsg exit'"
+
+# resize window (you can also use the mouse for that)
+mode "resize" {
+        # These bindings trigger as soon as you enter the resize mode
+
+        # Pressing left will shrink the window’s width.
+        # Pressing right will grow the window’s width.
+        # Pressing up will shrink the window’s height.
+        # Pressing down will grow the window’s height.
+        bindsym h resize shrink width 5 px
+        bindsym j resize grow height 5 px
+        bindsym k resize shrink height 5 px
+        bindsym l resize grow width 5 px
+
+        # same bindings, but for the arrow keys
+        bindsym Left resize shrink width 10 px or 10 ppt
+        bindsym Down resize grow height 10 px or 10 ppt
+        bindsym Up resize shrink height 10 px or 10 ppt
+        bindsym Right resize grow width 10 px or 10 ppt
+
+        # back to normal: Enter or Escape
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+bindsym $mod+r mode "resize"
+
+# Load colors from Xresources (pywal)
+# set_from_resource $inactivecolor swaywm.color2 #f0f0f0
+# set_from_resource $bgcolor swaywm.color0 #f0f0f0
+# set_from_resource $textcolor swaywm.color7 #f0f0f0
+# set_from_resource $activecolor swaywm.color5 #f0f0f0
+# set_from_resource $urgentcolor swaywm.color4 #f0f0f0
+
+# Window Settings       border          background      text            indicator       child-border
+client.focused          $active         $bgcolor        $textcolor      $active         $active
+client.unfocused        $inactivecolor  $inactivebgcolor        $inactivetextcolor      $inactivecolor  $inactivecolor
+client.focused_inactive $inactivecolor  $bgcolor        $textcolor      $inactivecolor  $inactivecolor
+client.urgent           $urgentcolor    $bgcolor        $textcolor      $urgentcolor    $urgentcolor
+
+# Start polybar
+# exec_always --no-startup-id ~/.config/polybar/launch.sh
+
+# exec_always --no-startup-id /usr/lib/x86_64-linux-gnu/libexec/kdeconnectd
+
+# Start scratch terminal
+# Start swaybar to display a workspace bar (plus the system information swaystatus
+# finds out, if available)
+# bar {
+#      position top
+#      status_command swayblocks -c ~/.config/sway/swayblocks.conf
+#      tray_output primary
+
+#      colors {
+#         background $bgcolor
+# #       Class               Border               Background Text
+#         inactive_workspace  $inactive-bgcolor   $bgcolor  $textcolor
+#      }
+# }
+#
+
+# My Settings
+
+for_window [app_id="flameshot"] border pixel 0, floating enable, fullscreen disable, move absolute position 190px 0
+for_window [class="^.*"] border pixel 1
+for_window [class="Google-chrome"] border none
+for_window [title="[.]*Emulator[.]*"] floating enable
+for_window [class="Peek"] floating enable
+for_window [class="Pavucontrol"] floating enable
+for_window [class="Godot" instance="Godot_ProjectList"] floating enable
+for_window [class="^scratchterm$"] floating enable
+for_window [class="^scratchterm$"] move scratchpad
+for_window [class="^Gnome-calculator$"] floating enable
+for_window [class="^Gnome-calculator$"] move scratchpad
+gaps inner 8
+gaps outer 8
+gaps top -4
+
+# Keyboard configuration
+exec_always --no-startup-id autorandr --change; wal -Rts && feh --bg-scale ~/.config/wall.png
+exec_always --no-startup-id setxkbmap -option caps:escape
+exec_always --no-startup-id xset r rate 250 45
+exec_always --no-startup-id xinput --set-prop "Logitech USB Receiver Mouse" "Coordinate Transformation Matrix" 0.7 0 0 0 0.7 0 0 0 1
+
+# Transparency shortcuts
+bindsym $mod+Shift+plus exec --no-startup-id ~/bin/terminal_transparency up
+bindsym $mod+Shift+minus exec --no-startup-id ~/bin/terminal_transparency down
+
+# Start dunst
+exec_always --no-startup-id killall dunst; dunst -lb "$bgcolor" -nb "$bgcolor" -cb "$bgcolor" -lf "$textcolor" -nf "$textcolor" -cf "$urgentcolor"
+
+# Bind printscreen
+bindsym $mod+Shift+S exec --no-startup-id grim -g "$(slurp)" - | wl-copy
+bindsym $mod+Shift+W exec --no-startup-id grim -g "$(~/bin/sway-get-window-rect)" - | wl-copy
+bindsym Print exec --no-startup-id ~/bin/flameshot-wrapper
+bindsym Shift+Print exec --no-startup-id peek
+bindsym Ctrl+Print exec --no-startup-id ~/bin/screenshot-mac
+
+# Mod+Tab = toggle workspace
+bindsym $mod+Tab workspace back_and_forth
+
+# Pulse Audio controls
+bindsym XF86AudioRaiseVolume exec --no-startup-id volume up #increase sound volume
+bindsym XF86AudioLowerVolume exec --no-startup-id volume down #decrease sound volume
+bindsym XF86AudioMute exec --no-startup-id volume mute # mute sound
+bindsym XF86AudioNext exec --no-startup-id baton next
+bindsym XF86AudioPrev exec --no-startup-id baton prev
+bindsym XF86AudioPlay exec --no-startup-id baton pause
+bindsym XF86Search exec --no-startup-id baton save
+
+# Sreen brightness controls
+bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 20 # increase screen brightness
+bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 20 # decrease screen brightness
+
+# Lock screen
+bindsym $mod+Delete exec --no-startup-id ~/.sway/lock -b=0x5
+bindsym XF86Sleep exec --no-startup-id ~/.sway/lock -b=0x5 && systemctl suspend
+bindsym $mod+Shift+Delete exec --no-startup-id ~/.sway/lock -b=0x5 && systemctl suspend
+
+exec --no-startup-id swayidle -w timeout 300 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"'
+
+exec systemctl --user import-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP SWAYSOCK I3SOCK XCURSOR_SIZE XCURSOR_THEME
+exec dbus-update-activation-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP SWAYSOCK I3SOCK XCURSOR_SIZE XCURSOR_THEME
