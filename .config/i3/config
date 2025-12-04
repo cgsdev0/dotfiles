@@ -31,6 +31,8 @@ bar {
 set $term ghostty
 set $webbrowse google-chrome
 
+seat * hide_cursor when-typing enable
+
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
@@ -274,6 +276,8 @@ bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 20 # decrease
 bindsym $mod+Delete exec --no-startup-id ~/.sway/lock -b=0x5
 bindsym XF86Sleep exec --no-startup-id ~/.sway/lock -b=0x5 && systemctl suspend
 bindsym $mod+Shift+Delete exec --no-startup-id ~/.sway/lock -b=0x5 && systemctl suspend
+
+exec --no-startup-id swayidle -w timeout 300 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"'
 
 exec systemctl --user import-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP SWAYSOCK I3SOCK XCURSOR_SIZE XCURSOR_THEME
 exec dbus-update-activation-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP SWAYSOCK I3SOCK XCURSOR_SIZE XCURSOR_THEME

@@ -180,6 +180,9 @@ parsecmd() {
         "!man")
             reply "refer to the manual: https://www.youtube.com/watch?v=7taNCDMpPvc"
             ;;
+        "!vods")
+            reply "https://youtube.com/@badcopVODs"
+            ;;
         "!yt")
             ;&
         "!youtube")
