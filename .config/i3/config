@@ -1,37 +1,22 @@
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
-include ~/.config/sway/outputs
-
-exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
-
 set $mod Mod4
 
 # Default Font
-font pango:Hack Nerd Font 12
+font pango:Ubuntu 10
 
 # Colour Setting
-set $bgcolor            #292e42
-set $inactivebgcolor    #000000
+set $bgcolor            #2f343f
+set $inactivebgcolor    #2f343f
 set $textcolor          #f3f4f5
 set $inactivetextcolor  #676E7D
-set $inactivecolor      #444450
-set $urgentcolor        #E53935
+set $urgentbgcolor      #E53935
 set $active             #aaaaaa
 
-bar {
-    font pango:Hack Nerd Font Mono 12
-    status_command i3status
-    position top
-    output DP-2
-    tray_output none
-    status_edge_padding 16
-}
-
 # Default Programs
-set $term ghostty
+set $term i3-sensible-terminal
 set $webbrowse google-chrome
-
-seat * hide_cursor when-typing enable
+set $TERMINAL urxvt
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -47,12 +32,12 @@ bindsym $mod+Ctrl+Return exec --no-startup-id $term -e mac-connect
 bindsym $mod+Shift+q kill
 
 # start dmenu (a program launcher)
-bindsym $mod+d exec rofi -show run -config ~/.config/sway/rofi.conf
+bindsym $mod+d exec rofi -show run -config ~/.config/i3/rofi.conf
 
-# There also is the (new) sway-dmenu-desktop which only displays applications
+# There also is the (new) i3-dmenu-desktop which only displays applications
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
 # installed.
-# bindsym $mod+d exec --no-startup-id sway-dmenu-desktop
+# bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
 
 # change focus
 bindsym $mod+h focus left
@@ -140,24 +125,12 @@ bindsym $mod+Shift+8 move container to workspace $ws8
 bindsym $mod+Shift+9 move container to workspace $ws9
 bindsym $mod+Shift+0 move container to workspace $ws10
 
-workspace $ws1 output DP-2
-workspace $ws2 output DP-2
-workspace $ws3 output DP-2
-workspace $ws4 output DP-2
-workspace $ws5 output DP-2
-workspace $ws6 output DP-2
-workspace $ws7 output DP-2
-workspace $ws8 output DP-2
-workspace $ws9 output DP-2
-workspace $ws0 output DP-2
-workspace left output DP-0
-
 # reload the configuration file
 # bindsym $mod+Shift+c reload
-# restart sway inplace (preserves your layout/session, can be used to upgrade sway)
-bindsym $mod+Shift+r reload
-# exit sway (logs you out of your X session)
-bindsym $mod+Shift+e exec "swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your X session.' -b 'Yes, exit sway' 'swaymsg exit'"
+# restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
+bindsym $mod+Shift+r restart
+# exit i3 (logs you out of your X session)
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -186,15 +159,15 @@ mode "resize" {
 bindsym $mod+r mode "resize"
 
 # Load colors from Xresources (pywal)
-# set_from_resource $inactivecolor swaywm.color2 #f0f0f0
-# set_from_resource $bgcolor swaywm.color0 #f0f0f0
-# set_from_resource $textcolor swaywm.color7 #f0f0f0
-# set_from_resource $activecolor swaywm.color5 #f0f0f0
-# set_from_resource $urgentcolor swaywm.color4 #f0f0f0
+set_from_resource $inactivecolor i3wm.color2 #f0f0f0
+set_from_resource $bgcolor i3wm.color0 #f0f0f0
+set_from_resource $textcolor i3wm.color7 #f0f0f0
+set_from_resource $activecolor i3wm.color5 #f0f0f0
+set_from_resource $urgentcolor i3wm.color4 #f0f0f0
 
 # Window Settings       border          background      text            indicator       child-border
 client.focused          $active         $bgcolor        $textcolor      $active         $active
-client.unfocused        $inactivecolor  $inactivebgcolor        $inactivetextcolor      $inactivecolor  $inactivecolor
+client.unfocused        $inactivecolor  $bgcolor        $textcolor      $inactivecolor  $inactivecolor
 client.focused_inactive $inactivecolor  $bgcolor        $textcolor      $inactivecolor  $inactivecolor
 client.urgent           $urgentcolor    $bgcolor        $textcolor      $urgentcolor    $urgentcolor
 
@@ -204,11 +177,16 @@ client.urgent           $urgentcolor    $bgcolor        $textcolor      $urgentc
 # exec_always --no-startup-id /usr/lib/x86_64-linux-gnu/libexec/kdeconnectd
 
 # Start scratch terminal
-# Start swaybar to display a workspace bar (plus the system information swaystatus
+# exec --no-startup-id st -c scratchterm
+# exec --no-startup-id gnome-calculator
+# bindsym $mod+c [class="^Gnome-calculator$"] scratchpad show
+# bindsym $mod+x [class="^scratchterm$"] scratchpad show
+# bindsym $mod+Shift+x [class="^scratchterm$"] move scratchpad
+# Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 # bar {
 #      position top
-#      status_command swayblocks -c ~/.config/sway/swayblocks.conf
+#      status_command i3blocks -c ~/.config/i3/i3blocks.conf
 #      tray_output primary
 
 #      colors {
@@ -221,20 +199,19 @@ client.urgent           $urgentcolor    $bgcolor        $textcolor      $urgentc
 
 # My Settings
 
-for_window [app_id="flameshot"] border pixel 0, floating enable, fullscreen disable, move absolute position 190px 0
 for_window [class="^.*"] border pixel 1
 for_window [class="Google-chrome"] border none
 for_window [title="[.]*Emulator[.]*"] floating enable
 for_window [class="Peek"] floating enable
 for_window [class="Pavucontrol"] floating enable
-for_window [class="Godot" instance="Godot_ProjectList"] floating enable
 for_window [class="^scratchterm$"] floating enable
 for_window [class="^scratchterm$"] move scratchpad
 for_window [class="^Gnome-calculator$"] floating enable
 for_window [class="^Gnome-calculator$"] move scratchpad
-gaps inner 8
-gaps outer 8
-gaps top -4
+hide_edge_borders both
+gaps outer 15
+gaps inner 10
+# gaps right 440
 
 # Keyboard configuration
 exec_always --no-startup-id autorandr --change; wal -Rts && feh --bg-scale ~/.config/wall.png
@@ -246,18 +223,22 @@ exec_always --no-startup-id xinput --set-prop "Logitech USB Receiver Mouse" "Coo
 bindsym $mod+Shift+plus exec --no-startup-id ~/bin/terminal_transparency up
 bindsym $mod+Shift+minus exec --no-startup-id ~/bin/terminal_transparency down
 
+# Start picom
+exec_always --no-startup-id picom --experimental-backends -c --config ~/.config/compton.conf -b &> /dev/null
+
 # Start dunst
-exec_always --no-startup-id killall dunst; dunst -lb "$bgcolor" -nb "$bgcolor" -cb "$bgcolor" -lf "$textcolor" -nf "$textcolor" -cf "$urgentcolor"
+# exec_always --no-startup-id killall dunst; dunst -lb "$bgcolor" -nb "$bgcolor" -cb "$bgcolor" -lf "$textcolor" -nf "$textcolor" -cf "$urgentcolor"
 
 # Bind printscreen
-bindsym $mod+Shift+S exec --no-startup-id grim -g "$(slurp)" - | wl-copy
-bindsym $mod+Shift+W exec --no-startup-id grim -g "$(~/bin/sway-get-window-rect)" - | wl-copy
-bindsym Print exec --no-startup-id ~/bin/flameshot-wrapper
+bindsym Print exec --no-startup-id flameshot gui
 bindsym Shift+Print exec --no-startup-id peek
 bindsym Ctrl+Print exec --no-startup-id ~/bin/screenshot-mac
 
 # Mod+Tab = toggle workspace
 bindsym $mod+Tab workspace back_and_forth
+
+# Mod+Shift+C = toggle picom
+bindsym $mod+Shift+c exec --no-startup-id killall picom || picom --experimental-backends -c --config ~/.config/compton.conf -b &> /dev/null
 
 # Pulse Audio controls
 bindsym XF86AudioRaiseVolume exec --no-startup-id volume up #increase sound volume
@@ -273,11 +254,6 @@ bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 20 # increase s
 bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 20 # decrease screen brightness
 
 # Lock screen
-bindsym $mod+Delete exec --no-startup-id ~/.sway/lock -b=0x5
-bindsym XF86Sleep exec --no-startup-id ~/.sway/lock -b=0x5 && systemctl suspend
-bindsym $mod+Shift+Delete exec --no-startup-id ~/.sway/lock -b=0x5 && systemctl suspend
-
-exec --no-startup-id swayidle -w timeout 300 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"'
-
-exec systemctl --user import-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP SWAYSOCK I3SOCK XCURSOR_SIZE XCURSOR_THEME
-exec dbus-update-activation-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP SWAYSOCK I3SOCK XCURSOR_SIZE XCURSOR_THEME
+bindsym $mod+Delete exec --no-startup-id ~/.i3/lock -b=0x5
+bindsym XF86Sleep exec --no-startup-id ~/.i3/lock -b=0x5 && systemctl suspend
+bindsym $mod+Shift+Delete exec --no-startup-id ~/.i3/lock -b=0x5 && systemctl suspend
