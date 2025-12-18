@@ -1,6 +1,0 @@
-#!/bin/bash
-
-    curl -Ss -X GET \
-        'https://api.twitch.tv/helix/subscriptions?broadcaster_id=56931496' \
-        -H 'Authorization: Bearer '$(cat ~/.twitch_access_token) \
-        -H 'Client-Id: '$(. ~/.twitch_secrets; echo $TWITCH_CLIENT_ID)

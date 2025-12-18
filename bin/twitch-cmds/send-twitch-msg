@@ -1,3 +1,0 @@
-#!/bin/bash
-
-{ echo "SYSTEM_EV $@" | head -c 509; echo; } >> /tmp/twitch_tunnel

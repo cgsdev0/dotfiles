@@ -1,7 +1,0 @@
-#!/bin/bash
-if [ "$1" == "" ]
-then
-    jq .colors ~/.cache/wal/colors.json
-else
-    jq .colors.color$(echo $1) -r ~/.cache/wal/colors.json
-fi
