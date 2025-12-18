@@ -72,3 +72,5 @@ if [ "$NICKNAME" = "devbox" ] ; then
 fi
 
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+
+. "$HOME/.local/bin/env"

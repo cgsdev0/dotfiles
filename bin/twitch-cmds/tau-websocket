@@ -77,7 +77,7 @@ function reqreader() {
 }
 
 authenticate() {
-    echo '{"token":"'$(cat ~/.tau_token)'"}'
+    echo '{"token":"'$(cat ~/.secrets/tau_token)'"}'
 }
 
 set -o pipefail;

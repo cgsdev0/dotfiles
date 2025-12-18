@@ -147,21 +147,12 @@ eval "$(direnv hook zsh)"
 # make pasting fast
 zstyle ':bracketed-paste-magic' active-widgets '.self-*'
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="$HOME/.sdkman"
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
-
 if [ -e /home/sarah/.nix-profile/etc/profile.d/nix.sh ]; then . /home/sarah/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
 
 # emacs is a way of life, so it's best to always be inside emacs
 # (also unrelated, this makes pure prompt not fuck with the title)
 # export INSIDE_EMACS=true
 printf '\033]2;%s\033\\' "$(hostname)"
-
-if [[ -d "$HOME/.fly" ]]; then
-  export FLYCTL_INSTALL="$HOME/.fly"
-  export PATH="$FLYCTL_INSTALL/bin:$PATH"
-fi
 
 ssh() {
   if [[ ! -z "$TMUX" ]]; then
@@ -207,4 +198,17 @@ fi
 # source ~/.zsh/autocomplete/*
 
 # Generated for envman. Do not edit.
-[ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
+# [ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
+
+# export NVM_DIR="$HOME/.config/nvm"
+# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+. "$HOME/.local/bin/env"
+
+# fnm
+FNM_PATH="/home/badcop/.local/share/fnm"
+if [ -d "$FNM_PATH" ]; then
+  export PATH="$FNM_PATH:$PATH"
+  eval "`fnm env`"
+fi

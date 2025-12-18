@@ -6,3 +6,5 @@ if [ -f "$HOME/.cargo/env" ]; then
 fi
 
 if [ -e /home/sarah/.nix-profile/etc/profile.d/nix.sh ]; then . /home/sarah/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+
+. "$HOME/.local/bin/env"

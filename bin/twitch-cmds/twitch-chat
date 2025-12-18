@@ -11,9 +11,9 @@ LDJAM_ENABLED=true
 ITCHJAM_ENABLED=false
 
 if [[ ! -z "$BADCOP" ]]; then
-  source ~/.twitch_secrets;
+  source ~/.twitch_secrets badcop_;
 else
-  source ~/.twitch_secrets_bot;
+  source ~/.twitch_secrets_bot goodcop_;
 fi
 source ./fish-cmds;
 source ../utils/url-parsing;
@@ -264,12 +264,6 @@ parsecmd() {
               echo "$msg_loud" | cut -d' ' -f2- >> "$HOME/.today"
             fi
             ;;
-        "!jam")
-            reply "we are doing the F.U.N. jam https://itch.io/jam/fdotfdotudotndot-jam-2"
-            ;;
-        "!theme")
-            reply "the theme is \"Take The Ride\""
-            ;;
         "!twitter")
             reply "https://twitter.com/badcop_"
             ;;
@@ -316,15 +310,6 @@ parsecmd() {
         "!song")
             URL="$(baton share | grep "Share URL" | cut -d' ' -f3-)"
             reply "$(baton status | head -n2 | cut -d':' -f2- | paste -sd' ') $URL"
-            ;;
-        "!ld")
-            ;&
-        "!link")
-            ;&
-        "!play")
-            if [[ "$CHAN" == "badcop_" ]]; then
-                reply "Here is my LD jam entry: https://ldjam.com/events/ludum-dare/55/salmoning-1"
-            fi
             ;;
         "!dice")
             ;&
@@ -414,7 +399,7 @@ parsecmd() {
            ;;
        *"kuviman"*)
            if [[ "$headers" != *"reply-parent-user-login=kuviman;"* ]]; then
-             reply "rust is better"
+             reply "kast is better"
            fi
            ;;
        *"evanmmo"*)
@@ -719,9 +704,9 @@ reqreader() {
 set -o pipefail;
 while true; do
     if [[ ! -z "$BADCOP" ]]; then
-      source ~/.twitch_secrets;
+      source ~/.twitch_secrets badcop_;
     else
-      source ~/.twitch_secrets_bot;
+      source ~/.twitch_secrets goodcop_;
     fi
   (echo "CAP REQ :twitch.tv/membership twitch.tv/tags twitch.tv/commands\r\nPASS oauth:${TWITCH_ACCESS_TOKEN}\r\nNICK ${TWITCH_NICK}\r\nJOIN #${CHAN}\r"; \
       </tmp/twitch_tunnel | reqreader) \

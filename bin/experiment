@@ -1,6 +1,9 @@
 #!/bin/bash
 
-while read -r session client; do
+function doit() {
+  local session="$1"
+  local client="$2"
+  local flavor="$3"
   session=${session}:0.0
   DIMENSIONS="$(tmux -L outer display -t $session -p "#{pane_width}x#{pane_height}")"
   # POSITION="$(tmux -L outer display -c $client -p "#{pane_left}x#{pane_top}")"
@@ -9,9 +12,39 @@ while read -r session client; do
   # Y="${POSITION#*x}"
   # ((Y+=HEIGHT+1))
   # X="${POSITION%x*}"
-  STUFF="$(tmux -L outer capture-pane -t $session -p -e)"
+  STUFF="$(tmux -L outer capture-pane -t $session -p -e -C)"
   echo -e "$STUFF" \
-    | popup -c $client -e $1 -B -E -x 0 -y 0 -w $WIDTH -h $HEIGHT &
+    | popup -c $client -e "$flavor" -B -E -x 0 -y 0 -w $WIDTH -h $HEIGHT &
     # | popup -c $client -e $1 -E -B -y$Y -x$X -w $WIDTH -h $HEIGHT &
+}
+
+if [[ "$1" == "blender" ]]; then
+  export EFFECT="| termsand -c 2153999782 -b --bg=2151573719 --bg=3 --bg=2150449014 --bg=2164233836 --cycles 0 --ms 10 -e tilt-shift"
+  DIMENSIONS="$(tmux -L outer display -p "#{pane_width}x#{pane_height}")"
+  HEIGHT="${DIMENSIONS#*x}"
+  WIDTH="${DIMENSIONS%x*}"
+  STUFF="$(tmux -L outer capture-pane -p -e -C | tee ~/debug-guy)"
+  TMP="$(mktemp)"
+  trap "rm $TMP" EXIT
+  echo -e "$STUFF" > "$TMP"
+  tmux -L outer display-popup -B -E -E -x 0 -y 0 -w $WIDTH -h $HEIGHT "tput cvvis; cd $PWD; cat \"$TMP\" $EFFECT"
+  exit 0
+fi
+if [[ "$1" == "snow" ]]; then
+  export EFFECT="| termsand -c 2153144201 -b -d down snow"
+  DIMENSIONS="$(tmux -L outer display -p "#{pane_width}x#{pane_height}")"
+  HEIGHT="${DIMENSIONS#*x}"
+  WIDTH="${DIMENSIONS%x*}"
+  STUFF="$(tmux -L outer capture-pane -p -e -C | tee ~/debug-guy)"
+  TMP="$(mktemp)"
+  trap "rm $TMP" EXIT
+  echo -e "$STUFF" > "$TMP"
+  tmux -L outer display-popup -B -E -E -x 0 -y 0 -w $WIDTH -h $HEIGHT "tput cvvis; cd $PWD; cat \"$TMP\" $EFFECT"
+  exit 0
+fi
+
+flavor="$1"
+while read -r session client; do
+  doit "$session" "$client" "$flavor"
 done < <(tmux -L outer list-clients -F '#{session_name} #{client_name}')
-wait
+# wait

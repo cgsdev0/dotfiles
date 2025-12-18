@@ -29,16 +29,22 @@ if [[ "$1" == "-e" ]]; then
   shift
   case "$EFFECT" in
     lolsand)
+      export EXTRA_ARGS="-E"
       export EFFECT="| lolcat --force | termsand"
       ;;
     sand)
-      export EFFECT="| termsand -c 2153144201 -b"
+      export EXTRA_ARGS="-E"
+      export EFFECT="| termsand -c 2153999782 -b --bg=2151573719 --bg=3 --bg=2150449014 --bg=2164233836"
+      ;;
+    blender)
+      export EXTRA_ARGS="-E"
+      export EFFECT="| termsand -c 2153999782 -b --bg=2151573719 --bg=3 --bg=2150449014 --bg=2164233836 --cycles 0 --ms 6 -e blender"
       ;;
     glitch)
       export EFFECT="| glitchcat --duration infinite --glitchness 30 --amount 30"
       ;;
     *)
-      export EFFECT="| python3 -m terminaltexteffects --ignore-terminal-dimensions $EFFECT | head -c -1"
+      export EFFECT="| /home/badcop/.local/bin/tte --ignore-terminal-dimensions $EFFECT | head -c -1"
       ;;
   esac
 fi
@@ -73,5 +79,9 @@ else
   #   WIDTH=$MAX_W
   # fi
   # EFFECT="${EFFECT:-; tput civis}"
-  flock $LOCK${CLIENT//\//.} /bin/sh -c "cd $PWD; tmux -L outer display-popup -c $CLIENT  $* 'tput cvvis; cd $PWD; cat \"$TMP\" $EFFECT'"
+  if [[ -z "$CLIENT" ]]; then
+    env TMUX_PANE= TMUX= /bin/sh -c "cd $PWD; tmux -L outer display-popup $* $EXTRA_ARGS 'tput cvvis; cd $PWD; cat \"$TMP\" $EFFECT'"
+  else
+    flock $LOCK${CLIENT//\//.} /bin/sh -c "cd $PWD; tmux -L outer display-popup -c $CLIENT  $* $EXTRA_ARGS 'tput cvvis; cd $PWD; cat \"$TMP\" $EFFECT'"
+  fi
 fi

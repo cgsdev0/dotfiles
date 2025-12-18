@@ -36,24 +36,7 @@ end
 
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
--- local function organize_imports()
---   local params = {
---     command = "_typescript.organizeImports",
---     arguments = { vim.api.nvim_buf_get_name(0) },
---     title = "",
---   }
---   vim.lsp.buf.execute_command(params)
--- end
-
--- local mason_registry = require("mason-registry")
--- local vue_language_server_path = mason_registry.get_package("vue-language-server"):get_install_path()
---   .. "/node_modules/@vue/language-server"
-
--- vim.lsp.config("tsserver", {
---   on_attach = on_attach,
---   capabilities = capabilities,
--- })
-vim.lsp.config("tsserver", {
+vim.lsp.config("ts_ls", {
   filetypes = {
     "javascript",
     "typescript",

@@ -1,9 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -eu
 
-# Issue an access token for Twitch
-source $HOME/.twitch_secrets
+source $HOME/.twitch_secrets "$1"
 
 RESPONSE=$(curl -Ss -X POST "https://id.twitch.tv/oauth2/token" \
     -F "client_id=${TWITCH_CLIENT_ID}" \
@@ -15,8 +14,8 @@ TWITCH_REFRESH_TOKEN=$(echo "$RESPONSE" | jq -r '.refresh_token')
 TWITCH_ACCESS_TOKEN=$(echo "$RESPONSE" | jq -r '.access_token')
 
 if [[ "$TWITCH_ACCESS_TOKEN" != "null" ]]; then
-  echo "$TWITCH_ACCESS_TOKEN" > ~/.twitch_access_token
+  echo "$TWITCH_ACCESS_TOKEN" > ~/.secrets/twitch/$1/access
 fi
 if [[ "$TWITCH_REFRESH_TOKEN" != "null" ]]; then
-  echo "$TWITCH_REFRESH_TOKEN" > ~/.twitch_refresh
+  echo "$TWITCH_REFRESH_TOKEN" > ~/.secrets/twitch/$1/refresh
 fi
