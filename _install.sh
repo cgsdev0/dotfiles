@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 list_files() {
     cd "${0%/*}"
@@ -11,7 +11,9 @@ list_dirs() {
 }
 
 SCRIPT_DIR=$( cd ${0%/*} && pwd -P )
-list_dirs | xargs -I {} sudo mkdir -p $HOME/{}
-list_files | xargs -I {} sudo ln -sf $SCRIPT_DIR/{} $HOME/{}
+list_dirs | xargs -I {} sudo mkdir -p "$HOME"/{}
+list_files | xargs -I {} sudo ln -sf $SCRIPT_DIR/{} "$HOME"/{}
 
-sudo ln -sf $HOME/.profile $HOME/.zprofile
+sudo ln -sf "$HOME"/.profile "$HOME"/.zprofile
+
+find "$HOME"/bin -xtype l -print0 | xargs -0 rm --
