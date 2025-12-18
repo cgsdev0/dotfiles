@@ -1,0 +1,19 @@
+#!/bin/bash
+
+CHAN=$1
+shift
+
+MESSAGE="$*"
+
+source ~/.twitch_secrets goodcop_;
+
+auth() {
+    printf "%s\r\n" \
+        "CAP REQ :twitch.tv/membership twitch.tv/tags twitch.tv/commands" \
+        "PASS oauth:${TWITCH_ACCESS_TOKEN}" \
+        "NICK ${TWITCH_NICK}" \
+        "JOIN #${CHAN}" \
+        "PRIVMSG #${CHAN} :$MESSAGE"
+}
+
+auth | websocat -E wss://irc-ws.chat.twitch.tv

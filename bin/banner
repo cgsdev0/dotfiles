@@ -1,0 +1,48 @@
+#!/bin/bash
+
+width=$(tmux -L outer display -p '#{pane_width}')
+
+guts() {
+  TEXT="$1"
+  shift
+  tput civis
+  printf "\x1b]11;#222436"
+  sleep 0.2
+  printf "\x1b]11;#151630"
+  sleep 0.2
+  printf "\x1b]11;#111225"
+  sleep 0.2
+  printf "\x1b]11;#050612"
+  sleep 0.2
+  printf "\x1b]11;#000000"
+  /home/badcop/go/bin/gum style \
+    --width $width \
+    --align center \
+    --padding "1 0 0 0" \
+    "$(figlet -f standard "$TEXT" | head -c-1)" \
+    | /home/badcop/.local/bin/tte \
+      --no-eol \
+      --existing-color-handling=dynamic \
+      --terminal-background-color=#000000 \
+      --no-restore-cursor wipe \
+      "$@"
+  sleep 1
+  printf "\x1b]11;#050612"
+  sleep 0.2
+  printf "\x1b]11;#111225"
+  sleep 0.2
+  printf "\x1b]11;#151630"
+  sleep 0.2
+  printf "\x1b]11;#222436"
+  sleep 0.2
+  clear
+  printf "\x1b]11;#24283B"
+  sleep 0.2
+}
+
+if [[ -n "$BANNER_ACTUALLY_RENDER" ]]; then
+  guts "$@"
+else
+  tmux -L outer display-popup -E -B -w $width -h 6 \
+    env BANNER_ACTUALLY_RENDER=1 $0 "$@"
+fi
