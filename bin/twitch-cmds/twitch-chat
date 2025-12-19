@@ -7,15 +7,16 @@ cd "${0%/*}"
 
 CHAN=$1
 
-source ~/.twitch_secrets_bot goodcop_;
-source ../utils/url-parsing;
+source ~/.twitch_secrets_bot goodcop_
+source ../utils/url-parsing
 
 MYID=56931496
 LOG_FILE="$HOME/data/twitch-logs/$(date "+%Y-%m-%d_%H-%M-%S").log"
 touch "$LOG_FILE"
 
-rm -f /tmp/twitch_tunnel;
-mkfifo /tmp/twitch_tunnel;
+TUNNEL=/tmp/twitch_tunnel
+rm -f "$TUNNEL"
+mkfifo "$TUNNEL"
 
 
 # Example chat msg:
@@ -146,7 +147,7 @@ parse() {
         printf "time=%s;%s\n" $(date "+%Y-%m-%d_%H:%M:%S") "$line" >> "$LOG_FILE"
         read -r tagstr user cmd room msg <<< "$line"
         case $cmd in
-            PING) printf "%s\r\n" PONG :tmi.twitch.tv ;;
+            PING) printf "%s\r\n" "PONG :tmi.twitch.tv" ;;
             PRIVMSG)
                 unset tags
                 local -A tags
@@ -189,15 +190,14 @@ auth() {
 
 set -o pipefail
 while true; do
-  (auth; parse </tmp/twitch_tunnel) \
+  (auth; parse < "$TUNNEL") \
       | websocat \
         -E wss://irc-ws.chat.twitch.tv \
         --ping-timeout 15 \
         --ping-interval 10 \
-      >/tmp/twitch_tunnel;
-  FAILED=$?
-  if [[ "$FAILED" -ge 130 ]]; then
-    exit 0
-  fi
+      > "$TUNNEL"
+
+  [[ $? -ge 130 ]] && exit 0
+
   echo "$(date) IT CRASHED, RESTARTING"
 done
