@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env bash
 
 cd "${0%/*}"
 
@@ -6,8 +6,8 @@ CHAN="badcop_"
 
 function reqreader() {
   while IFS= read -r line; do
-      event_type="$(echo "$line" | jq -r '."event_type"')";
-      event_key=$(echo "$line" | jq -r '."event"');
+      event_type="$(echo "$line" | jq -r '."event_type"')"
+      event_key=$(echo "$line" | jq -r '."event"')
       if [[ "$event_key" != "keep_alive" ]]; then
         case $event_type in
             "channel-channel_points_custom_reward_redemption-add")
@@ -31,12 +31,6 @@ function reqreader() {
                     "CHOO CHOO")
                         # sfx train
                         </dev/null popup -B -h 100% -w 100% -E /usr/games/sl &
-                        ;;
-                    "Enable gravity")
-                        make-it-rain &
-                        ;;
-                    "Game of life")
-                        game-of-life &
                         ;;
                 esac
                 ;;
@@ -76,13 +70,14 @@ function reqreader() {
   done
 }
 
-authenticate() {
-    echo '{"token":"'$(cat ~/.secrets/tau_token)'"}'
-}
-
 set -o pipefail;
 while true; do
-      sleep infinity | websocat -E 'wss://tau.cgs.dev/ws/twitch-events/' --ping-interval 10 --ping-timeout 15 | reqreader
+      sleep infinity \
+          | websocat \
+            -E 'wss://tau.cgs.dev/ws/twitch-events/' \
+            --ping-interval 10 \
+            --ping-timeout 15 \
+          | reqreader
   FAILED=$?
   echo "$FAILED"
   if [[ "$FAILED" -ge 130 ]]; then

@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 
-TERMINAL_CONF="C:/Users/sarah/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json"
-
-remote_powershell() {
-  ssh badcop@192.168.50.4 "powershell.exe $@"
-}
+TERMINAL_CONF="$HOME/.config/ghostty/config"
 
 vim_cmd() {
   find /run/user/1000/ -iname 'nvim*' 2> /dev/null \
@@ -12,53 +8,23 @@ vim_cmd() {
 }
 
 replace_terminal_theme() {
-  remote_powershell "Set-Content -Path ${TERMINAL_CONF} -Value ( (Get-Content -Path ${TERMINAL_CONF} -Raw) -Replace '\\\"colorScheme\\\": \\\"$1\\\"','\\\"colorScheme\\\": \\\"$2\\\"')";
+  sed -i "s/$1/$2/" "$TERMINAL_CONF"
+  kill -SIGUSR2 $(pidof ghostty)
 }
 
 vim_theme() {
   vim_cmd "<Esc>:colorscheme $1<CR>"
 }
 
-save_theme() {
-  echo "$1" > ~/.theme
-}
-
-load_theme() {
-  THEME="$(cat ~/.theme)"
-}
-
-windows_theme() {
-  remote_powershell 'Set-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize -Name AppsUseLightTheme -Value '$1' -Type Dword -Force; Set-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize -Name SystemUsesLightTheme -Value '$1' -Type Dword -Force'
-}
-
-daydog() {
-  THEME=tokyonight-day
-  replace_terminal_theme Hotdog $THEME
-  replace_terminal_theme tokyonight-storm $THEME
-  windows_theme 1
-  vim_theme $THEME
-  save_theme $THEME
-}
-
 hotdog() {
-  replace_terminal_theme tokyonight-storm Hotdog
-  replace_terminal_theme tokyonight-day Hotdog
+  replace_terminal_theme "TokyoNight Storm" "Hot Dog Stand"
   vim_theme hotdog
-}
-
-nightdog() {
-  THEME=tokyonight-storm
-  replace_terminal_theme Hotdog $THEME
-  replace_terminal_theme tokyonight-day $THEME
-  windows_theme 0
-  vim_theme $THEME
-  save_theme $THEME
 }
 
 not_hotdog() {
   load_theme
-  replace_terminal_theme Hotdog $THEME
-  vim_theme $THEME
+  replace_terminal_theme "Hot Dog Stand" "TokyoNight Storm"
+  vim_theme tokyonight-storm
 }
 
 case "$1" in
@@ -70,16 +36,6 @@ case "$1" in
     ;;
   "not")
     not_hotdog &> /dev/null
-    ;;
-  "night")
-    ;&
-  "dark")
-    nightdog &> /dev/null
-    ;;
-  "light")
-    ;&
-  "day")
-    daydog &> /dev/null
     ;;
   *)
     hotdog &> /dev/null
