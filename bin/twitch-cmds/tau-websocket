@@ -62,7 +62,7 @@ function reqreader() {
             "channel-raid")
                 who=$(echo "$line" | jq -r '.event_data.from_broadcaster_user_name');
                 viewers=$(echo "$line" | jq -r '.event_data.viewers');
-                send-twitch-msg "@$who just raided with $viewers viewers! :O"
+                # send-twitch-msg "@$who just raided with $viewers viewers! :O"
                 # flash-lights
                 ;;
         esac

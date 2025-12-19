@@ -6,14 +6,9 @@ cd "${0%/*}"
 # twitch docs reference: https://dev.twitch.tv/docs/irc
 
 CHAN=$1
-LDJAM_INDEX=55
-LDJAM_ENABLED=false
-ITCHJAM_ENABLED=false
 
 source ~/.twitch_secrets_bot goodcop_;
 source ../utils/url-parsing;
-source ./ld-cmds;
-source ./jam-cmds;
 
 MYID=56931496
 LOG_FILE="$HOME/data/twitch-logs/$(date "+%Y-%m-%d_%H-%M-%S").log"
@@ -34,11 +29,13 @@ reply() {
     if [[ "$*" == "" ]]; then
       return
     fi
-    colorize "ff0000" 1>&2
-    echo -n "bot" 1>&2
-    printf '\033[0m' 1>&2
-    echo -n ": " 1>&2
-    echo "$@" 1>&2
+    {
+        colorize "ff0000"
+        echo -n "bot"
+        printf '\033[0m'
+        echo -n ": "
+        echo "$@"
+    } 1>&2
     printf "%s\r\n" "PRIVMSG #${CHAN} :$*"
 }
 
@@ -50,59 +47,22 @@ parsecmd() {
     user_id="${tags[user-id]}"
     mod="${tags[mod]}"
 
-    case $msg in
-        "!crab")
-            ;&
-        *"🦀"*)
-            reply "🦀🚫🦀🚫🦀🚫🦀🚫"
-            ;;
-        *"goodcop_"*)
-            if [[ "$headers" == *"reply-parent-user-login=goodcop_;"* ]]; then
-                reply "@$name don't reply to me LUL"
-            else
-                reply "@$name don't at me"
-            fi
-            ;;
-        "!ping")
-            reply "pong!"
-            ;;
-        "!boot")
-            reply "check out https://boot.gay/badcop i worked there it is a cool website"
-            ;;
-        "!job")
-            reply "i worked for https://boot.gay/badcop as an engineer and instructor"
-            ;;
-        "!tau")
-            reply "its a twitch api thing by FiniteSingularity https://github.com/Team-TAU/tau"
-            ;;
-        "!team")
-            ;&
-        "!claw")
-            reply "https://www.twitch.tv/team/theclaw"
-            ;;
-        "!plant")
-            reply "plant. https://badcop.itch.io/plant"
-            ;;
-        "!posix")
-            reply "https://twitter.com/badcop_/status/1692837652477718917"
-            ;;
-        "!aoc")
-            reply "check out my advent of code 2023 solutions! https://github.com/cgsdev0/aoc-2023"
-            ;;
-        "!blue")
-            reply "it is my favorite color"
-            ;;
-        "!termsand")
-            reply "it's a program i wrote called termsand: https://github.com/cgsdev0/termsand"
-            ;;
-        "!stack")
-            reply "bash stack is a web framework in bash: http://bashsta.cc"
-            ;;
-        "!emotes")
-            ;&
-        "!artist")
-            reply "https://x.com/RiriiMeow"
-            ;;
+    case "$msg" in
+        "!crab") ;&
+        *"🦀"*) reply "🦀🚫🦀🚫🦀🚫🦀🚫" ;;
+        "!ping") reply "pong!" ;;
+        "!boot") reply "check out https://boot.gay/badcop i worked there it is a cool website" ;;
+        "!tau") reply "its a twitch api thing by FiniteSingularity https://github.com/Team-TAU/tau" ;;
+        "!team") ;&
+        "!claw") reply "https://www.twitch.tv/team/theclaw" ;;
+        "!plant") reply "plant. https://badcop.itch.io/plant" ;;
+        "!posix") reply "https://twitter.com/badcop_/status/1692837652477718917" ;;
+        "!aoc") reply "advent of code: https://aoc.cgs.dev/" ;;
+        "!blue") reply "it is my favorite color" ;;
+        "!termsand") reply "https://github.com/cgsdev0/termsand" ;;
+        "!stack") reply "bash stack is a web framework in bash: http://bashsta.cc" ;;
+        "!emotes") ;&
+        "!artist") reply "https://x.com/RiriiMeow" ;;
         "!botsnack")
             count=$(cat ~/.twitch_snack_counter)
             count=$(( count + 1 ))
@@ -114,449 +74,70 @@ parsecmd() {
               reply "yum, thanks :)"
             fi
             ;;
-        "!rtfm")
-            ;&
-        "!man")
-            reply "refer to the manual: https://www.youtube.com/watch?v=7taNCDMpPvc"
-            ;;
-        "!vods")
-            reply "https://youtube.com/@badcopVODs"
-            ;;
-        "!yt")
-            ;&
-        "!youtube")
-            ;&
-        "!bashcop")
-            reply "https://youtube.com/@bashcop"
-            ;;
-        "!summoning")
-            ;&
-        "!salmoning")
-            reply "https://clips.twitch.tv/FriendlyGenerousWolfPastaThat-xTl0b_eJ1D94qriv"
-            ;;
-        "!winrar")
-            ;&
-        *"tmux"*)
-            winrar-tmux-popup | popup -h 12 -w 50 &
-            ;;
-        "!hi")
-            reply "/me waves"
-            ;;
-        # "!fish leaderboard")
-        #     reply "$(fish_leaderboard)"
-        #     ;;
-        "!discord")
-            reply "join our discord! https://discord.badcop.games/"
-            ;;
-        "!theme")
-            reply "tokyonight https://github.com/folke/tokyonight.nvim"
-            ;;
-        "!mouse")
-            reply "Logitech G305 >>>>>>>>"
-            ;;
-        "!keyboard")
-            # reply "massdrop alt high profile w/ novelkey olivia silk switches"
-            reply "NK65 olivia edition https://novelkeys.com/collections/keyboards/products/nk65-olivia-edition"
-            ;;
-        "!camera")
-            # reply "massdrop alt high profile w/ novelkey olivia silk switches"
-            reply "my main camera is a sony a6400 with a sigma 30mm lens"
-            ;;
-        "!font")
-            reply "I use the hack font: https://sourcefoundry.org/hack/"
-            ;;
-        "badcop3bonk")
-            reply "You bonk the fish for $RANDOM damage!"
-            ;;
-        "badcop3rage")
-            ;&
-        "!fist")
-            reply "You punch the fish for $RANDOM damage!"
-            ;;
-        "!fish "*)
-            ;&
-        "!fish")
-            reply "cop.fish"
-            # sync_fish &
-            ;;
-        # "!rod")
-        #     rod=$(get_rod)
-        #     rod_name=$(echo "$rod" | cut -d' ' -f1)
-        #     rod_uses=$(echo "$rod" | cut -d' ' -f2)
-        #     reply "@$name has a $rod_name rod ($rod_uses uses left)"
-        #     ;;
-        "!tomorrow")
-            reply "rust stream?"
-            ;;
-        "!help")
-            ;&
-        "!commands")
-            reply "!fish, !roll, !count, !play, !discord, !today, !jump"
-            ;;
-        # "!q "*)
-        #     printf "%s %s: " "$(date "+%Y-%m-%d %H:%M")" "$name" >> "$HOME/.queue"
-        #     echo "$msg_loud" | cut -d' ' -f2- >> "$HOME/.queue"
-        #     reply "@$name Message queued for later!"
-        #     ;;
+        "!rtfm") ;&
+        "!man") reply "refer to the manual: https://www.youtube.com/watch?v=7taNCDMpPvc" ;;
+        "!vods") reply "https://youtube.com/@badcopVODs" ;;
+        "!yt") ;&
+        "!youtube") ;&
+        "!bashcop") reply "https://youtube.com/@bashcop" ;;
+        "!summoning") ;&
+        "!salmoning") reply "https://clips.twitch.tv/FriendlyGenerousWolfPastaThat-xTl0b_eJ1D94qriv" ;;
+        "!winrar") ;&
+        *"tmux"*) winrar-tmux-popup | popup -h 12 -w 50 & ;;
+        "!hi") reply "/me waves" ;;
+        "!discord") reply "join our discord! https://discord.badcop.games/" ;;
+        "!theme") reply "tokyonight https://github.com/folke/tokyonight.nvim" ;;
+        "!mouse") reply "Logitech G305 >>>>>>>>" ;;
+        "!keyboard") reply "novelkeys NK65" ;;
+        "!dotfiles") reply "https://github.com/cgsdev0/dotfiles" ;;
+        "!camera") reply "my main camera is a sony a6400 with a sigma 30mm lens" ;;
+        "!font") reply "I use the hack font: https://sourcefoundry.org/hack/" ;;
+        "!pronouns") ;&
+        "!gender") reply "i prefer to go by she/her or they/them pronouns" ;;
+        "badcop3bonk") reply "You bonk the fish for $RANDOM damage!" ;;
+        "badcop3rage") ;&
+        "!fist") reply "You punch the fish for $RANDOM damage!" ;;
+        "!fish "*) ;&
+        "!fish") reply "cop.fish" ;;
+        "!jump") reply "/me jumps" ;;
+        "!consulting") reply "https://bash.consulting/" ;;
+        "!lurk"*) reply "sounds good, $name :)" ;;
+        "!twitter") reply "https://twitter.com/badcop_" ;;
+        "!tomorrow") reply "rust stream?" ;;
+        "!today") reply "$(tail -n1 $HOME/.today)" ;;
         "!settoday "*)
             if [[ "$mod" != "0" ]] || [[ "$name" == "badcop_" ]]; then
               echo "$msg_loud" | cut -d' ' -f2- >> "$HOME/.today"
             fi
             ;;
-        "!twitter")
-            reply "https://twitter.com/badcop_"
-            ;;
-        "!today")
-            reply "$(tail -n1 $HOME/.today)"
-            ;;
-        "!jump")
-            reply "/me jumps"
-            ;;
-        # "!fishdex all")
-        #     reply "$(fishdex_all)"
-        #     ;;
-        # "!fishdex")
-        #     reply "$(fishdex)"
-        #     ;;
-        # "!fishdex "*)
-        #     USER="$(basename "$(echo "$msg_loud" | cut -d' ' -f2)")"
-        #     reply "$(fishdex_check "$USER")"
-        #     ;;
-        "!count")
-            count=$(cat ~/.twitch_counter)
-            count=$(( count + 1 ))
-            echo "$count" > ~/.twitch_counter
-            reply "$count"
-            ;;
-        "!roll"*)
-            # !roll 20
-            val=$(echo -n "$msg" | cut -d' ' -f2)
-            re='^[0-9]+$'
-            if ! [[ $val =~ $re ]] ; then
-                reply "not a valid number!"
-            else
-                reply "$((1 + $RANDOM % $val))"
-            fi
-            ;;
-        # "!sync")
-        #     if [[ "$name" == "badcop_" ]]; then
-        #         cd ~/fishing-data
-        #         git add -A &> /dev/null
-        #         git commit -am "sync" &> /dev/null
-        #         git push &> /dev/null
-        #     fi
-        #     ;;
         "!song")
             URL="$(baton share | grep "Share URL" | cut -d' ' -f3-)"
             reply "$(baton status | head -n2 | cut -d':' -f2- | paste -sd' ') $URL"
             ;;
-        "!dice")
-            ;&
-        "!rollycubes")
-            if lsof -i:3000 &> /dev/null; then
-                reply "Join my game: https://rollycubes.live"
+        "!rollycubes") reply "https://rollycubes.com/" ;;
+        "!github") reply "https://github.com/cgsdev0" ;;
+        # memes
+        "!sha2") reply "It is balderdash by scam artists trying to bamboozle people into buying fintech snake oil" ;;
+        "!modules") reply "they are orthogonal to namespaces" ;;
+        "!bot") reply "i live here: https://github.com/cgsdev0/dotfiles/blob/main/bin/twitch-cmds/twitch-chat" ;;
+        "!bible") reply "https://github.com/dylanaraps/pure-bash-bible" ;;
+        "!itch") ;&
+        "!games") reply "https://badcop.itch.io/" ;;
+        *"haha"*) reply "lol" ;;
+        *"heh"*) reply "haha" ;;
+        # make the bot sassy
+        *"golang"*) reply "more like nolang" ;;
+        *"emacs"*) reply "vim is better" ;;
+        *"vim"*) reply "emacs is better" ;;
+        *"linux"*) reply "i use ubuntu btw" ;;
+        "!"[^!]*) reply "what" ;;
+        *"goodcop_"*)
+            if [[ "$reply_parent" == "goodcop_" ]]; then
+                reply "@$name don't reply to me LUL"
             else
-                reply "rollycubes is not running right now :("
+                reply "@$name don't at me"
             fi
             ;;
-        "!github")
-            reply "https://github.com/cgsdev0"
-            ;;
-        # memes
-        "!sha2")
-            reply "It is balderdash by scam artists trying to bamboozle people into buying fintech snake oil"
-            ;;
-        "!modules")
-            reply "they are orthogonal to namespaces"
-            ;;
-        "!pronouns")
-            ;&
-        "!gender")
-            reply "i prefer to go by she/her or they/them pronouns"
-            ;;
-        "!consulting")
-            reply "https://bash.consulting/"
-            ;;
-        "!lurk"*)
-            reply "sounds good, $name :)"
-            ;;
-        "!dotfiles")
-            reply "https://github.com/cgsdev0/dotfiles"
-            ;;
-        "!bot")
-            reply "i live here: https://github.com/cgsdev0/dotfiles/blob/main/bin/twitch-cmds/twitch-chat"
-            ;;
-        *"haha"*)
-            reply "lol"
-            ;;
-        "!bible")
-            reply "https://github.com/dylanaraps/pure-bash-bible"
-            ;;
-        "!itch")
-            ;&
-        "!games")
-            reply "https://badcop.itch.io/"
-            ;;
-        *"heh"*)
-            reply "haha"
-            ;;
-        # support ludum dare submission links
-        *"https://ldjam.com/events/ludum-dare/${LDJAM_INDEX}/"*)
-            # [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_submit_cmd)"
-            echo "@$name submissions are closed, sorry!"
-            ;;
-        "!submit"*)
-            [[ "$LDJAM_ENABLED" == "true" ]] && reply "Just paste the link in the chat :)"
-            [[ "$ITCHJAM_ENABLED" == "true" ]] && reply "$(itch_submit_cmd)"
-            ;;
-        "!endraffle")
-            [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_endraffle_cmd)"
-            [[ "$ITCHJAM_ENABLED" == "true" ]] && reply "$(itch_endraffle_cmd)"
-            ;;
-        "!raffle")
-            [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_raffle_cmd)"
-            [[ "$ITCHJAM_ENABLED" == "true" ]] && reply "$(itch_raffle_cmd)"
-            ;;
-        "!join")
-            [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_join_cmd)"
-            [[ "$ITCHJAM_ENABLED" == "true" ]] && reply "$(itch_join_cmd)"
-            ;;
-        "!game")
-            [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_game_cmd)"
-            [[ "$ITCHJAM_ENABLED" == "true" ]] && reply "$(itch_game_cmd)"
-            ;;
-        "!next")
-            [[ "$LDJAM_ENABLED" == "true" ]] && reply "$(ld_next_cmd)"
-            [[ "$ITCHJAM_ENABLED" == "true" ]] && reply "$(itch_next_cmd)"
-            ;;
-        # make the bot sassy
-       *"golang"*)
-           reply "more like nolang"
-           ;;
-       *"emacs"*)
-           reply "vim is better"
-           ;;
-       *"vim"*)
-           reply "emacs is better"
-           ;;
-       *"linux"*)
-           reply "i use ubuntu btw"
-           ;;
-        "!")
-           ;&
-        "!!")
-           ;&
-        "!!!")
-           ;&
-        "!!!!")
-           ;&
-        "!!!!!")
-           ;&
-        "!!!!!!")
-           ;&
-        "!!!!!!!")
-           ;&
-        "!!!!!!!!")
-           ;&
-        "!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;&
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-           ;;
-        "!"*)
-           reply "what"
-           ;;
     esac
 }
 
@@ -565,36 +146,34 @@ parse() {
         printf "time=%s;%s\n" $(date "+%Y-%m-%d_%H:%M:%S") "$line" >> "$LOG_FILE"
         read -r tagstr user cmd room msg <<< "$line"
         case $cmd in
-            PING)
-        echo "PONG :tmi.twitch.tv"
-        ;;
+            PING) printf "%s\r\n" PONG :tmi.twitch.tv ;;
             PRIVMSG)
-        unset tags
-        local -A tags
-        while read -r -d';' tag; do
-            IFS='=' read -r key val <<< "$tag"
-            tags["$key"]="$val"
-        done <<< "$tagstr"
-        redeemed="${tags[custom-reward-id]}"
-        msg=${msg:1}
-        color=${tags[color]:1}
-        if [[ "${#color}" != "6" ]]; then
-            colorhash=$(echo "$name" | md5sum)
-            color=${colorhash:3:9}
-        fi
-        colorize "$color" 1>&2
-        name=${tags[display-name]}
-        printf "%s" "$name" 1>&2
-        printf '\033[0m' 1>&2
-        if [[ "$msg" == $'\x01'"ACTION "* ]]; then
-            printf '\033[3m' 1>&2
-            echo " ${msg#* }" 1>&3
-        else
-            echo ": $msg" 1>&2
-        fi
-        printf '\033[0m' 1>&2
-        parsecmd
-        ;;
+                unset tags
+                local -A tags
+                while read -r -d';' tag; do
+                    IFS='=' read -r key val <<< "$tag"
+                    tags["$key"]="$val"
+                done <<< "$tagstr"
+                redeemed="${tags[custom-reward-id]}"
+                msg=${msg:1}
+                color=${tags[color]:1}
+                if [[ ${#color} != 6 ]]; then
+                    colorhash=$(echo "$name" | md5sum)
+                    color=${colorhash:3:9}
+                fi
+                colorize "$color" 1>&2
+                name=${tags[display-name]}
+                printf "%s" "$name" 1>&2
+                printf '\033[0m' 1>&2
+                if [[ "$msg" == $'\x01'"ACTION "* ]]; then
+                    printf '\033[3m' 1>&2
+                    echo " ${msg#* }" 1>&2
+                else
+                    echo ": $msg" 1>&2
+                fi
+                printf '\033[0m' 1>&2
+                parsecmd
+                ;;
         esac
     done
 }
@@ -608,7 +187,7 @@ auth() {
         "JOIN #${CHAN}"
 }
 
-set -o pipefail;
+set -o pipefail
 while true; do
   (auth; parse </tmp/twitch_tunnel) \
       | websocat \
