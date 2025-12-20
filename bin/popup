@@ -1,8 +1,19 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 LOCK=/tmp/tmux-popups-lock
 # glitchcat ~/.current_cow --duration infinite --glitchness 30 --amount 30
 
+
+# parse flags
+while true; do
+  case "$1" in
+    -c|--client) CLIENT=$2; shift 2 ;;
+    -w|--width)  WIDTH=$2;  shift 2 ;;
+    -h|--height) HEIGHT=$2; shift 2 ;;
+    -a|--all) all=1; shift ;;
+    *) break ;;
+  esac
+done
 
 function decolor() {
   if [[ "$1" == "force" ]]; then
@@ -16,72 +27,52 @@ function decolor() {
   fi
 }
 
-# poor man's getopts
-if [[ "$1" == "-c" ]]; then
-  shift
-  CLIENT="$1"
-  shift
+if [[ -z "$CLIENT" ]]; then
+  if [[ -z "$all" ]]; then
+    CLIENTS=$(tmux -L outer display -p '#{client_name}')
+  else
+    CLIENTS=$(tmux -L outer list-clients -F '#{client_name}')
+  fi
+else
+  CLIENTS="$CLIENT"
 fi
 
-if [[ "$1" == "-e" ]]; then
-  shift
-  EFFECT="$1"
-  shift
-  case "$EFFECT" in
-    lolsand)
-      export EXTRA_ARGS="-E"
-      export EFFECT="| lolcat --force | termsand"
-      ;;
-    sand)
-      export EXTRA_ARGS="-E"
-      export EFFECT="| termsand -c 2153999782 -b --bg=2151573719 --bg=3 --bg=2150449014 --bg=2164233836"
-      ;;
-    blender)
-      export EXTRA_ARGS="-E"
-      export EFFECT="| termsand -c 2153999782 -b --bg=2151573719 --bg=3 --bg=2150449014 --bg=2164233836 --cycles 0 --ms 6 -e blender"
-      ;;
-    glitch)
-      export EFFECT="| glitchcat --duration infinite --glitchness 30 --amount 30"
-      ;;
-    *)
-      export EFFECT="| /home/badcop/.local/bin/tte --ignore-terminal-dimensions $EFFECT | head -c -1"
-      ;;
-  esac
-fi
+# if we're not reading from stdin
 if [[ ! -p /dev/stdin ]]; then
-  for CLIENT in $(tmux -L outer list-clients -F '#{client_name}'); do
+  for CLIENT in $CLIENTS; do
     flock ${LOCK}${CLIENT//\//.} /bin/sh -c "tmux -L outer display-popup -c $CLIENT $*" &
   done
   wait
-else
-  TMP="$(mktemp)"
-  trap "rm $TMP" EXIT
-  HEIGHT=1
-  WIDTH=10
-  decolor > "$TMP"
-  # while IFS= read -r line; do
-  #   if [[ ${#line} -gt $WIDTH ]]; then
-  #     WIDTH=${#line}
-  #   fi
-  #   ((HEIGHT++))
-  # done < <(decolor force < "$TMP")
-  # ((HEIGHT+=2))
-  # ((WIDTH+=2))
-
-  # MAX=$(tmux -L outer display -c $CLIENT -p '#{window_width}x#{window_height}')
-  # MAX_H=${MAX#*x}
-  # ((MAX_H+=1))
-  # MAX_W=${MAX%x*}
-  # if [[ $HEIGHT -gt $MAX_H ]]; then
-  #   HEIGHT=$MAX_H
-  # fi
-  # if [[ $WIDTH -gt $MAX_W ]]; then
-  #   WIDTH=$MAX_W
-  # fi
-  # EFFECT="${EFFECT:-; tput civis}"
-  if [[ -z "$CLIENT" ]]; then
-    env TMUX_PANE= TMUX= /bin/sh -c "cd $PWD; tmux -L outer display-popup $* $EXTRA_ARGS 'tput cvvis; cd $PWD; cat \"$TMP\" $EFFECT'"
-  else
-    flock $LOCK${CLIENT//\//.} /bin/sh -c "cd $PWD; tmux -L outer display-popup -c $CLIENT  $* $EXTRA_ARGS 'tput cvvis; cd $PWD; cat \"$TMP\" $EFFECT'"
-  fi
+  exit 0
 fi
+
+TMP="$(mktemp)"
+trap "rm $TMP" EXIT
+height_computed=1
+width_computed=10
+decolor > "$TMP"
+while IFS= read -r line; do
+  if [[ ${#line} -gt $width_computed ]]; then
+    width_computed=${#line}
+  fi
+  ((height_computed++))
+done < <(decolor force < "$TMP")
+((height_computed+=2))
+((width_computed+=2))
+
+for CLIENT in $CLIENTS; do
+  max=$(tmux -L outer display -c $CLIENT -p '#{window_width} #{window_height}')
+  read max_w max_h <<< "$max"
+  ((max_h+=1))
+  if [[ $height_computed -gt $max_h ]]; then
+    height_computed=$max_h
+  fi
+  if [[ $width_computed -gt $max_w ]]; then
+    width_computed=$max_w
+  fi
+  WIDTH=${WIDTH:-$width_computed}
+  HEIGHT=${HEIGHT:-$height_computed}
+  EFFECT="${EFFECT:-; tput civis}"
+  flock $LOCK${CLIENT//\//.} /bin/sh -c "cd $PWD; tmux -L outer display-popup -c $CLIENT -w $WIDTH -h $HEIGHT $* 'tput cvvis; cd $PWD; cat \"$TMP\" $EFFECT'" &
+done
+wait

@@ -84,7 +84,7 @@ parsecmd() {
         "!summoning") ;&
         "!salmoning") reply "https://clips.twitch.tv/FriendlyGenerousWolfPastaThat-xTl0b_eJ1D94qriv" ;;
         "!winrar") ;&
-        *"tmux"*) winrar-tmux-popup | popup -h 12 -w 50 & ;;
+        *"tmux"*) popup-queue 'winrar-tmux-popup | popup -h 13 -w 50' & ;;
         "!hi") reply "/me waves" ;;
         "!discord") reply "join our discord! https://discord.badcop.games/" ;;
         "!theme") reply "tokyonight https://github.com/folke/tokyonight.nvim" ;;
@@ -146,8 +146,16 @@ parse() {
     while IFS= read -r line; do
         printf "time=%s;%s\n" $(date "+%Y-%m-%d_%H:%M:%S") "$line" >> "$LOG_FILE"
         read -r tagstr user cmd room msg <<< "$line"
+        if [[ "$tagstr" == "PING" ]]; then
+            # i hate that this is like this, but if you just pretend
+            # that it's not like this then it's not so bad
+            #
+            # it turns out that my way of parsing is not exactly correct
+            # but it's close enough for our needs so eff it
+            printf "PONG %s\r\n" "$user" | tee /dev/stderr
+            continue
+        fi
         case $cmd in
-            PING) printf "%s\r\n" "PONG :tmi.twitch.tv" ;;
             PRIVMSG)
                 unset tags
                 local -A tags

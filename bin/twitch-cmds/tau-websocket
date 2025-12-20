@@ -21,16 +21,16 @@ function reqreader() {
                         (sleep 30; hotdog not) &
                         ;;
                     "Sand")
-                        experiment sand
+                        popup-queue 'experiment sand' &
                         ;;
                     "Random Effect")
                         effect=$(shuf -n1 ~/.random-effects)
                         echo "chosen effect: '$effect'"
-                        experiment "$effect"
+                        popup-queue "experiment \"$effect\"" &
                         ;;
                     "CHOO CHOO")
                         # sfx train
-                        </dev/null popup -B -h 100% -w 100% -E /usr/games/sl &
+                        popup-queue '</dev/null popup -B -h 100% -w 100% -E /usr/games/sl' &
                         ;;
                 esac
                 ;;
