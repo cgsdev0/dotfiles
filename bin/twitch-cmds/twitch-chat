@@ -152,7 +152,7 @@ parse() {
             #
             # it turns out that my way of parsing is not exactly correct
             # but it's close enough for our needs so eff it
-            printf "PONG %s\r\n" "$user" | tee /dev/stderr
+            printf "PONG %s\r\n" "$user"
             continue
         fi
         case $cmd in

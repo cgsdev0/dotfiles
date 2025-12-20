@@ -250,11 +250,9 @@ bindsym $mod+Shift+minus exec --no-startup-id ~/bin/terminal_transparency down
 exec_always --no-startup-id killall dunst; dunst -lb "$bgcolor" -nb "$bgcolor" -cb "$bgcolor" -lf "$textcolor" -nf "$textcolor" -cf "$urgentcolor"
 
 # Bind printscreen
-bindsym $mod+Shift+S exec --no-startup-id grim -g "$(slurp)" - | wl-copy
-bindsym $mod+Shift+W exec --no-startup-id grim -g "$(~/bin/sway-get-window-rect)" - | wl-copy
-bindsym Print exec --no-startup-id ~/bin/flameshot-wrapper
+bindsym $mod+Shift+S exec ~/bin/grimw -g "$(slurp)"
+bindsym $mod+Shift+W exec ~/bin/grimw -g "$(~/bin/sway-get-window-rect)"
 bindsym Shift+Print exec --no-startup-id peek
-bindsym Ctrl+Print exec --no-startup-id ~/bin/screenshot-mac
 
 # Mod+Tab = toggle workspace
 bindsym $mod+Tab workspace back_and_forth

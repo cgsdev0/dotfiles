@@ -17,9 +17,16 @@ case "$1" in
     echo "please specify an effect" 1>&2
     exit 1
     ;;
+  debug)
+    export EFFECT="| termsand --list-colors; sleep infinity"
+    ;;
   snow)
     export EXTRA_ARGS="-E"
-    export EFFECT="| termsand -c 2153144201 -b -d down snow"
+    export EFFECT="| termsand -c 2153144201 -b -d down snow --cycles 0"
+    ;;
+  silly)
+    export EXTRA_ARGS="-E"
+    export EFFECT="| termsand -c 208 -b -d down snow --cycles 0 --ms 16 -e tilt-shift"
     ;;
   sand)
     export EXTRA_ARGS="-E"

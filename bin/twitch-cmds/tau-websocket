@@ -30,7 +30,7 @@ function reqreader() {
                         ;;
                     "CHOO CHOO")
                         # sfx train
-                        popup-queue '</dev/null popup -B -h 100% -w 100% -E /usr/games/sl' &
+                        popup-queue '</dev/null popup -a -B -h 100% -w 100% -E /usr/games/sl' &
                         ;;
                 esac
                 ;;
