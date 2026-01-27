@@ -52,6 +52,7 @@ parsecmd() {
         "!crab") ;&
         *"🦀"*) reply "🦀🚫🦀🚫🦀🚫🦀🚫" ;;
         "!ping") reply "pong!" ;;
+        "!irc") reply "irc.badcop.live:6667 (6697 for TLS)" ;;
         "!boot") reply "check out https://boot.gay/badcop i worked there it is a cool website" ;;
         "!tau") reply "its a twitch api thing by FiniteSingularity https://github.com/Team-TAU/tau" ;;
         "!team") ;&
@@ -129,7 +130,7 @@ parsecmd() {
         # make the bot sassy
         *"golang"*) reply "more like nolang" ;;
         *"emacs"*) reply "vim is better" ;;
-        *"vim"*) reply "emacs is better" ;;
+        # *"vim"*) reply "emacs is better" ;;
         *"linux"*) reply "i use ubuntu btw" ;;
         "!"[^!]*) reply "what" ;;
         *"goodcop_"*)

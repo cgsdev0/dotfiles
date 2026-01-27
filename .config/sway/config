@@ -247,7 +247,7 @@ bindsym $mod+Shift+plus exec --no-startup-id ~/bin/terminal_transparency up
 bindsym $mod+Shift+minus exec --no-startup-id ~/bin/terminal_transparency down
 
 # Start dunst
-exec_always --no-startup-id killall dunst; dunst -lb "$bgcolor" -nb "$bgcolor" -cb "$bgcolor" -lf "$textcolor" -nf "$textcolor" -cf "$urgentcolor"
+# exec_always --no-startup-id killall dunst; dunst -lb "$bgcolor" -nb "$bgcolor" -cb "$bgcolor" -lf "$textcolor" -nf "$textcolor" -cf "$urgentcolor"
 
 # Bind printscreen
 bindsym $mod+Shift+S exec ~/bin/grimw -g "$(slurp)"
@@ -275,7 +275,7 @@ bindsym $mod+Delete exec --no-startup-id ~/.sway/lock -b=0x5
 bindsym XF86Sleep exec --no-startup-id ~/.sway/lock -b=0x5 && systemctl suspend
 bindsym $mod+Shift+Delete exec --no-startup-id ~/.sway/lock -b=0x5 && systemctl suspend
 
-exec --no-startup-id swayidle -w timeout 300 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"'
+exec --no-startup-id swayidle -w timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"'
 
 exec systemctl --user import-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP SWAYSOCK I3SOCK XCURSOR_SIZE XCURSOR_THEME
 exec dbus-update-activation-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP SWAYSOCK I3SOCK XCURSOR_SIZE XCURSOR_THEME
