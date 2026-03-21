@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+flock /tmp/popup-queue /bin/sh -c "$*"

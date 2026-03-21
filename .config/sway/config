@@ -228,6 +228,8 @@ for_window [title="[.]*Emulator[.]*"] floating enable
 for_window [class="Peek"] floating enable
 for_window [class="Pavucontrol"] floating enable
 for_window [class="Godot" instance="Godot_ProjectList"] floating enable
+for_window [instance="^Godot_Engine$" class="^(?!Godot$).*"] floating enable
+for_window [app_id="mpv"] floating enable
 for_window [class="^scratchterm$"] floating enable
 for_window [class="^scratchterm$"] move scratchpad
 for_window [class="^Gnome-calculator$"] floating enable

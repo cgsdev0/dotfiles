@@ -30,11 +30,11 @@ case "$1" in
     ;;
   sand)
     export EXTRA_ARGS="-E"
-    export EFFECT="| termsand -c 2153999782 -b --bg=2151573719 --bg=3 --bg=2150449014 --bg=2164233836"
+    export EFFECT="| termsand -c 2153999782 -b --bg=2151573719 --bg=3 --bg=2150449014 --bg=2164233836 --ms 40"
     ;;
   tilt)
     export EXTRA_ARGS="-E"
-    export EFFECT="| termsand -c 2153999782 -b --bg=2151573719 --bg=3 --bg=2150449014 --bg=2164233836 --cycles 0 --ms 10 -e tilt-shift"
+    export EFFECT="| termsand -c 2153999782 -b --bg=2151573719 --bg=3 --bg=2150449014 --bg=2164233836 --cycles 0 --ms 20 -e tilt-shift"
     ;;
   blender)
     export EXTRA_ARGS="-E"
