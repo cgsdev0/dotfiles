@@ -67,6 +67,7 @@
   };
   nixpkgs.config.allowUnfree = true;
   programs.zsh.enable = true;
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.badcop = {
     shell = pkgs.zsh;
@@ -96,7 +97,7 @@
     crosspipe
     wofi
     i3status
-    # ahhhhh
+    direnv
     zoom-us
   ];
   services.gnome.gnome-keyring.enable = true;

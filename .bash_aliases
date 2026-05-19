@@ -67,10 +67,7 @@ alias start="jira-tools start"
 alias ticket="jira-tools create-ticket"
 # =============
 
-# Mac specials
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    alias vim="nvim"
-fi
+alias vim="nvim"
 
 # Twitch things
 alias tw_chat="clear; sleep 2; watch-and-reload twitch-chat badcop_"
@@ -78,13 +75,3 @@ alias tw_chanpoints="clear; watch-and-reload channel-points"
 alias tw_follower="clear; watch-and-reload latest-follower"
 alias chat="send-twitch-msg"
 alias ichat='clear; echo -n "chat > "; while read -r line; do send-twitch-msg "$line"; clear; echo -n "chat > "; done'
-
-unalias gb
-unalias gc
-unalias gd
-# boot dev
-alias bb="cd ~/bootdev/bin"
-alias gb="cd ~/bootdev/go-api-gate"
-alias gc="cd ~/bootdev/go-api-gate/courses"
-alias gd="cd ~/bootdev/go-api-gate/backend/internal/database/sql"
-alias qs='cd $(find-exercise)'
