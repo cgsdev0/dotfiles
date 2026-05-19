@@ -43,6 +43,10 @@
   # Configure keymap in X11
   # services.xserver.xkb.options = "caps:escape";
 
+  xdg.portal = {
+    enable = true;
+    wlr.enable = true;
+  };
   # Enable CUPS to print documents.
   # services.printing.enable = true;
 
@@ -100,6 +104,9 @@
     i3status
     direnv
     zoom-us
+    grim
+    slurp
+    peek
   ];
   services.gnome.gnome-keyring.enable = true;
   programs.sway = {
