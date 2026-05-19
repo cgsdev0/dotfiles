@@ -75,3 +75,4 @@ alias tw_chanpoints="clear; watch-and-reload channel-points"
 alias tw_follower="clear; watch-and-reload latest-follower"
 alias chat="send-twitch-msg"
 alias ichat='clear; echo -n "chat > "; while read -r line; do send-twitch-msg "$line"; clear; echo -n "chat > "; done'
+alias update="sudo nixos-rebuild switch --flake /home/badcop/dotfiles/_nixos#orange --show-trace"
