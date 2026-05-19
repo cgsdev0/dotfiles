@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Settings
 REPO=$(cd $(dirname $(readlink $0))/..; pwd -P)
