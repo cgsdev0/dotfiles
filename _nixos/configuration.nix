@@ -106,7 +106,7 @@
     zoom-us
     grim
     slurp
-    peek
+    wf-recorder
   ];
   services.gnome.gnome-keyring.enable = true;
   programs.sway = {
