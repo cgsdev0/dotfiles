@@ -50,7 +50,6 @@
 quit-after-last-window-closed = false
 font-family = Hack Nerd Font
 theme = TokyoNight Storm
-command = tmux -f ~/.tmux.outer.conf -L outer new-session -D
 font-size = 20
 confirm-close-surface = false
 app-notifications = false
