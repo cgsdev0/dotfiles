@@ -109,11 +109,8 @@
     wf-recorder
   ];
   services.gnome.gnome-keyring.enable = true;
+
   programs.sway = {
-    package = pkgs.sway.overrideAttrs (_: {
-      version = "1.12-rc";
-      sway = pkgs.callPackage ./sway-unwrapped/package.nix {};
-    });
     enable = true;
     wrapperFeatures.gtk = true;
   };
