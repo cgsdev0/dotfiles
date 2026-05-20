@@ -107,8 +107,17 @@
     grim
     slurp
     wf-recorder
+    unzip
+    zulip
+    gcc
+    gnumake
   ];
   services.gnome.gnome-keyring.enable = true;
+
+  programs.git = {
+    enable = true;
+    lfs.enable = true;
+  };
 
   programs.sway = {
     enable = true;

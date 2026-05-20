@@ -19,11 +19,12 @@ set $urgentcolor        #E53935
 set $active             #aaaaaa
 
 bar {
+    gaps 4
     font pango:Hack Nerd Font Mono 12
     position top
     status_command i3status -c ~/.config/sway/i3status
     tray_output none
-    status_edge_padding 16
+    status_edge_padding 2
 }
 
 # Default Programs
@@ -231,8 +232,8 @@ for_window [class="^scratchterm$"] floating enable
 for_window [class="^scratchterm$"] move scratchpad
 for_window [class="^Gnome-calculator$"] floating enable
 for_window [class="^Gnome-calculator$"] move scratchpad
-gaps inner 8
-gaps outer 8
+gaps inner 4
+gaps outer 0
 gaps top -4
 
 # Keyboard configuration
@@ -268,8 +269,8 @@ bindsym XF86MonBrightnessUp exec brightnessctl set +10%
 bindsym XF86MonBrightnessDown exec brightnessctl set 10%-
 
 # Volume
-bindsym XF86AudioRaiseVolume exec 'pactl set-sink-volume @DEFAULT_SINK@ +1%'
-bindsym XF86AudioLowerVolume exec 'pactl set-sink-volume @DEFAULT_SINK@ -1%'
+bindsym XF86AudioRaiseVolume exec 'pactl set-sink-volume @DEFAULT_SINK@ +5%'
+bindsym XF86AudioLowerVolume exec 'pactl set-sink-volume @DEFAULT_SINK@ -5%'
 bindsym XF86AudioMute exec 'pactl set-sink-mute @DEFAULT_SINK@ toggle'
 
 exec --no-startup-id swayidle -w timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"'

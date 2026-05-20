@@ -12,7 +12,7 @@
   };
 
   programs.home-manager.enable = true;
-  home.packages = [ pkgs.htop pkgs.git pkgs.fzf ];
+  home.packages = [ pkgs.htop pkgs.fzf ];
 
   home.stateVersion = "25.11"; # Match your NixOS version
 }
