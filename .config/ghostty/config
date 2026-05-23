@@ -50,6 +50,6 @@
 quit-after-last-window-closed = false
 font-family = Hack Nerd Font
 theme = TokyoNight Storm
-font-size = 12
+font-size = 14
 confirm-close-surface = false
 app-notifications = false

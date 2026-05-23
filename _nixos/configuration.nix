@@ -92,6 +92,8 @@
     neovim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     wget
     wl-clipboard
+    ripgrep
+    fd
     mako
     tmux
     discord-ptb
@@ -111,6 +113,10 @@
     zulip
     gcc
     gnumake
+    nodejs
+    godot
+    wayland-scanner
+    s3cmd
   ];
   services.gnome.gnome-keyring.enable = true;
 

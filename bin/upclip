@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -o pipefail
+
+types=$(wl-paste --list-types)
+if [[ "$types" == "image/png" ]]; then
+  dest=cdn.badcop.live/$(date +"%Y/%m/%d/%M_%S.png")
+  wl-paste \
+    | s3cmd put - "s3://$dest" \
+    --mime-type image/png \
+    --add-header "Content-Disposition: inline" &> /dev/null
+
+  if [[ $? -eq 0 ]]; then
+    echo "Uploaded!"
+    echo "https://$dest"
+  else
+    echo "failed :("
+    exit 1
+  fi
+
+  s3cmd setacl "s3://$dest" --acl-public &> /dev/null
+fi
