@@ -12,6 +12,7 @@
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
+  services.blueman.enable = true;
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -46,7 +47,15 @@
   xdg.portal = {
     enable = true;
     wlr.enable = true;
+    wlr.settings = {
+      screencast = {
+        chooser_type = "dmenu";
+        chooser_cmd = "${pkgs.wofi}/bin/wofi --show=dmenu";
+      };
+    };
   };
+
+
   # Enable CUPS to print documents.
   # services.printing.enable = true;
 
@@ -69,6 +78,11 @@
       "alsa.use-ucm" = false;
     };
   };
+  # services.pipewire.wireplumber.extraConfig."bluetooth" = {
+  #   "monitor.bluez.properties" = {
+  #     "bluez5.codecs" = [ "aptx" ];  # or "aptx_hd" if your headphones support it
+  #   };
+  # };
   nixpkgs.config.allowUnfree = true;
   programs.zsh.enable = true;
   users.defaultUserShell = pkgs.zsh;
@@ -97,12 +111,16 @@
     mako
     tmux
     discord-ptb
+    spotify
     google-chrome
     ghostty
+    bluetuith
     pavucontrol
     pwvucontrol
     crosspipe
+    flitter
     wofi
+    inotify-tools
     i3status
     direnv
     zoom-us
@@ -113,12 +131,22 @@
     zulip
     gcc
     gnumake
+    ffmpeg
+    fuzzel
     nodejs
+    bc
+    xxd
+    file
+    websocat
+    prismlauncher
+    jq
     godot
+    blender
     wayland-scanner
     s3cmd
   ];
   services.gnome.gnome-keyring.enable = true;
+  # programs.noisetorch.enable = true;
 
   programs.git = {
     enable = true;

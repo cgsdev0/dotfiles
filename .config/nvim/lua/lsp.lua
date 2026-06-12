@@ -62,6 +62,9 @@ vim.lsp.config("cssls", {
 })
 
 vim.lsp.config("clangd", {
+  filetypes = {
+    "cpp",
+  },
   on_attach = on_attach,
   capabilities = capabilities,
 })

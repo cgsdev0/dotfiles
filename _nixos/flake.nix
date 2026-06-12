@@ -7,9 +7,13 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    xdpw-src = {
+      url = "github:emersion/xdg-desktop-portal-wlr";
+      flake = false;
+    };
   };
 
-  outputs = { self, nixpkgs, nixos-hardware, home-manager, nixpkgs-wayland }: {
+  outputs = { self, nixpkgs, nixos-hardware, home-manager, nixpkgs-wayland, xdpw-src }: {
     config = {
       nix.settings = {
         # add binary caches
@@ -27,7 +31,15 @@
       system = "x86_64-linux";
       modules = [
         nixos-hardware.nixosModules.framework-amd-ai-300-series
-        { nixpkgs.overlays = [ nixpkgs-wayland.overlay ]; }
+        { nixpkgs.overlays = [ nixpkgs-wayland.overlay
+
+          (final: prev: {
+            xdg-desktop-portal-wlr = prev.xdg-desktop-portal-wlr.overrideAttrs (old: {
+            src = xdpw-src;
+            version = "master";
+            });
+            })
+        ]; }
         ./configuration.nix
          home-manager.nixosModules.home-manager
         {
