@@ -38,13 +38,13 @@ case "$1" in
     ;;
   blender)
     export EXTRA_ARGS="-E"
-    export EFFECT="| termsand -c 2153999782 -b --bg=2151573719 --bg=3 --bg=2150449014 --bg=2164233836 --cycles 0 --ms 6 -e blender"
+    export EFFECT="| termsand blender -c 2153999782 -b --bg=2151573719 --bg=3 --bg=2150449014 --bg=2164233836 --cycles 0 --ms 12 --h-time 100 --v-time 80"
     ;;
   # glitch)
   #   export EFFECT="| glitchcat --duration infinite --glitchness 30 --amount 30"
   #   ;;
   *)
-    export EFFECT="| /home/badcop/.local/bin/tte --ignore-terminal-dimensions $1 | head -c -1"
+    export EFFECT="| tte --ignore-terminal-dimensions $1 | head -c -1"
     ;;
 esac
 

@@ -53,3 +53,4 @@ theme = TokyoNight Storm
 font-size = 14
 confirm-close-surface = false
 app-notifications = false
+command = tmux -f ~/.tmux.outer.conf -L outer new-session -D

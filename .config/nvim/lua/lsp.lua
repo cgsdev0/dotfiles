@@ -51,10 +51,10 @@ vim.lsp.config("gopls", {
   capabilities = capabilities,
 })
 
-vim.lsp.config("rust_analyzer", {
-  on_attach = on_attach,
-  capabilities = capabilities,
-})
+-- vim.lsp.config("rust_analyzer", {
+--   on_attach = on_attach,
+--   capabilities = capabilities,
+-- })
 
 vim.lsp.config("cssls", {
   on_attach = on_attach,

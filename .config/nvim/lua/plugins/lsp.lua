@@ -1,4 +1,9 @@
 return {
+  {
+    "mrcjkb/rustaceanvim",
+    version = "^9",
+    lazy = false,
+  },
   { "folke/neodev.nvim" },
   {
     "folke/trouble.nvim",

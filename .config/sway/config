@@ -78,6 +78,7 @@ bindsym $mod+Shift+Right move right
 
 # split in horizontal orientation
 bindsym $mod+t split h
+bindsym Mod1+Tab exec swayr switch-window
 
 # split in vertical orientation
 bindsym $mod+v split v
@@ -277,3 +278,8 @@ exec --no-startup-id swayidle -w timeout 600 'swaymsg "output * dpms off"' resum
 
 exec systemctl --user import-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP SWAYSOCK I3SOCK XCURSOR_SIZE XCURSOR_THEME
 exec dbus-update-activation-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP SWAYSOCK I3SOCK XCURSOR_SIZE XCURSOR_THEME
+
+
+# swayr
+exec env RUST_BACKTRACE=1 RUST_LOG=swayr=debug swayrd > /tmp/swayrd.log 2>&1
+

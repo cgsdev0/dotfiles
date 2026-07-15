@@ -3,9 +3,9 @@
 set -o pipefail
 
 types=$(wl-paste --list-types)
-if [[ "$types" == "image/png" ]]; then
+if [[ "$types" =~ "image/png" ]]; then
   dest=cdn.badcop.live/$(date +"%Y/%m/%d/%M_%S.png")
-  wl-paste \
+  wl-paste --type "image/png" \
     | s3cmd put - "s3://$dest" \
     --mime-type image/png \
     --add-header "Content-Disposition: inline" &> /dev/null

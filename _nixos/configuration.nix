@@ -12,13 +12,22 @@
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
+  fonts.packages = with pkgs; [
+    nerd-fonts.hack
+  ];
   services.blueman.enable = true;
+  services.flatpak.enable = true;
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "orange"; # Define your hostname.
+  networking.firewall.enable = false;
 
+  networking = {
+    nameservers = [ "1.1.1.1" "1.0.0.1" ];
+    networkmanager.dns = "none";
+  };
   # Configure network connections interactively with nmcli or nmtui.
   networking.networkmanager.enable = true;
 
@@ -103,7 +112,12 @@
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
   environment.systemPackages = with pkgs; [
-    neovim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    (wrapNeovimUnstable neovim-unwrapped {
+      wrapRc = false;
+      wrapperArgs = [
+        "--prefix" "PATH" ":" "${lib.makeBinPath [ gcc tree-sitter ]}"
+      ];
+    })
     wget
     wl-clipboard
     ripgrep
@@ -115,6 +129,7 @@
     google-chrome
     ghostty
     bluetuith
+    ucspi-tcp
     pavucontrol
     pwvucontrol
     crosspipe
@@ -144,6 +159,12 @@
     blender
     wayland-scanner
     s3cmd
+    swayr
+    wdisplays
+    dig
+    gum
+    figlet
+    terminaltexteffects
   ];
   services.gnome.gnome-keyring.enable = true;
   # programs.noisetorch.enable = true;
@@ -158,6 +179,8 @@
     wrapperFeatures.gtk = true;
   };
   time.timeZone="America/New_York";
+
+  services.udev.extraRules = builtins.readFile ./69-probe-rs.rules;
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
