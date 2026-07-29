@@ -32,7 +32,8 @@
   networking.networkmanager.enable = true;
 
   # Set your time zone.
-  # time.timeZone = "Europe/Amsterdam";
+  # time.timeZone = "America/Los_Angeles";
+  time.timeZone="America/New_York";
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -96,11 +97,13 @@
   programs.zsh.enable = true;
   users.defaultUserShell = pkgs.zsh;
 
+  users.groups.plugdev = {};
+  users.groups.dialout = {};
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.badcop = {
     shell = pkgs.zsh;
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" "networkmanager" "plugdev" "dialout" ]; # Enable ‘sudo’ for the user.
     packages = with pkgs; [
       tree
     ];
@@ -121,8 +124,10 @@
     wget
     wl-clipboard
     ripgrep
+    screen
     fd
     mako
+    moreutils
     tmux
     discord-ptb
     spotify
@@ -165,6 +170,9 @@
     gum
     figlet
     terminaltexteffects
+    viu
+    chafa
+    freecad
   ];
   services.gnome.gnome-keyring.enable = true;
   # programs.noisetorch.enable = true;
@@ -178,7 +186,6 @@
     enable = true;
     wrapperFeatures.gtk = true;
   };
-  time.timeZone="America/New_York";
 
   services.udev.extraRules = builtins.readFile ./69-probe-rs.rules;
 

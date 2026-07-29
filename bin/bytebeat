@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+eval "fn() { n=\$((($1)%256)); }"
+
+t=0
+while :; do
+  fn
+  printf -v octal '%03o' "$n"
+  printf "\\$octal"
+  ((t++))
+done

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 info=$(upower -i /org/freedesktop/UPower/devices/battery_BAT0)
 
 if [ "$1" == "" ]; then
